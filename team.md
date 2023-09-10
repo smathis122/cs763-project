@@ -1,7 +1,7 @@
 Samantha Mathis: Hi! I am from Tucson, Arizona. I got my Bachelor's degree in Computer Science/French at the University of Arizona. I currently work at Raytheon as a Software Engineer. 
 
 
-Lazaro Perez: My name is Lazaro but I go by Laz. I received a Bachelors degree in Finance from Umass Amherst, as well a certificate of completion of Full Stack Software Development at Bottega University. I am currently working as a Workday Integrations Consultant at a company called Kognitiv Inc based out of Newton Massachusetts. I love watching shows on Netflix, Playing RPG Videos games(Currently playing Dark Souls 3) and reading self development books. 
+Lazaro Perez: My name is Lazaro but I go by Laz. I received a Bachelors degree in Finance from Umass Amherst, as well a certificate of completion of Full Stack Software Development at Bottega University. I am currently working as a Workday Integrations Consultant at a company called Kognitiv Inc based out of Newton Massachusetts.I live in Weymouth Massachusetts. I love watching shows on Netflix, Playing RPG Videos games(Currently playing Dark Souls 3) and reading self development books. 
 
 <h5>Jian Song</h5> <p>Hey everyone! This is <strong>Jay</strong> and I am based in Boston area. My latest degree is a Master in Financial Engineering from the University of Maryland before I relocated to Boston area. I am currently working as a Software Engineer at a financial company called Wellington Management.</p> <p>I am an avid basketball fan and playing piano sometimes. Previously I play PC games like Dota2 but now I can barely find time to play (especially after getting married).</p>
 
