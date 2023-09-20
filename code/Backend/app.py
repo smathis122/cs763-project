@@ -19,17 +19,17 @@ port=url.port
 db = SQLAlchemy()
 ma = Marshmallow(app)
 
+#Question for team: Might not be the best idea to create a table here, should need a separate file for that or create it directly in our database
 class User(db.Model):
     """Creating database for user"""
 
-    __tablename__ = "rentingUser"
+    __tablename__ = "User"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(35), unique=True, nullable=False)
+    name = db.Column(db.String(35), unique=True, nullable=False)
+    emailID = db.Column(db.String(35), unique=True, nullable=False)
     password = db.Column(db.String())
-#Hashing the password
-    passwordCrypt = b"{password}"
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(passwordCrypt, salt)
+    type = db.Column(db.Integer)
+
 
 
 def __init__(self, username, password):
@@ -44,17 +44,37 @@ user_schema = UserSchema()
 multiple_user_schema = UserSchema(many=True)
 
 @app.route('/registerUser', methods=['POST'])
-def registerNewUserEmail(self, emailID, password):
-    """
-    Adding pseudo code here which will be programmed once @Laz can set up 
-    postgres database with @Saahil
-    try:
-        existing_user = is_email_id_in_database
+def registerNewUserEmail():
+    try: 
+        #parse json data
+        userData = request.get_json()
+        print(userData)
+        #defining cursor to postgres data
+        cursor = conn.cursor()
+        #Hashing the password
+        password = userData["password"]
+        passwordCrypt = b"{password}"
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(passwordCrypt, salt)
 
-        if existing_user:
-            return "The email, ID already exists in our system please continue to log in"
-        db.add(emailId, password, maybe a unique key (primary key))
-    Exception exception as e
-        print e
-        raise e
-    """
+        query_email_exists = "SELECT EXISTS ( SELECT 1 FROM User WHERE user_email = '{emailID}')"#might need AS email_exists after) , need to check
+        if  query_email_exists:
+        
+            insertion_query = "INSERT INTO User (name, emailID, password, type) VALUES (%s, %s, %s, %d)"
+
+            cursor.execute(insertion_query, (userData["name"], userData["emailID"], userData["hashed"], userData["type"]))
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return jsonify({"message": "Equipment added successfully"}), 201
+        print("Email ID already exists in database")
+        """
+        Need a pop-up here for UI
+        """
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    #Main method
+    if __name__ == "__main__":
+        app.run(debug=True)
