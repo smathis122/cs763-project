@@ -1,47 +1,41 @@
 from flask import Flask, request, jsonify
+import psycopg2  # or SQLAlchemy
 from flask_cors import CORS
-
 app = Flask(__name__)
+
 CORS(app)  # Allow all origins for development; restrict in production
 
-# Your routes and API endpoints here...
+# PostgreSQL connection settings
+db_connection_settings = {
+    "dbname": "fcfcgjwl",
+    "user": "fcfcgjwl",
+    "password": "Eb5MNeBN-fJlmTipRgqaC-c0tzO3gM5r",
+    "host": "bubble.db.elephantsql.com",
+    "port": "5432",
+}
 
-
-# Sample data
-items = [
-    {"id": 1, "name": "Item 1"},
-    {"id": 2, "name": "Item 2"},
-    {"id": 3, "name": "Item 3"},
-]
-
-@app.route("/add", methods=["POST"], strict_slashes=False)
-def add_articles():
-    title = request.json['title']
-    body = request.json['body']
-
-    article = Articles(
-        title=title,
-        body=body
-        )
-
-    db.session.add(article)
-    db.session.commit()
-
-    return article_schema.jsonify(article)
-    
-@app.route("/api/save", methods=["POST"])
-def save_data():
+@app.route("/api/addEquipment", methods=["POST"])
+def add_equipment():
     try:
-        data = request.json.get("data")
-        # Process and save the data as needed
-        # ...
-        return jsonify({"message": "Data saved successfully"})
+        # Parse JSON data from the request
+        data = request.get_json()
+        print(data)
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Insert data into the "Equipment" table (modify SQL statement to match your table schema)
+        insert_sql = "INSERT INTO Equipment (name, description, status, price, owner) VALUES (%s, %s, %s, %s, %s)"
+
+        cursor.execute(insert_sql, (data["name"], data["description"], data["status"], data["price"], data["owner"]))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Equipment added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/data')
-def get_data():
-    return jsonify(items)
-
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(debug=True)
