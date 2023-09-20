@@ -3,6 +3,8 @@ import os
 import urllib.parse as up
 import psycopg2
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+import bcrypt
 
 app = Flask(__name__)
 
@@ -14,6 +16,33 @@ password=url.password,
 host=url.hostname,
 port=url.port
 )
+db = SQLAlchemy()
+ma = Marshmallow(app)
+
+class User(db.Model):
+    """Creating database for user"""
+
+    __tablename__ = "rentingUser"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(35), unique=True, nullable=False)
+    password = db.Column(db.String())
+#Hashing the password
+    passwordCrypt = b"{password}"
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(passwordCrypt, salt)
+
+
+def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+class UserSchema(ma.Schema):
+    class Meta:
+        fields =("id", "username")
+
+user_schema = UserSchema()
+multiple_user_schema = UserSchema(many=True)
+
 @app.route('/registerUser', methods=['POST'])
 def registerNewUserEmail(self, emailID, password):
     """
