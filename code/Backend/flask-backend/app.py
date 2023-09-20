@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import psycopg2  # or SQLAlchemy
 from flask_cors import CORS
 app = Flask(__name__)
-<<<<<<< HEAD
+# <<<<<<< HEAD
 
 CORS(app)  # Allow all origins for development; restrict in production
 
