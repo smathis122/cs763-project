@@ -93,8 +93,8 @@ def sign_up():
 #     create_table_query = """
 #     CREATE TABLE IF NOT EXISTS users (
 #         id serial PRIMARY KEY,
-#         email VARCHAR(255) NOT NULL,
-#         password VARCHAR(255) NOT NULL
+#         email VARCHAR(20) NOT NULL,
+#         password VARCHAR(80) NOT NULL
 #     );
 #     """
 #     cursor.execute(create_table_query)

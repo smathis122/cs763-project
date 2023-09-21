@@ -19,8 +19,8 @@ db = SQLAlchemy(app)
 # Define the User model (from models.py)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    password = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
 
 # Function to create the table
 def create_user_table():
