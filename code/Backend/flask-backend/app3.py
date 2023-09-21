@@ -3,20 +3,23 @@ import psycopg2
 import os
 from __init__ import create_app
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = create_app()
-app.secret_key = 'secret123'  # Set a secret key for session management
+# app.secret_key = 'secret123'  # Set a secret key for session management
+app.secret_key = os.environ.get('SECRET_KEY')
 
 # PostgreSQL database URL (replace with your ElephantSQL database URL)
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-db_url = os.environ.get('DATABASE_URL')
-print(f'DATABASE_URL: {db_url}')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+
 db = SQLAlchemy(app)
 
 # Define the User model (from models.py)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
 
 # Function to create the table if it doesn't exist
@@ -25,11 +28,17 @@ def create_user_table():
         db.create_all()
 
 # Check if the table exists and create it if not
-if not db.engine.dialect.has_table(db.engine, 'users'):
-    create_user_table()
+# if not db.engine.dialect.has_table(db.engine, 'users'):
+create_user_table()
 
+with app.app_context():
+    user = User(email='user@example.com', password='password123')
+    db.session.add(user)
+    db.session.commit()
 
-
+# with app.app_context():
+#     db.session.query(User).delete()
+#     db.session.commit()
 
 
 
