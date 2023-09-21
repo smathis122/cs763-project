@@ -21,8 +21,8 @@ cursor = conn.cursor()
 create_table_query = """
 CREATE TABLE IF NOT EXISTS example_table (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255),
-    age INT
+    email VARCHAR(255),
+    password VARCHAR(255)
 );
 """
 

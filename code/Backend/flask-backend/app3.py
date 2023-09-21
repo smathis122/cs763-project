@@ -22,7 +22,7 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
 
-# Function to create the table if it doesn't exist
+# Function to create the table
 def create_user_table():
     with app.app_context():
         db.create_all()
@@ -31,10 +31,10 @@ def create_user_table():
 # if not db.engine.dialect.has_table(db.engine, 'users'):
 create_user_table()
 
-with app.app_context():
-    user = User(email='user@example.com', password='password123')
-    db.session.add(user)
-    db.session.commit()
+# with app.app_context():
+#     user = User(email='user@example.com', password='password123')
+#     db.session.add(user)
+#     db.session.commit()
 
 # with app.app_context():
 #     db.session.query(User).delete()
@@ -82,4 +82,4 @@ with app.app_context():
 #     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

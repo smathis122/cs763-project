@@ -7,7 +7,7 @@
     <h1>Login</h1>
     <form method="POST" action="/login">
         <label for="email">Email:</label>
-        <input type="text" name="username" required><br>
+        <input type="text" name="email" required><br>
 
         <label for="password">Password:</label>
         <input type="password" name="password" required><br>
@@ -15,11 +15,13 @@
         <input type="submit" value="Login">
     </form>
 
+    <a href="/sign-up">New User? Sign Up</a>
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
                 {% for message in messages %}
-                    <li class="alert alert-{{ message[1] }}">{{ message[0] }}</li>
+                    <li class="alert alert-{{ message[1] }}">{{ message }}</li>
                 {% endfor %}
             </ul>
         {% endif %}

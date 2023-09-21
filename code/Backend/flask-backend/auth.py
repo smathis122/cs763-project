@@ -34,29 +34,29 @@ def login():
     cursor = conn.cursor()
 
     # Retrieve user information from the database
-    cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
+    cursor.execute('SELECT * FROM "user" WHERE "email" = %s AND "password" = %s', (email, password))
     user = cursor.fetchone()
 
     if user:
         session['logged_in'] = True
         flash('Login successful!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('auth.dashboard'))
     else:
         flash('Login failed. Please try again.', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('auth.index'))
     
 @auth.route('/dashboard')
 def dashboard():
     if session.get('logged_in'):
-        return 'Welcome to the dashboard!'
+        return render_template('dashboard.html')
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('auth.index'))
 
 @auth.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('Logged out successfully.', 'info')
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.index'))
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -67,38 +67,38 @@ def sign_up():
         # Check if the username is already in use (you may want to improve this check)
         conn = connect_db()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+        cursor.execute('SELECT * FROM user WHERE email = %s', (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
             flash('Username already in use. Please choose another one.', 'danger')
         else:
             # Insert the new user into the database (you should hash the password in a real app)
-            cursor.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
+            cursor.execute('INSERT INTO user (email, password) VALUES (%s, %s)', (email, password))
             conn.commit()
             conn.close()
 
             flash('Sign-up successful! You can now log in.', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('auth.index'))
 
     return render_template('signup.html')
 
-@auth.route('/create_table')
-def create_table():
-    # Connect to the PostgreSQL database
-    conn = connect_db()
-    cursor = conn.cursor()
+# @auth.route('/create_table')
+# def create_table():
+#     # Connect to the PostgreSQL database
+#     conn = connect_db()
+#     cursor = conn.cursor()
 
-    # Create the users table if it doesn't exist
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS users (
-        id serial PRIMARY KEY,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL
-    );
-    """
-    cursor.execute(create_table_query)
-    conn.commit()
-    conn.close()
+#     # Create the users table if it doesn't exist
+#     create_table_query = """
+#     CREATE TABLE IF NOT EXISTS users (
+#         id serial PRIMARY KEY,
+#         email VARCHAR(255) NOT NULL,
+#         password VARCHAR(255) NOT NULL
+#     );
+#     """
+#     cursor.execute(create_table_query)
+#     conn.commit()
+#     conn.close()
 
-    return 'User table created or already exists'
+#     return 'User table created or already exists'
