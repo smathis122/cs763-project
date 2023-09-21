@@ -7,9 +7,12 @@ from flask_marshmallow import Marshmallow
 import bcrypt
 from __init__ import create_app
 from flask_login import UserMixin
+from flask_cors import CORS
 
 
 app = create_app()
+
+CORS(app)
 
 db_connection_settings = {
     "dbname": "fcfcgjwl",
@@ -19,7 +22,9 @@ db_connection_settings = {
     "port": "5432",
 }
 
-# conn = psycopg2.connect(**db_connection_settings)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+conn = psycopg2.connect(**db_connection_settings)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://fcfcgjwl:Eb5MNeBN-fJlmTipRgqaC-c0tzO3gM5r@bubble.db.elephantsql.com/fcfcgjwl'
 
