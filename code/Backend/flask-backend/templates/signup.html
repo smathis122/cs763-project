@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sign-Up Page</title>
+    <title>Sign Up Page</title>
 </head>
 <body>
     <h1>Sign Up</h1>
-    <form method="POST" action="/signup">
+    <form method="POST" action="/sign-up">
         <label for="email">Email:</label>
         <input type="text" name="email" required><br>
 
@@ -21,7 +21,7 @@
         {% if messages %}
             <ul>
                 {% for message in messages %}
-                    <li class="alert alert-{{ message[1] }}">{{ message[0] }}</li>
+                    <li class="alert alert-{{ message[1] }}">{{ message }}</li>
                 {% endfor %}
             </ul>
         {% endif %}

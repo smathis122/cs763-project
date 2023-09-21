@@ -67,14 +67,14 @@ def sign_up():
         # Check if the username is already in use (you may want to improve this check)
         conn = connect_db()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM user WHERE email = %s', (email,))
+        cursor.execute('SELECT * FROM "user" WHERE "email" = %s', (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
             flash('Username already in use. Please choose another one.', 'danger')
         else:
             # Insert the new user into the database (you should hash the password in a real app)
-            cursor.execute('INSERT INTO user (email, password) VALUES (%s, %s)', (email, password))
+            cursor.execute('INSERT INTO "user" (email, password) VALUES (%s, %s)', (email, password))
             conn.commit()
             conn.close()
 
