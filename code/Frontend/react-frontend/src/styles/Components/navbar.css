@@ -1,0 +1,19 @@
+.topnav a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 10px 12px;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 3px;
+    border-bottom: 3px solid transparent;
+}
+
+.topnav a:hover {
+    border-bottom: 3px solid red;
+}
+
+.topnav a.active {
+    border-bottom: 3px solid red;
+}
