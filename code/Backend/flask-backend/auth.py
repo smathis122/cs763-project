@@ -71,7 +71,7 @@ def sign_up():
         existing_user = cursor.fetchone()
 
         if existing_user:
-            flash('Username already in use. Please choose another one.', 'danger')
+            flash('Email already in use. Please choose another one.', 'danger')
         else:
             # Insert the new user into the database (you should hash the password in a real app)
             cursor.execute('INSERT INTO "user" (email, password) VALUES (%s, %s)', (email, password))

@@ -11,6 +11,16 @@
 <body>
     <h1>Hello you are logged in.</h1>
     <a href="{{url_for('logout')}}">Press here to logout</a>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="alert alert-{{ message[1] }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 
 </html>

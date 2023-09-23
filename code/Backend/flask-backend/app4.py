@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -51,6 +51,7 @@ class RegisterForm(FlaskForm):
         existing_user_email = User.query.filter_by(
             email=email.data).first()
         if existing_user_email:
+            flash('Email already in use. Please choose another one.', 'danger')
             raise ValidationError(
                 'That email already exists. Please choose a different one.')
 
@@ -81,7 +82,12 @@ def login():
 
             if bcrypt.checkpw(form.password.data.encode('utf-8'), hashed_password_bytes):   #password and hash not matching???
                 login_user(user)
+                flash('Login successful!', 'success')
                 return redirect(url_for('dashboard'))
+            else:
+                flash('Login failed. Please try again.', 'danger')  
+        else:
+            flash('Login failed. Please try again.', 'danger')
     return render_template('flasklogin.html', form=form)
 
 
@@ -95,6 +101,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
+    flash('Logged out successfully.', 'info')
     return redirect(url_for('login'))
 
 
@@ -107,6 +114,7 @@ def register():
         new_user = User(email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
+        flash('Sign-up successful! You can now log in.', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
