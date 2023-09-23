@@ -11,9 +11,9 @@
 }
 
 .topnav a:hover {
-    border-bottom: 3px solid red;
+    border-bottom: 3px solid #635F51;
 }
 
 .topnav a.active {
-    border-bottom: 3px solid red;
+    border-bottom: 3px solid #635F51;
 }

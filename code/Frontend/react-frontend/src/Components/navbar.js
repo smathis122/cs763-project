@@ -6,12 +6,10 @@ import "../styles/Components/navbar.css";
 export function NavbarCustom(props) {
   return (
     <Navbar
-      style={{ fontFamily: "blackPearl" }}
       collapseOnSelect
       sticky="top"
       expand="lg"
-      bg="primary"
-      variant="dark"
+      style={{ backgroundColor: "#918C78" }}
     >
       <Container>
         <Navbar.Brand style={{ fontSize: "35px" }} href="/">

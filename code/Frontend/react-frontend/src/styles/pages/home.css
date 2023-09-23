@@ -7,7 +7,7 @@
 }
 
 body {
-    background: #eeeded;
+    background: #eeeeee !important;
   }
   
   .card {
@@ -16,7 +16,7 @@ body {
     box-sizing: border-box;
     margin-top:10px;
     margin-bottom:10px;
-    background-color:#FFF;
+    background-color:#FCF9DF !important;
   }
   
   .card:hover {
@@ -35,16 +35,9 @@ body {
   .card img{
     width:100%;
   }
-.carousel{
-    background-color: grey;
-}
 
 
 .home-page {
     background-color: gray;
     color:white;
   }
-
-.hours{
-    background-color:rgba(255, 255, 255, 0.8);
-}
