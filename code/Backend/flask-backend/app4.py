@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
+import re
 # from flask_bcrypt import Bcrypt
 import os
 from dotenv import load_dotenv
@@ -40,7 +41,7 @@ class User(db.Model, UserMixin):
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
+                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
@@ -48,6 +49,8 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_email(self, email):
+        if not re.match(r'^[a-zA-Z0-9.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$', email.data):
+            raise ValidationError('Invalid email address.')
         existing_user_email = User.query.filter_by(
             email=email.data).first()
         if existing_user_email:
@@ -58,7 +61,7 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
+                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
