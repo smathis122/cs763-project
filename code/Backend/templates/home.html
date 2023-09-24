@@ -8,6 +8,7 @@
 </head>
 <body>
     {% if session %}
+    <p><a href="{{url_for('logout')}}">Logout</a></p>
     <div><pre>{{pretty}}</pre></div>
     {% else %}
     <p><a href="{{url_for('googleLogin')}}">Login with Google</a></p>
