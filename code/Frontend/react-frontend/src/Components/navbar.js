@@ -23,9 +23,12 @@ export function NavbarCustom(props) {
             <Nav.Link href="#/reservations">Reservations</Nav.Link>
             <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>
+            <Nav.Link href="#/search">Search</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
   );
 }
+
+export default NavbarCustom;
