@@ -7,6 +7,7 @@ import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
 // import RegisterForm from "./pages/RegisterForm";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="dashboard" element={<Dashboard />} />
           {/* <Route path="register" element={<RegisterForm />} /> */}
         </Route>
       </Routes>

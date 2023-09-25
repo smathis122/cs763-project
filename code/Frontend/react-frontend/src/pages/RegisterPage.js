@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 function RegisterPage() {
+  let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -32,6 +33,8 @@ function RegisterPage() {
         console.log(data)
       })
       .catch((error) => console.error("Error:", error));
+    setSubmitMsg("Registering...");
+    setTimeout(() => setSubmitMsg("You have registered!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -41,6 +44,7 @@ function RegisterPage() {
 return (
     <div>
       <NavbarCustom />
+      <h1>Register</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
           <FormGroup className="contact-page-form-group">

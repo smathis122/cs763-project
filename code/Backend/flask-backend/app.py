@@ -166,14 +166,17 @@ def login():
                 hashed_db_password = binascii.unhexlify(db_password)
                 print("Unhexed pass:", hashed_db_password)
                 if bcrypt.checkpw(password, hashed_db_password):
+                    print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
                     user = User(user_data[0], email, db_password)
                     login_user(user)
                     flash('Login successful!', 'success')
-                    return redirect(url_for('dashboard'))
+                    return jsonify({"message": "User logged in successfully"}), 201
+                    # return redirect(url_for('dashboard'))
                 else:
                     flash('Login failed. Please try again.', 'danger')
+                    return jsonify({"message": "Wrong password"}), 201
             else:
                 flash('Login failed. Please try again.', 'danger')
         else:
@@ -187,7 +190,7 @@ def login():
 @app.route('/api/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('flaskdashboard.html')
+    return jsonify({"message": "Entered Dashboard"}), 201
 
 
 @app.route('/api/logout', methods=['GET', 'POST'])
@@ -200,7 +203,7 @@ def logout():
 
 @app.route('/api/register', methods=['GET', 'POST'])
 def register():
-    print("hello")
+    print("in register route")
     try:
         # Connect to the PostgreSQL database
         conn = psycopg2.connect(**db_connection_settings)

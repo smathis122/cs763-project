@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 function LoginPage() {
+  let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,6 +30,8 @@ function LoginPage() {
         console.log(data)
       })
       .catch((error) => console.error("Error:", error));
+    setSubmitMsg("Logging In...");
+    setTimeout(() => setSubmitMsg("You have logged in!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -38,6 +41,7 @@ function LoginPage() {
 return (
     <div>
       <NavbarCustom />
+      <h1>Log In</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
           <FormGroup className="contact-page-form-group">
@@ -76,6 +80,7 @@ return (
             Submit
           </Button>
         </Form>
+        {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
 );
