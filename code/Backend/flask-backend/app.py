@@ -1,5 +1,4 @@
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -7,6 +6,7 @@ from wtforms.validators import InputRequired, Length, ValidationError, Email, Da
 import re
 # from flask_bcrypt import Bcrypt
 import os
+import secrets
 from dotenv import load_dotenv
 import binascii
 import bcrypt
@@ -14,7 +14,7 @@ import psycopg2
 from flask_cors import CORS
 app = Flask(__name__)
 
-CORS(app)  # Allow all origins for development; restrict in production
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3001"}}) # Allow all origins for development; restrict in production
 
 # PostgreSQL connection settings
 db_connection_settings = {
@@ -25,6 +25,9 @@ db_connection_settings = {
     "port": "5432",
 }
 
+secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
+app.config['SECRET_KEY'] = secret_key
+print(app.config['SECRET_KEY'])
 @app.route("/api/getEquipment", methods=["GET"])
 def get_equipment():
     try:
@@ -69,16 +72,6 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
 class User(UserMixin):
     def __init__(self, id, email, password):
         self.id = id
@@ -110,7 +103,7 @@ class RegisterForm(FlaskForm):
         cursor.execute('SELECT email FROM "user" WHERE email = %s', (email.data,))
         existing_user_email = cursor.fetchone()
         cursor.close()
-
+        conn.close()
         if existing_user_email:
             flash('Email already in use. Please choose another one.', 'danger')
             raise ValidationError('That email already exists. Please choose a different one.')
@@ -126,12 +119,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['GET', 'POST'])
 def login():
     conn = psycopg2.connect(**db_connection_settings)
     form = LoginForm()
@@ -155,16 +143,17 @@ def login():
                 flash('Login failed. Please try again.', 'danger')
         else:
             flash('Login failed. Please try again.', 'danger')
+    conn.close()
     return render_template('flasklogin.html', form=form)
 
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/api/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return render_template('flaskdashboard.html')
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/api/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
@@ -172,9 +161,30 @@ def logout():
     return redirect(url_for('login'))
 
 
-@ app.route('/register', methods=['GET', 'POST'])
+@ app.route('/api/register', methods=['GET', 'POST'])
 def register():
-    conn = psycopg2.connect(**db_connection_settings)
+    print("hello")
+    try:
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        form = RegisterForm()
+        if form.validate_on_submit():
+            email = form.email.data
+            hashed_password = bcrypt.hashpw(
+                form.password.data.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute(
+                'INSERT INTO "user" (email, password) VALUES (%s, %s)', (email, hashed_password))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return jsonify({"message": "User added successfully"}), 201
+        return jsonify({"message": "User validate unsuccessfully"}), 201
+
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    '''conn = psycopg2.connect(**db_connection_settings)
     form = RegisterForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -187,7 +197,8 @@ def register():
         cursor.close()
         conn.close()
         flash('Sign-up successful! You can now log in.', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))'''
+
 
 if __name__ == "__main__":
     app.run(debug=True)
