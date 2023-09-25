@@ -150,7 +150,7 @@ def login():
     try:
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-        form = LoginForm()
+        form = LoginForm(meta={'csrf': False})
 
         if form.validate_on_submit():
             email = form.email.data
@@ -205,7 +205,7 @@ def register():
         # Connect to the PostgreSQL database
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-        form = RegisterForm()
+        form = RegisterForm(meta={'csrf': False})
         # csrf_token = generate_csrf()
 
         if form.validate_on_submit():
