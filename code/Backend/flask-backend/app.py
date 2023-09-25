@@ -12,9 +12,11 @@ import binascii
 import bcrypt
 import psycopg2
 from flask_cors import CORS
+from flask_wtf.csrf import generate_csrf
+
 app = Flask(__name__)
 
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3001"}}) # Allow all origins for development; restrict in production
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) # Allow all origins for development; restrict in production
 
 # PostgreSQL connection settings
 db_connection_settings = {
@@ -72,6 +74,30 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    print("User ID:", user_id)
+    print(type(user_id))
+    conn = psycopg2.connect(**db_connection_settings)
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM "user" WHERE id = %s', (user_id,))
+    user_info = cursor.fetchone()
+    print(user_info)
+    cursor.close()
+    conn.close()
+    user = None
+    if user_info:
+        db_password = user_info[2][2:].encode('utf-8')
+        hashed_db_password = binascii.unhexlify(db_password)
+        user = User(user_info[0], user_info[1], hashed_db_password)
+        print(user)
+        app.logger.info(f"Loaded user: {user}")
+    return user
+    
 class User(UserMixin):
     def __init__(self, id, email, password):
         self.id = id
@@ -121,31 +147,42 @@ class LoginForm(FlaskForm):
 
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
-    conn = psycopg2.connect(**db_connection_settings)
-    form = LoginForm()
-    if form.validate_on_submit():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-        email = form.email.data
-        password = form.password.data.encode('utf-8')
-        cursor.execute('SELECT * FROM "user" WHERE email = %s', (email,))
-        user_data = cursor.fetchone()
-        cursor.close()
+        form = LoginForm()
 
-        if user_data:
-            db_password = user_data[2:].encode('utf-8')
-            hashed_db_password = binascii.unhexlify(db_password)
-            if bcrypt.checkpw(password, hashed_db_password):
-                user = User(user_data[0], email, db_password)
-                login_user(user)
-                flash('Login successful!', 'success')
-                return redirect(url_for('dashboard'))
+        if form.validate_on_submit():
+            email = form.email.data
+            password = form.password.data.encode('utf-8')
+            print('Entered pass:', password)
+            cursor.execute('SELECT * FROM "user" WHERE email = %s', (email,))
+            user_data = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            if user_data:
+                db_password = user_data[2][2:]
+                print("Hex pass:", db_password)
+                hashed_db_password = binascii.unhexlify(db_password)
+                print("Unhexed pass:", hashed_db_password)
+                if bcrypt.checkpw(password, hashed_db_password):
+                    print(user_data[0])
+                    print(type(user_data[0]))
+                    user = User(user_data[0], email, db_password)
+                    login_user(user)
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash('Login failed. Please try again.', 'danger')
             else:
                 flash('Login failed. Please try again.', 'danger')
         else:
-            flash('Login failed. Please try again.', 'danger')
-    conn.close()
-    return render_template('flasklogin.html', form=form)
-
+            print("Form validation failed")
+            print(form.errors)  # Print form validation errors
+        return jsonify({"message": "User validate unsuccessfully"}), 201
+        # return render_template('flasklogin.html', form=form)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/dashboard', methods=['GET', 'POST'])
 @login_required
@@ -161,7 +198,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@ app.route('/api/register', methods=['GET', 'POST'])
+@app.route('/api/register', methods=['GET', 'POST'])
 def register():
     print("hello")
     try:
@@ -169,6 +206,8 @@ def register():
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
         form = RegisterForm()
+        # csrf_token = generate_csrf()
+
         if form.validate_on_submit():
             email = form.email.data
             hashed_password = bcrypt.hashpw(
@@ -179,9 +218,11 @@ def register():
             cursor.close()
             conn.close()
             return jsonify({"message": "User added successfully"}), 201
-        return jsonify({"message": "User validate unsuccessfully"}), 201
+        else:
+            print("Form validation failed")
+            print(form.errors)  # Print form validation errors
+        return jsonify({"message": "User validate unsuccessfully"},), 201
 
-        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     '''conn = psycopg2.connect(**db_connection_settings)
