@@ -14,6 +14,72 @@ db_connection_settings = {
     "port": "5432",
 }
 
+# Fetch all equipment items
+@app.route("/api/getAllEquipment", methods=["GET"])
+def get_all_equipment():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Fetch all equipment items from the database
+        cursor.execute("SELECT * FROM Equipment")
+        equipment_data = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(equipment_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
+def remove_equipment(item_id):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Remove the equipment item from the database by ID
+        cursor.execute("DELETE FROM Equipment WHERE Itemid = %s", (item_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Equipment with ID {item_id} removed successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Update an equipment item by ID
+@app.route("/api/updateEquipment/<int:item_id>", methods=["PUT"])
+def update_equipment(item_id):
+    try:
+        data = request.get_json()
+        
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Update the equipment item in the database by ID
+        cursor.execute("""
+            UPDATE Equipment
+            SET
+                Name = %s,
+                Description = %s,
+                Status = %s,
+                Price = %s,
+                Owner = %s
+            WHERE Itemid = %s
+        """, (data["name"], data["description"], data["status"], data["price"], data["owner"], item_id))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Equipment with ID {item_id} updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+        
 @app.route("/api/getEquipment", methods=["GET"])
 def get_equipment():
     try:
