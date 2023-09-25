@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import GoogleLogin from "./pages/GoogleLogin";
 
 
+import View from "./pages/ViewItem";
+
 function App() {
   return (
     <HashRouter>
@@ -19,6 +21,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="View" element={<View />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="dashboard" element={<Dashboard />} />
