@@ -68,8 +68,8 @@ def make_reservation():
         cursor = conn.cursor()
 
         # Insert data into the "Reservation" table (modify SQL statement to match your table schema)
-        insert_sql = "INSERT INTO Reservation (name, address, email, description, date) VALUES (%s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_sql, (data["name"], data["address"], data["email"], data["description"], data["startDate"], data["endDate"]))
+        insert_sql = "INSERT INTO Reservation (start_date, end_date) VALUES (%s, %s)"
+        cursor.execute(insert_sql, (data["start_date"], data["end_date"]))
         
         conn.commit()
         cursor.close()

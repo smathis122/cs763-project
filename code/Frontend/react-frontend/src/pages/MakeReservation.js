@@ -6,12 +6,8 @@ import Button from "react-bootstrap/Button";
 function ReservationForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    email: "",
-    description: "",
-    startDate: "",
-    endDate: "",
+    start_date: "",
+    end_date: "",
   });
 
   const handleInputChange = (event) => {
@@ -35,12 +31,8 @@ function ReservationForm() {
     setSubmitMsg("Loading...");
     setTimeout(() => setSubmitMsg("Your reservation has been made!"), 3000);
     setFormData({
-        name: "",
-        address: "",
-        email: "",
-        description: "",
-        startDate: "",
-        endDate: "",
+        start_date: "",
+        end_date: "",
     });
   };
 
@@ -48,70 +40,25 @@ function ReservationForm() {
     <div>
       <NavbarCustom />
       <div className="form" id="formDiv">
-        <Form className="contact-form" onSubmit={handleSubmit}>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter Name for User"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter Address of User"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="text" // Use "number" for numeric input
-              placeholder="Enter Email for User"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea" // Use "textarea" for multi-line text input
-              placeholder="Enter Description"
-              rows={5}
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
+        <Form className="reservation-form" onSubmit={handleSubmit}>
+          <FormGroup className="reservation-page-form-group">
             <Form.Label>Rental Start Date</Form.Label>
             <Form.Control
               type="date" // Use "text" for a text input field
               placeholder="Enter Date"
-              name="startDate"
-              value={formData.startDate}
+              name="start_date"
+              value={formData.start_date}
               onChange={handleInputChange}
               required
             />
           </FormGroup>
-          <FormGroup className="contact-page-form-group">
+          <FormGroup className="reservation-page-form-group">
             <Form.Label>Rental End Date</Form.Label>
             <Form.Control
               type="date" // Use "text" for a text input field
               placeholder="Enter Date"
-              name="endDate"
-              value={formData.endDate}
+              name="end_date"
+              value={formData.end_date}
               onChange={handleInputChange}
               required
             />
