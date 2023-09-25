@@ -12,34 +12,59 @@ function EquipmentForm() {
     price: "",
     user: "",
   });
+  function getUserId() {
+    fetch("http://127.0.0.1:5000/api/userInfo", {
+      method: "GET",
+      credentials: "include", // Include cookies in the request if using cookies for sessions
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const userId = data.userId; // Extract the user ID from the response data
+        console.log("User ID:", userId);
+      })
+      .catch((error) => console.error("Error:", error));
+  }
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const handleSubmit = () => {
+    // Get the user ID obtained during login
+    const userId = getUserId(); // Implement a function to retrieve the user ID
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Send the formData as JSON to your Flask back-end here
+    // Create the equipment object with the user's ID as the owner
+    const newEquipment = {
+      name: formData.name,
+      description: formData.description,
+      status: formData.status,
+      price: formData.price,
+      owner: userId, // Include the user's ID as the owner
+    };
+
+    // Send a POST request to your API to create the equipment
     fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(newEquipment),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+        // Handle successful equipment creation
+      })
       .catch((error) => console.error("Error:", error));
     setSubmitMsg("Loading...");
-    setTimeout(() => setSubmitMsg("Your Item has been added!"), 3000);
+    setTimeout(() => setSubmitMsg("Your Item has been added!"), 2000);
     setFormData({
       name: "",
       description: "",
       status: "",
       price: "",
-      owner: "",
     });
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
@@ -76,17 +101,6 @@ function EquipmentForm() {
               placeholder="Enter Price for object"
               name="price"
               value={formData.price}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>Owner</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter Owner name"
-              name="owner"
-              value={formData.owner}
               onChange={handleInputChange}
               required
             />
