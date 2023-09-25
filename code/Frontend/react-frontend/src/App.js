@@ -5,6 +5,8 @@ import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
+import RegisterPage from "./pages/RegisterPage";
+// import RegisterForm from "./pages/RegisterForm";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="register" element={<RegisterPage />} />
+          {/* <Route path="register" element={<RegisterForm />} /> */}
         </Route>
       </Routes>
     </HashRouter>
