@@ -19,7 +19,8 @@ export function NavbarCustom(props) {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
           <Nav className="topnav" style={{ fontSize: "35px" }}>
-            <Nav.Link href="#/Items">Items</Nav.Link>
+            <Nav.Link href="#/Items">Add Items</Nav.Link>
+            <Nav.Link href="#/View">View Items</Nav.Link>
             <Nav.Link href="#/reservations">Reservations</Nav.Link>
             <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>

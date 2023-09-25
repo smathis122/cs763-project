@@ -6,7 +6,7 @@ import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
-import Remove from "./pages/RemoveItem";
+import View from "./pages/ViewItem";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="Remove" element={<Remove />} />
+          <Route path="View" element={<View />} />
         </Route>
       </Routes>
     </HashRouter>
