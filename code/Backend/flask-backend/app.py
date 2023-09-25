@@ -58,5 +58,47 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/makeReservation", methods=["POST"])
+def make_reservation():
+    try:
+        # Parse JSON data from the request
+        data = request.get_json()
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Insert data into the "Reservation" table (modify SQL statement to match your table schema)
+        insert_sql = "INSERT INTO Reservation (name, address, email, description, date) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_sql, (data["name"], data["address"], data["email"], data["description"], data["startDate"], data["endDate"]))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Reservation made successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/getReservation", methods=["GET"])
+def get_reservation():
+    try:
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        # Execute an SQL query to fetch reservation data
+        cursor.execute("SELECT * FROM Reservation")  # Modify this query as needed
+
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        reservation_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(reservation_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(debug=True)

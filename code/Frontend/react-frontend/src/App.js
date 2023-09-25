@@ -5,6 +5,7 @@ import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
+import Reservations from "./pages/MakeReservation";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="reservations" element={<Reservations />} />
         </Route>
       </Routes>
     </HashRouter>
