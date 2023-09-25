@@ -8,7 +8,8 @@ import Contact from "./pages/contact";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
-// import RegisterForm from "./pages/RegisterForm";
+import GoogleLogin from "./pages/GoogleLogin";
+
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="dashboard" element={<Dashboard />} />
-          {/* <Route path="register" element={<RegisterForm />} /> */}
+          <Route path="GoogleLogin" element={<GoogleLogin />} />
         </Route>
       </Routes>
     </HashRouter>
