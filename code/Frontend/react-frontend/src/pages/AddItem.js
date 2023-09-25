@@ -13,7 +13,7 @@ function EquipmentForm() {
     user: "",
   });
   function getUserId() {
-    fetch("/api/userInfo", {
+    fetch("http://127.0.0.1:5000/api/userInfo", {
       method: "GET",
       credentials: "include", // Include cookies in the request if using cookies for sessions
     })
@@ -39,7 +39,7 @@ function EquipmentForm() {
     };
 
     // Send a POST request to your API to create the equipment
-    fetch("http://your-api-url/api/addEquipment", {
+    fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
