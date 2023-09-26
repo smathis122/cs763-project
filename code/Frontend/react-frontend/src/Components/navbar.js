@@ -24,6 +24,7 @@ export function NavbarCustom(props) {
             <Nav.Link href="#/reservations">Reservations</Nav.Link>
             <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>
+            <Nav.Link href="#/search">Search</Nav.Link>
             <Nav.Link href="#/login">Login</Nav.Link>
             <Nav.Link href="#/register">Register</Nav.Link>
           </Nav>
@@ -32,3 +33,5 @@ export function NavbarCustom(props) {
     </Navbar>
   );
 }
+
+export default NavbarCustom;

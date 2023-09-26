@@ -337,5 +337,80 @@ def get_reservation():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/searchItems', methods=['GET'])
+def search_items():
+    try:
+        search_query = request.args.get('q')
+        print(f"Received search query: {search_query}")
+
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
+        cursor.execute(query, (f"%{search_query}%", f"%{search_query}%"))
+
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+
+        if equipment_data:
+            return jsonify(equipment_data), 200
+        else:
+            return jsonify({"message": "No matching items found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/availableItems', methods=['GET'])
+def get_available_items():
+    try:
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM Equipment WHERE available = true")
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+
+        if equipment_data:
+            return jsonify(equipment_data), 200
+        else:
+            return jsonify({"message": "No available items found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/unavailableItems', methods=['GET'])
+def get_unavailable_items():
+    try:
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM Equipment WHERE available = false")
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+
+        if equipment_data:
+            return jsonify(equipment_data), 200
+        else:
+            return jsonify({"message": "No unavailable items found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)

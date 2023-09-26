@@ -5,6 +5,8 @@ import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
+import ItemSearchAndFilter from "./pages/search";
+
 
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
@@ -23,6 +25,7 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="search" element={<ItemSearchAndFilter />} />
           <Route path="reservations" element={<Reservations />} />
           <Route path="View" element={<View />} />
           <Route path="register" element={<RegisterPage />} />
