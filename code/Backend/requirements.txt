@@ -8,8 +8,10 @@ flask_login
 flask_wtf
 wtforms
 wtforms.validators
-re
-os
-dotenv
-binascii
-bcryp
+regex
+python-dotenv
+bcrypt
+flask_marshmallow
+marshmallow-sqlalchemy
+oauthlib
+authlib
