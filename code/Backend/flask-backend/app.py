@@ -1,3 +1,6 @@
+from flask_marshmallow import Marshmallow
+
+
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -15,6 +18,12 @@ from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 
 app = Flask(__name__)
+load_dotenv()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.secret_key = os.environ.get('SECRET_KEY')
+
+db = SQLAlchemy(app)
 
 CORS(app) # Allow all origins for development; restrict in production
 
@@ -26,6 +35,24 @@ db_connection_settings = {
     "host": "bubble.db.elephantsql.com",
     "port": "5432",
 }
+
+
+class paymentInfo(db.Model):
+    payment_id = db.Column(db.Integer,primary_key = True)
+    itemid = db.Column(db.Integer, nullable = False)
+    is_paid = db.Column(db.Boolean, nullable = False)
+    Price = db.Column(db.Integer, nullable = False)
+
+@app.route("/")         
+def home():
+    return render_template("")
+
+#configuration parameters
+conf= {
+    "FLASK_PORT" : 5014,
+    "FLASK_SECRET" : "SECRET1234"
+}
+
 
 # Fetch all equipment items
 @app.route("/api/getAllEquipment", methods=["GET"])
@@ -412,5 +439,8 @@ def get_unavailable_items():
         return jsonify({"error": str(e)}), 500
 
 
+#Main method
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=conf.get("FLASK_PORT"), debug=True)
+
+

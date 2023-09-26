@@ -5,6 +5,11 @@ import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
+
+import CheckoutHelp from "./pages/form_helpbutton";
+import CheckoutValidation from "./pages/payment_validation";
+// import PaymentSuccessful from "./pages/payment_successful";
+
 import ItemSearchAndFilter from "./pages/search";
 
 
@@ -25,6 +30,11 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
+
+          <Route path="CheckoutHelp" element={<CheckoutHelp />} />
+          <Route path="CheckoutValidation" element={<CheckoutValidation />} />
+          {/* <Route path="PaymentSuccessful" element={<PaymentSuccessful />} /> */}
+
           <Route path="search" element={<ItemSearchAndFilter />} />
           <Route path="reservations" element={<Reservations />} />
           <Route path="View" element={<View />} />
@@ -32,6 +42,7 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="GoogleLogin" element={<GoogleLogin />} />
+
         </Route>
       </Routes>
     </HashRouter>
