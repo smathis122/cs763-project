@@ -1,64 +1,152 @@
 import React, { useState } from "react";
-import '../styles/pages/checkoutFormstyle.css';
-import '../styles/pages/overallstyle.css';
+import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
 
 function CheckoutForm() {
-    return (
-        
-        <div>
-            <p><h1>Checkout</h1></p>
-            <p class = "redpoints">Please enter your payment details below:</p>
-            <input type = "submit" id = "clickme" value = "Help" />
-            <hr />
-            <br />
-            <form name = "Payment Details"
-            method = "post"
-            action = ""
-            novalidate
-            onSubmit={(e) => {
-                e.preventDefault();
-                if (validateForm()) {
-                    console.log("Form is valid. Submitting...");
-                }
-            }}
-            >
-            <p class = "teal">Full Name as it appears on your Card:
-                <input type = "text" name = "textName" id = "fullName" required /></p>
-
-            <p class = "teal">Enter your Billing Address:</p><br />
-
-            <p class = "teal">Street Address:
-            <input type = "text" name = "textName" id = "streetAddress" required /></p>
-            
-            <p class = "teal">House/Unit/Apartment No:
-              <input type = "text" name = "textName" id = "unitNo" required /></p>
-         
-            <p class = "teal">State:
-            <input type = "text" name = "textName" id = "state" required /></p>
-        
-            <p class = "teal">Zip Code:
-            <input type = "text" name = "textName" id = "zipCode" required /></p>
-            <br />
-
-            <p class = "teal">Card Number:
-              <input type = "text" name = "textName" id = "cardNumber" required /></p>
-              
-
-            <p class = "teal">Valid Through (MM/YY):
-            <input type = "text" name = "textName" id = "validThru" required /></p>
-            
-            <p class = "teal">CVC:
-            <input type = "text" name = "textName" id = "cvc" required /></p>
-            <br />
-
-            <p class = "teal">Please write your experience here: (required)
-            <p><textarea rows = "5" cols = "50" name = "taComments" id = "message" required></textarea></p>
-            
-            <p><input type = "submit" name = "send" value = "Pay" /></p></p>
-        </form>
-        </div>
-    );
+    window.onload = function() {
+    var clickMeButton = document.getElementById('clickme');
+    clickMeButton.onclick = youClicked;
 }
+function youClicked(){
+    alert('Please fill in the boxes below.\nIncomplete information will not be submitted.');
+}
+    const [showAlert, setShowAlert] = useState(false);
+  
+
+  const handleHelpClick = () => {
+    setShowAlert(true);
+  };
+
+  return (
+    <Container>
+      <h1>Checkout</h1>
+      <input type = "submit" id = "clickme" value = "Help" />
+      <hr />
+      <Form
+        name="Payment Details"
+        method="post"
+        action=""
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (validateForm()) {
+            console.log("Form is valid. Submitting...");
+          }
+        }}
+      >
+        <Form.Group>
+          <Form.Label className="text-info">
+            Full Name as it appears on your Card:
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="textName"
+            id="fullName"
+            required
+          />
+        </Form.Group>
+
+        <Form.Label className="text-info">Enter your Billing Address:</Form.Label>
+        <Row>
+          <Col>
+            <Form.Control
+              type="text"
+              name="textName"
+              id="streetAddress"
+              placeholder="Street Address"
+              required
+            />
+          </Col>
+          <Col>
+            <Form.Control
+              type="text"
+              name="textName"
+              id="unitNo"
+              placeholder="House/Unit/Apartment No"
+              required
+            />
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <Form.Control
+              type="text"
+              name="textName"
+              id="state"
+              placeholder="State (e.g., MA)"
+              required
+            />
+          </Col>
+          <Col>
+            <Form.Control
+              type="text"
+              name="textName"
+              id="zipCode"
+              placeholder="Zip Code"
+              required
+            />
+          </Col>
+        </Row>
+
+        <Form.Group>
+          <Form.Label className="text-info">Card Number:</Form.Label>
+          <Form.Control
+            type="text"
+            name="textName"
+            id="cardNumber"
+            required
+          />
+        </Form.Group>
+
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Label className="text-info">
+                Valid Through (MM/YY):
+              </Form.Label>
+              <Form.Control
+                type="text"
+                name="textName"
+                id="validThru"
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label className="text-info">CVC:</Form.Label>
+              <Form.Control
+                type="text"
+                name="textName"
+                id="cvc"
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Form.Group>
+          <Form.Label className="text-info">
+            Please write your experience here: (required)
+          </Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={5}
+            cols={50}
+            name="taComments"
+            id="message"
+            required
+          />
+        </Form.Group>
+
+        <Button variant="primary" type="submit">
+          Pay
+        </Button>
+      </Form>
+    </Container>
+  );
+}
+
 
 function validateForm(){
 
@@ -139,7 +227,7 @@ else {
         }
 
     }
-}
-
+};
+// The rest of your code for the validateForm function and export statement
 
 export default CheckoutForm;
