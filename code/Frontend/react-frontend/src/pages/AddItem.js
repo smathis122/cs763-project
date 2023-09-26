@@ -10,29 +10,35 @@ function EquipmentForm() {
     description: "",
     status: "",
     price: "",
-    user: "",
+    owner: "",
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const handleSubmit = () => {
+    // Create the equipment object with the user's ID as the owner
+    const newEquipment = {
+      name: formData.name,
+      description: formData.description,
+      status: formData.status,
+      price: formData.price,
+      owner: formData.owner, // Include the user's ID as the owner
+    };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Send the formData as JSON to your Flask back-end here
+    // Send a POST request to your API to create the equipment
     fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(newEquipment),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+        // Handle successful equipment creation
+      })
       .catch((error) => console.error("Error:", error));
     setSubmitMsg("Loading...");
-    setTimeout(() => setSubmitMsg("Your Item has been added!"), 3000);
+    setTimeout(() => setSubmitMsg("Your Item has been added!"), 2000);
     setFormData({
       name: "",
       description: "",
@@ -40,6 +46,11 @@ function EquipmentForm() {
       price: "",
       owner: "",
     });
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
@@ -81,17 +92,6 @@ function EquipmentForm() {
             />
           </FormGroup>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Owner</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter Owner name"
-              name="owner"
-              value={formData.owner}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
             <Form.Label>Description</Form.Label>
             <Form.Control
               as="textarea" // Use "textarea" for multi-line text input
@@ -99,6 +99,17 @@ function EquipmentForm() {
               rows={5}
               name="description"
               value={formData.description}
+              onChange={handleInputChange}
+              required
+            />
+          </FormGroup>
+           <FormGroup className="contact-page-form-group">
+            <Form.Label>Owner</Form.Label>
+            <Form.Control
+              type="text" // Use "text" for a text input field
+              placeholder="Enter owner of Item"
+              name="owner"
+              value={formData.owner}
               onChange={handleInputChange}
               required
             />
