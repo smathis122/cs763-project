@@ -1,0 +1,89 @@
+body { font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 3em;
+    background-color: white;
+    line-height: 15px; }
+
+  #app {font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+  text-align: center;
+  margin-top: 40px;}  
+
+.img-center {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  height: 350px;
+  width: 350px;
+}
+
+@media (max-width: 480px) {
+  .text {
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .text {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .text {
+    font-size: 12px;
+  }
+}
+
+#title {color: black;
+    font-family: Palatino;
+    font-weight: bold;
+    font-size: 18pt;}
+
+* {text-align: justify;
+  margin-left: 5px;
+  margin-right: 5px;}
+
+img {border-radius: 100px;
+     float: left; }
+
+table, th, td { border: 2px solid #000000;
+  border-color: blue;
+  line-height: 25px; 
+  background-color: rgb(20,180,245) }
+
+p {line-height: 20px;}
+
+ol {line-height: 25px;
+    font-style: italic;}
+
+ul {line-height: 25px;
+    font-style: italic;}
+
+.teal {
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 11pt;}
+
+.redpoints {
+    color: rgb(200,10,10);
+    font-weight: bold;
+    font-size: 11pt;}
+
+nav {
+height: 100px;
+width: auto;
+margin-left: 150px;
+border: 2px solid #000000;
+border-color: blue;
+background-color: rgb(20,170,245);
+text-align: center;
+}
+
+div {
+height: auto;
+width: auto;
+border: 2px solid #000000;
+border-color: blue;
+background-color: rgb(245,235,200);
+clear: both;
+}

@@ -1,62 +1,41 @@
-from flask import Flask, request, jsonify
-import psycopg2  # or SQLAlchemy
-from flask_cors import CORS
+from flask import Flask, jsonify, render_template
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+import psycopg2
+
+from dotenv import load_dotenv
+
+import os
+
 app = Flask(__name__)
+load_dotenv()
 
-CORS(app)  # Allow all origins for development; restrict in production
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.secret_key = os.environ.get('SECRET_KEY')
 
-# PostgreSQL connection settings
-db_connection_settings = {
-    "dbname": "fcfcgjwl",
-    "user": "fcfcgjwl",
-    "password": "Eb5MNeBN-fJlmTipRgqaC-c0tzO3gM5r",
-    "host": "bubble.db.elephantsql.com",
-    "port": "5432",
+db = SQLAlchemy(app)
+
+#database table for payments
+
+class paymentInfo(db.Model):
+    payment_id = db.Column(db.Integer,primary_key = True)
+    itemid = db.Column(db.Integer, nullable = False)
+    is_paid = db.Column(db.Boolean, nullable = False)
+    Price = db.Column(db.Integer, nullable = False)
+
+@app.route("/")         
+def home():
+    return render_template("")
+
+#configuration parameters
+conf= {
+    "FLASK_PORT" : 5014,
+    "FLASK_SECRET" : "SECRET1234"
 }
 
-@app.route("/api/getEquipment", methods=["GET"])
-def get_equipment():
-    try:
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
 
-        # Execute an SQL query to fetch equipment data
-        cursor.execute("SELECT * FROM Equipment")  # Modify this query as needed
-
-        # Fetch all rows and store them in a list of dictionaries
-        columns = [desc[0] for desc in cursor.description]
-        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-        cursor.close()
-        conn.close()
-
-        return jsonify(equipment_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/api/addEquipment", methods=["POST"])
-def add_equipment():
-    try:
-        # Parse JSON data from the request
-        data = request.get_json()
-        print(data)
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
-        # Insert data into the "Equipment" table (modify SQL statement to match your table schema)
-        insert_sql = "INSERT INTO Equipment (name, description, status, price, owner) VALUES (%s, %s, %s, %s, %s)"
-
-        cursor.execute(insert_sql, (data["name"], data["description"], data["status"], data["price"], data["owner"]))
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return jsonify({"message": "Equipment added successfully"}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+#Main method
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=conf.get("FLASK_PORT"), debug=True)
+
+
