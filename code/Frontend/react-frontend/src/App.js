@@ -8,6 +8,15 @@ import Contact from "./pages/contact";
 import ItemSearchAndFilter from "./pages/search";
 
 
+import Reservations from "./pages/MakeReservation";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import GoogleLogin from "./pages/GoogleLogin";
+
+
+import View from "./pages/ViewItem";
+
 function App() {
   return (
     <HashRouter>
@@ -17,6 +26,12 @@ function App() {
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
           <Route path="search" element={<ItemSearchAndFilter />} />
+          <Route path="reservations" element={<Reservations />} />
+          <Route path="View" element={<View />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="GoogleLogin" element={<GoogleLogin />} />
         </Route>
       </Routes>
     </HashRouter>
