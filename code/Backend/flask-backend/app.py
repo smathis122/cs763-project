@@ -27,6 +27,16 @@ db = SQLAlchemy(app)
 
 CORS(app) # Allow all origins for development; restrict in production
 
+# PostgreSQL connection settings
+db_connection_settings = {
+    "dbname": "fcfcgjwl",
+    "user": "fcfcgjwl",
+    "password": "Eb5MNeBN-fJlmTipRgqaC-c0tzO3gM5r",
+    "host": "bubble.db.elephantsql.com",
+    "port": "5432",
+}
+
+
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer,primary_key = True)
     itemid = db.Column(db.Integer, nullable = False)
