@@ -122,15 +122,15 @@ def add_equipment():
     try:
         # Parse JSON data from the request
         data = request.get_json()
-        print(data)
+        print("Data", data)
         # Connect to the PostgreSQL database
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
 
         # Insert data into the "Equipment" table (modify SQL statement to match your table schema)
-        insert_sql = "INSERT INTO Equipment (name, description, status, price, owner) VALUES (%s, %s, %s, %s, %s)"
+        insert_sql = "INSERT INTO Equipment (name, description, status, price, owner, available) VALUES (%s, %s, %s, %s, %s, %s)"
 
-        cursor.execute(insert_sql, (data["name"], data["description"], data["status"], data["price"], data["owner"]))
+        cursor.execute(insert_sql, (data["name"], data["description"], data["status"], data["price"], data["owner"], 't'))
         
         conn.commit()
         cursor.close()

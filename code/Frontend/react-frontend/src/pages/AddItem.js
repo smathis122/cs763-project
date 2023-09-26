@@ -10,32 +10,17 @@ function EquipmentForm() {
     description: "",
     status: "",
     price: "",
-    user: "",
+    owner: "",
   });
-  function getUserId() {
-    fetch("http://127.0.0.1:5000/api/userInfo", {
-      method: "GET",
-      credentials: "include", // Include cookies in the request if using cookies for sessions
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const userId = data.userId; // Extract the user ID from the response data
-        console.log("User ID:", userId);
-      })
-      .catch((error) => console.error("Error:", error));
-  }
 
   const handleSubmit = () => {
-    // Get the user ID obtained during login
-    const userId = getUserId(); // Implement a function to retrieve the user ID
-
     // Create the equipment object with the user's ID as the owner
     const newEquipment = {
       name: formData.name,
       description: formData.description,
       status: formData.status,
       price: formData.price,
-      owner: userId, // Include the user's ID as the owner
+      owner: formData.owner, // Include the user's ID as the owner
     };
 
     // Send a POST request to your API to create the equipment
@@ -59,6 +44,7 @@ function EquipmentForm() {
       description: "",
       status: "",
       price: "",
+      owner: "",
     });
   };
 
@@ -113,6 +99,17 @@ function EquipmentForm() {
               rows={5}
               name="description"
               value={formData.description}
+              onChange={handleInputChange}
+              required
+            />
+          </FormGroup>
+           <FormGroup className="contact-page-form-group">
+            <Form.Label>Owner</Form.Label>
+            <Form.Control
+              type="text" // Use "text" for a text input field
+              placeholder="Enter owner of Item"
+              name="owner"
+              value={formData.owner}
               onChange={handleInputChange}
               required
             />
