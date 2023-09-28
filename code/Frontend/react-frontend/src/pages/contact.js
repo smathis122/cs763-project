@@ -1,6 +1,6 @@
 import React from "react";
 import { FormGroup } from "react-bootstrap";
-import { NavbarCustom } from "../Components/navbar.js";
+import { NavbarCustom } from "../Components/Navbar.js";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "../styles/pages/contact.css";

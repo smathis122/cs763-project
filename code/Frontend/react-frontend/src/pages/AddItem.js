@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
+import { useUser } from "../Components/UserContext";
+
 function EquipmentForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
+  const { username } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     status: "",
     price: "",
-    owner: "",
   });
 
   const handleSubmit = () => {
@@ -20,7 +22,7 @@ function EquipmentForm() {
       description: formData.description,
       status: formData.status,
       price: formData.price,
-      owner: formData.owner, // Include the user's ID as the owner
+      owner: username, // Include the user's ID as the owner
     };
 
     // Send a POST request to your API to create the equipment
@@ -44,7 +46,6 @@ function EquipmentForm() {
       description: "",
       status: "",
       price: "",
-      owner: "",
     });
   };
 
@@ -99,17 +100,6 @@ function EquipmentForm() {
               rows={5}
               name="description"
               value={formData.description}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-           <FormGroup className="contact-page-form-group">
-            <Form.Label>Owner</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter owner of Item"
-              name="owner"
-              value={formData.owner}
               onChange={handleInputChange}
               required
             />

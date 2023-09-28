@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
@@ -17,7 +17,8 @@ function RegisterPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const csrfToken = 'IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ';
+    const csrfToken =
+      "IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ";
     // Send the formData as JSON to your Flask back-end here
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
@@ -30,7 +31,7 @@ function RegisterPage() {
       .then((response) => response.json())
       .then((data) => {
         const csrfToken = data.csrf_token;
-        console.log(data)
+        console.log(data);
       })
       .catch((error) => console.error("Error:", error));
     setSubmitMsg("Registering...");
@@ -41,7 +42,7 @@ function RegisterPage() {
     });
   };
 
-return (
+  return (
     <div>
       <NavbarCustom />
       <h1>Register</h1>
@@ -85,8 +86,7 @@ return (
         </Form>
       </div>
     </div>
-);
-
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;

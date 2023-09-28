@@ -1,47 +1,74 @@
 import React from "react";
-import { HashRouter, BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
-
-//import CheckoutHelp from "./pages/form_helpbutton";
+import { useUser } from "./Components/UserContext";
 import CheckoutValidation from "./pages/payment_validation";
-// import PaymentSuccessful from "./pages/payment_successful";
-
 import ItemSearchAndFilter from "./pages/search";
-
-
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
 import GoogleLogin from "./pages/GoogleLogin";
-
-
 import View from "./pages/ViewItem";
+import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
 
 function App() {
+  const { username } = useUser();
+
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Index />}>
           <Route path="" element={<Home />} />
-          <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
 
-          <Route path="CheckoutValidation" element={<CheckoutValidation />} />
-          {/* <Route path="PaymentSuccessful" element={<PaymentSuccessful />} /> */}
+          <Route
+            path="Items"
+            element={
+              <ProtectedRoute>
+                <Items />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="CheckoutValidation"
+            element={
+              <ProtectedRoute>
+                <CheckoutValidation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="search"
+            element={
+              <ProtectedRoute>
+                <ItemSearchAndFilter />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="reservations"
+            element={
+              <ProtectedRoute>
+                <Reservations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="View"
+            element={
+              <ProtectedRoute>
+                <View />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="search" element={<ItemSearchAndFilter />} />
-          <Route path="reservations" element={<Reservations />} />
-          <Route path="View" element={<View />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="dashboard" element={<Dashboard />} />
           <Route path="GoogleLogin" element={<GoogleLogin />} />
-
         </Route>
       </Routes>
     </HashRouter>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -37,7 +37,7 @@ function EquipmentList() {
       <Container>
         <Row>
           {equipmentData.map((equipment) => (
-            <Col key={equipment.id} xs={12} sm={6} md={4} lg={3}>
+            <Col key={equipment.itemid} xs={12} sm={6} md={4} lg={3}>
               <Card
                 onClick={() => handleCardClick(equipment)}
                 style={{ cursor: "pointer" }}
