@@ -14,6 +14,8 @@ function LoginPage() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -88,6 +90,11 @@ function LoginPage() {
           >
             Submit
           </Button>
+          <div className="error-messages">
+            {errors.email && <p>{errors.email.join(', ')}</p>}
+            {errors.password && <p>{errors.password.join(', ')}</p>}
+            {/* Display other validation errors as needed */}
+          </div>
         </Form>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
