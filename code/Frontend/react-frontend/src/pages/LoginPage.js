@@ -16,6 +16,8 @@ function LoginPage() {
 
   const [errors, setErrors] = useState({});
 
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });

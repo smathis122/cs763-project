@@ -291,6 +291,10 @@ def login():
             print(errors)  # Print form validation errors
             return jsonify({"errors": errors}), 400
         # return jsonify({"message": "User validate unsuccessfully"}), 201
+            errors = form.errors
+            print(errors)  # Print form validation errors
+            return jsonify({"errors": errors}), 400
+        # return jsonify({"message": "User validate unsuccessfully"}), 201
         # return render_template('flasklogin.html', form=form)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -331,6 +335,10 @@ def register():
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
+            errors = form.errors
+            print(errors)  # Print form validation errors
+            return jsonify({"errors": errors}), 400
+        # return jsonify({"message": "User validate unsuccessfully"},), 201
             errors = form.errors
             print(errors)  # Print form validation errors
             return jsonify({"errors": errors}), 400
