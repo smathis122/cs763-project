@@ -6,7 +6,7 @@ import requests
 import json
 import urllib
 import urllib.parse as up
-from flask import Flask, render_template, url_for, redirect, flash, request, jsonify
+from flask import Flask, render_template, url_for, redirect, flash, request, jsonify, session
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -256,7 +256,7 @@ def login():
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
         form = LoginForm(meta={'csrf': False})
-
+        session['username'] = None
         if form.validate_on_submit():
             email = form.email.data
             password = form.password.data.encode('utf-8')
@@ -275,9 +275,11 @@ def login():
                     print(user_data[0])
                     print(type(user_data[0]))
                     user = User(user_data[0], email, db_password)
+                    username = user_data[1]
+                    session['username'] = username
                     login_user(user)
                     flash('Login successful!', 'success')
-                    return jsonify({"message": "User logged in successfully"}), 201
+                    return jsonify({"message": "User logged in successfully", "username": username}), 201
                     # return redirect(url_for('dashboard'))
                 else:
                     flash('Login failed. Please try again.', 'danger')

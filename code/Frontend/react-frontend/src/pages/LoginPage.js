@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useUser } from "../Components/UserContext";
 function LoginPage() {
-  let [submitMsg, setSubmitMsg] = React.useState("");
+  const [submitMsg, setSubmitMsg] = useState("");
+  const { setUsername } = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,30 +19,35 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Send the formData as JSON to your Flask back-end here
-    fetch("http://127.0.0.1:5000/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
+
+    axios
+      .post("http://127.0.0.1:5000/api/login", formData)
+      .then((response) => {
+        if (response.status === 201) {
+          setSubmitMsg("Login successful!");
+          const user = response.data;
+          const username = user.username;
+          // Store the username in state
+          setUsername(username.split("@")[0]);
+          console.log("Logged in", username);
+
+          // Navigate to the dashboard page
+          navigate("/");
+        } else {
+          setSubmitMsg("Login failed. Please try again.");
+        }
       })
-      .catch((error) => console.error("Error:", error));
-    setSubmitMsg("Logging In...");
-    setTimeout(() => setSubmitMsg("You have logged in!"), 2000);
-    setFormData({
-      email: "",
-      password: "",
-    });
+      .catch((error) => {
+        console.error("Error:", error);
+        setSubmitMsg("Login failed. Please try again.");
+      });
   };
 
-return (
+  return (
     <div>
       <NavbarCustom />
       <h1>Log In</h1>
@@ -83,8 +92,7 @@ return (
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
-);
-
+  );
 }
 
-export default LoginPage
+export default LoginPage;
