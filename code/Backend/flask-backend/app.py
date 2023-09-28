@@ -217,7 +217,7 @@ class User(UserMixin):
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
+                           InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
@@ -242,7 +242,7 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
+                           InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
@@ -276,7 +276,6 @@ def login():
                     print(type(user_data[0]))
                     user = User(user_data[0], email, db_password)
                     login_user(user)
-                    flash('Login successful!', 'success')
                     return jsonify({"message": "User logged in successfully"}), 201
                     # return redirect(url_for('dashboard'))
                 else:
@@ -286,8 +285,10 @@ def login():
                 flash('Login failed. Please try again.', 'danger')
         else:
             print("Form validation failed")
-            print(form.errors)  # Print form validation errors
-        return jsonify({"message": "User validate unsuccessfully"}), 201
+            errors = form.errors
+            print(errors)  # Print form validation errors
+            return jsonify({"errors": errors}), 400
+        # return jsonify({"message": "User validate unsuccessfully"}), 201
         # return render_template('flasklogin.html', form=form)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -328,8 +329,10 @@ def register():
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
-            print(form.errors)  # Print form validation errors
-        return jsonify({"message": "User validate unsuccessfully"},), 201
+            errors = form.errors
+            print(errors)  # Print form validation errors
+            return jsonify({"errors": errors}), 400
+        # return jsonify({"message": "User validate unsuccessfully"},), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

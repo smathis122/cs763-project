@@ -10,6 +10,8 @@ function LoginPage() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -17,6 +19,8 @@ function LoginPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setErrors({});
+    setSubmitMsg("Logging In...");
     // Send the formData as JSON to your Flask back-end here
     fetch("http://127.0.0.1:5000/api/login", {
       method: "POST",
@@ -25,13 +29,27 @@ function LoginPage() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if(!response.ok) {
+          return response.json().then((data) => {
+            // Handle validation errors
+            setErrors(data.errors || {});
+            setSubmitMsg("Failed to login");
+          });
+        }
+        else {
+          return response.json().then((data) => {
+            // Display the success message to the user
+            console.log(data.message); // This will log "User added successfully"
+            setSubmitMsg(data.message); // Set the message in your component state
+          });
+        }
+        // return response.json();
+      })
       .then((data) => {
         console.log(data)
       })
       .catch((error) => console.error("Error:", error));
-    setSubmitMsg("Logging In...");
-    setTimeout(() => setSubmitMsg("You have logged in!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -79,6 +97,11 @@ return (
           >
             Submit
           </Button>
+          <div className="error-messages">
+            {errors.email && <p>{errors.email.join(', ')}</p>}
+            {errors.password && <p>{errors.password.join(', ')}</p>}
+            {/* Display other validation errors as needed */}
+          </div>
         </Form>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
