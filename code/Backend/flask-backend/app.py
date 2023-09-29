@@ -12,7 +12,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 import re
-# from flask_bcrypt import Bcrypt
 import os
 import secrets
 from dotenv import load_dotenv
@@ -30,14 +29,9 @@ app.secret_key = os.environ.get('SECRET_KEY')
 
 db = SQLAlchemy(app)
 
-# Database table for user
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(200), nullable=False)
-
-
 CORS(app) # Allow all origins for development; restrict in production
+secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
+app.config['SECRET_KEY'] = secret_key
 
 # PostgreSQL connection settings
 db_connection_settings = {
@@ -48,6 +42,15 @@ db_connection_settings = {
     "port": "5432",
 }
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Database table for user
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(200), nullable=False)
 
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer,primary_key = True)
@@ -55,15 +58,14 @@ class paymentInfo(db.Model):
     is_paid = db.Column(db.Boolean, nullable = False)
     Price = db.Column(db.Integer, nullable = False)
 
-@app.route("/")         
-def home():
-    return render_template("")
-
-#configuration parameters
 conf= {
     "FLASK_PORT" : 5014,
     "FLASK_SECRET" : "SECRET1234"
 }
+
+@app.route("/")         
+def home():
+    return render_template("")
 
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -113,9 +115,6 @@ def update_equipment(item_id):
         return jsonify({"error": str(e)}), 500
 
 
-secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
-app.config['SECRET_KEY'] = secret_key
-
 @app.route("/api/getEquipment", methods=["GET"])
 def get_equipment():
     try:
@@ -159,10 +158,6 @@ def add_equipment():
         return jsonify({"message": "Equipment added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -274,12 +269,6 @@ def login():
         # return render_template('flasklogin.html', form=form)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route('/api/dashboard', methods=['GET', 'POST'])
-@login_required
-def dashboard():
-    return jsonify({"message": "Entered Dashboard"}), 201
-
 
 @app.route('/api/logout', methods=['GET', 'POST'])
 @login_required
@@ -434,7 +423,6 @@ def get_unavailable_items():
         return jsonify({"error": str(e)}), 500
 
 
-    #Main method
 if __name__ == "__main__":
     app.run(debug=True)
 

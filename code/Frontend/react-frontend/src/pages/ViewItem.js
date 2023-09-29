@@ -31,7 +31,6 @@ function AllItemsPage() {
   }, [username]);
 
   const fetchEquipmentData = () => {
-    // Fetch equipment data from your Flask API endpoint
     fetch("http://127.0.0.1:5000/api/getEquipment")
       .then((response) => response.json())
       .then((data) => setEquipmentData(data))
@@ -48,26 +47,20 @@ function AllItemsPage() {
     setSelectedItem(item);
   };
 
-  // Function to remove the selected item
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
-      // Handle the case where no item is selected
       console.error("No item selected for removal.");
       return;
     }
     console.log("Selected Item:", selectedItem);
-
-    // Send a DELETE request to remove the selected item from the database
     fetch(`http://127.0.0.1:5000/api/removeEquipment/${selectedItem.itemid}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Refresh the list of items
         fetchEquipmentData();
         setShowRemoveModal(false);
-        // Clear the selected item after removal
         setSelectedItem(null);
       })
       .catch((error) => console.error("Error:", error));
@@ -77,7 +70,7 @@ function AllItemsPage() {
     event.stopPropagation();
     setSelectedItem(equipment);
     setUpdateFormData({
-      id: equipment.itemid, // Make sure 'id' matches the property name in your equipment object
+      id: equipment.itemid,
       name: equipment.name,
       description: equipment.description,
       status: equipment.status,
@@ -90,7 +83,6 @@ function AllItemsPage() {
   const handleUpdateSubmit = (event) => {
     event.preventDefault();
     console.log(updateFormData);
-    // Send a PUT request to update the item's details in the database
     fetch(`http://127.0.0.1:5000/api/updateEquipment/${updateFormData.id}`, {
       method: "PUT",
       headers: {
@@ -101,7 +93,6 @@ function AllItemsPage() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Refresh the list of items
         fetchEquipmentData();
         setShowUpdateModal(false);
       })

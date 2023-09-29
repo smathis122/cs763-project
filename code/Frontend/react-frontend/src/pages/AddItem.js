@@ -16,16 +16,14 @@ function EquipmentForm() {
   });
 
   const handleSubmit = () => {
-    // Create the equipment object with the user's ID as the owner
     const newEquipment = {
       name: formData.name,
       description: formData.description,
       status: formData.status,
       price: formData.price,
-      owner: username, // Include the user's ID as the owner
+      owner: username,
     };
 
-    // Send a POST request to your API to create the equipment
     fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
@@ -36,7 +34,6 @@ function EquipmentForm() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Handle successful equipment creation
       })
       .catch((error) => console.error("Error:", error));
     setSubmitMsg("Loading...");
@@ -62,7 +59,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Name</Form.Label>
             <Form.Control
-              type="text" // Use "text" for a text input field
+              type="text"
               placeholder="Enter Name for Item"
               name="name"
               value={formData.name}
@@ -73,7 +70,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Condition</Form.Label>
             <Form.Control
-              type="text" // Use "text" for a text input field
+              type="text"
               placeholder="Enter Condition of Item"
               name="status"
               value={formData.status}
@@ -84,7 +81,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Price</Form.Label>
             <Form.Control
-              type="number" // Use "number" for numeric input
+              type="number"
               placeholder="Enter Price for object"
               name="price"
               value={formData.price}
@@ -95,7 +92,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Description</Form.Label>
             <Form.Control
-              as="textarea" // Use "textarea" for multi-line text input
+              as="textarea"
               placeholder="Enter Description"
               rows={5}
               name="description"
