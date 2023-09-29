@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
+import "../styles/pages/password.css";
+
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
   const { setUsername } = useUser();
@@ -15,10 +17,15 @@ function LoginPage() {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const navigate = useNavigate(); // Initialize useNavigate for navigation
@@ -83,14 +90,26 @@ function LoginPage() {
           </FormGroup>
           <FormGroup className="contact-page-form-group">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="password-input-container">
+              <Form.Control
+                type={showPassword ? "text" : "password"} // Toggle password visibility
+                placeholder="Enter Password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+              <span
+                className={`password-toggle ${showPassword ? "visible" : ""}`}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </span>
+            </div>
           </FormGroup>
           <Button
             variant="primary"

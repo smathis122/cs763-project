@@ -3,6 +3,8 @@ import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
+import "../styles/pages/password.css";
+
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
@@ -11,10 +13,15 @@ function RegisterPage() {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = (event) => {
@@ -79,14 +86,26 @@ function RegisterPage() {
           </FormGroup>
           <FormGroup className="contact-page-form-group">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="password-input-container">
+              <Form.Control
+                type={showPassword ? "text" : "password"} // Toggle password visibility
+                placeholder="Enter Password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+              <span
+                className={`password-toggle ${showPassword ? "visible" : ""}`}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </span>
+            </div>
           </FormGroup>
           <Button
             variant="primary"
