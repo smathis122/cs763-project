@@ -3,13 +3,71 @@ import { NavbarCustom } from "../Components/navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
+// Google import start
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+// Google import stop
+
+
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  //Google stuff start
+  const [loginData, setLoginData] = useState(
+    localStorage.getItem('loginData')
+      ? JSON.parse(localStorage.getItem('loginData'))
+      : null
+  );
+  // Failure handling for google login start
+  const handleFailure = (result) => {
+    console.log("HangleFailure: ", result)
+    // alert(JSON.stringify.result);
+  };
+  // Failure handling for google login stop
+  // Login handling for google login start
+  const handleLogin = async (googleData) => {
+    console.log("HangleLogin: ", googleData)
+    const res = await fetch('http://127.0.0.1:5000/api/register-google', {
+      method: 'POST',
+      body: JSON.stringify({
+        token: googleData.tokenId,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
+    const data = await res.json();
+    setLoginData(data);
+    localStorage.setItem('loginData', JSON.stringify(data));
+  };
+  // Login handling for google login stop
+  // const handleGoogleLoginSuccess = (response) => {
+  //   const googleId = response.googleId;
+  //   const email = response.profileObj.email;
+  //   // Send the email and googleId to your backend for registration
+  //   fetch('http://127.0.0.1:5000/signin-google', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({ email, google_id: googleId })
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => console.log(data))
+  //     .catch(error => console.error('Error:', error));
+  // };
+
+  // const handleGoogleLoginFailure = (response) => {
+  //   alert('Google login failed');
+  // };
+  const handleLogout = () => {
+    localStorage.removeItem('loginData');
+    setLoginData(null);
+  };
+  //Google stuff stop
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -41,7 +99,7 @@ function RegisterPage() {
     });
   };
 
-return (
+  return (
     <div>
       <NavbarCustom />
       <h1>Register</h1>
@@ -83,10 +141,33 @@ return (
             Submit
           </Button>
         </Form>
+        {/* Google button start */}
+        <div className="App">
+          <div>
+            {loginData ? (
+              <div>
+                <h3>You logged in as {loginData.email}</h3>
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            ) : (
+              <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                  // clientSecret={"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"}
+                  buttonText="Log in with Google"
+                  onSuccess={handleLogin}
+                  onFailure={handleFailure}
+                  cookiePolicy={'single_host_origin'}
+                ></GoogleLogin>
+              </GoogleOAuthProvider>
+            )}
+          </div>
+        </div>
+        {/* Google button stop */}
+
       </div>
     </div>
-);
+  );
 
 }
-
 export default RegisterPage

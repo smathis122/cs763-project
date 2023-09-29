@@ -2,7 +2,7 @@ import React from 'react';
 
 class GoogleSignUp extends React.Component {
   handleClick = () => {
-    window.location.href = 'http://localhost:5008/google-login'; // Redirect to Flask route
+    window.location.href = 'http://localhost:5014/api/register-google'; // Redirect to Flask route
   }
 
   render() {
