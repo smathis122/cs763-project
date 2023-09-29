@@ -301,6 +301,17 @@ def login():
 def dashboard():
     return jsonify({"message": "Entered Dashboard"}), 201
 
+@app.route('/api/profile')
+@login_required
+def profile():
+    # Access the current user's data using current_user
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        username = current_user.email
+        return f'User ID: {user_id}, Username: {username}'
+    else:
+        return 'User not authenticated'
+
 
 @app.route('/api/logout', methods=['GET', 'POST'])
 @login_required

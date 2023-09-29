@@ -14,6 +14,7 @@ import LoginPage from "./pages/LoginPage";
 import GoogleLogin from "./pages/GoogleLogin";
 import View from "./pages/ViewItem";
 import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
+import ProfilePage from "./pages/ProfilePage"
 
 function App() {
   const { username } = useUser();
@@ -62,6 +63,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <View />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
