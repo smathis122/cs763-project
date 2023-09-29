@@ -65,25 +65,6 @@ conf= {
     "FLASK_SECRET" : "SECRET1234"
 }
 
-
-# Fetch all equipment items
-@app.route("/api/getAllEquipment", methods=["GET"])
-def get_all_equipment():
-    try:
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
-        # Fetch all equipment items from the database
-        cursor.execute("SELECT * FROM Equipment")
-        equipment_data = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
-
-        return jsonify(equipment_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
     try:
