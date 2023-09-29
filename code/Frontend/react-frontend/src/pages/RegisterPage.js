@@ -35,6 +35,7 @@ function RegisterPage() {
           return response.json().then((data) => {
             // Handle validation errors
             setErrors(data.errors || {});
+            console.log(data.errors)
             setSubmitMsg("Failed to register");
           });
         }

@@ -16,8 +16,6 @@ function LoginPage() {
 
   const [errors, setErrors] = useState({});
 
-  const [errors, setErrors] = useState({});
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -27,11 +25,13 @@ function LoginPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    setErrors({});
+    setSubmitMsg("Logging in...");
     axios
       .post("http://127.0.0.1:5000/api/login", formData)
       .then((response) => {
         if (response.status === 201) {
+          // Going here when email right and password right
           setSubmitMsg("Login successful!");
           const user = response.data;
           const username = user.username;
@@ -41,11 +41,24 @@ function LoginPage() {
 
           // Navigate to the dashboard page
           navigate("/");
-        } else {
-          setSubmitMsg("Login failed. Please try again.");
+        } else if (response.status === 202) {
+          // Going here when password wrong but email right
+          setErrors(response.data || {});
+          console.log("Wrong Password")
+          console.log(response.data);
+          setSubmitMsg("Login failed. Please try again!");
+        } else if (response.status === 203) {
+          // Going here when user wrong
+          setErrors(response.data || {});
+          console.log("Wrong User")
+          console.log(response.data);
+          setSubmitMsg("Login failed. Please try again!");
         }
       })
       .catch((error) => {
+        // Going here when email and/or password format wrong
+        setErrors(error.response.data.errors || {});
+        console.log(errors);
         console.error("Error:", error);
         setSubmitMsg("Login failed. Please try again.");
       });
@@ -95,6 +108,7 @@ function LoginPage() {
           <div className="error-messages">
             {errors.email && <p>{errors.email.join(', ')}</p>}
             {errors.password && <p>{errors.password.join(', ')}</p>}
+            {errors.message && <p>{errors.message}</p>}
             {/* Display other validation errors as needed */}
           </div>
         </Form>

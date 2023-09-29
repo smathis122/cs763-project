@@ -281,16 +281,13 @@ def login():
                     return jsonify({"message": "User logged in successfully", "username": username}), 201
                     # return redirect(url_for('dashboard'))
                 else:
-                    flash('Login failed. Please try again.', 'danger')
-                    return jsonify({"message": "Wrong password"}), 201
+                    print("Wrong pass")
+                    return jsonify({"message": "Wrong password"}), 202
             else:
-                flash('Login failed. Please try again.', 'danger')
+                print("No user found")
+                return jsonify({"message": "No user found"}), 203
         else:
             print("Form validation failed")
-            errors = form.errors
-            print(errors)  # Print form validation errors
-            return jsonify({"errors": errors}), 400
-        # return jsonify({"message": "User validate unsuccessfully"}), 201
             errors = form.errors
             print(errors)  # Print form validation errors
             return jsonify({"errors": errors}), 400
@@ -335,10 +332,6 @@ def register():
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
-            errors = form.errors
-            print(errors)  # Print form validation errors
-            return jsonify({"errors": errors}), 400
-        # return jsonify({"message": "User validate unsuccessfully"},), 201
             errors = form.errors
             print(errors)  # Print form validation errors
             return jsonify({"errors": errors}), 400
