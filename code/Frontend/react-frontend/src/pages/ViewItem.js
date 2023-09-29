@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { useUser } from "../Components/UserContext";
 
 function AllItemsPage() {
   const [equipmentData, setEquipmentData] = useState([]);
@@ -15,6 +16,7 @@ function AllItemsPage() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const { username } = useUser();
   const [updateFormData, setUpdateFormData] = useState({
     id: null,
     name: "",
@@ -26,10 +28,9 @@ function AllItemsPage() {
 
   useEffect(() => {
     fetchEquipmentData();
-  }, []);
+  }, [username]);
 
   const fetchEquipmentData = () => {
-    // Fetch equipment data from your Flask API endpoint
     fetch("http://127.0.0.1:5000/api/getEquipment")
       .then((response) => response.json())
       .then((data) => setEquipmentData(data))
@@ -46,26 +47,20 @@ function AllItemsPage() {
     setSelectedItem(item);
   };
 
-  // Function to remove the selected item
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
-      // Handle the case where no item is selected
       console.error("No item selected for removal.");
       return;
     }
     console.log("Selected Item:", selectedItem);
-
-    // Send a DELETE request to remove the selected item from the database
     fetch(`http://127.0.0.1:5000/api/removeEquipment/${selectedItem.itemid}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Refresh the list of items
         fetchEquipmentData();
         setShowRemoveModal(false);
-        // Clear the selected item after removal
         setSelectedItem(null);
       })
       .catch((error) => console.error("Error:", error));
@@ -75,7 +70,7 @@ function AllItemsPage() {
     event.stopPropagation();
     setSelectedItem(equipment);
     setUpdateFormData({
-      id: equipment.itemid, // Make sure 'id' matches the property name in your equipment object
+      id: equipment.itemid,
       name: equipment.name,
       description: equipment.description,
       status: equipment.status,
@@ -88,7 +83,6 @@ function AllItemsPage() {
   const handleUpdateSubmit = (event) => {
     event.preventDefault();
     console.log(updateFormData);
-    // Send a PUT request to update the item's details in the database
     fetch(`http://127.0.0.1:5000/api/updateEquipment/${updateFormData.id}`, {
       method: "PUT",
       headers: {
@@ -99,7 +93,6 @@ function AllItemsPage() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Refresh the list of items
         fetchEquipmentData();
         setShowUpdateModal(false);
       })
@@ -116,36 +109,39 @@ function AllItemsPage() {
       <NavbarCustom />
       <Container>
         <Row>
-          {equipmentData.map((equipment) => (
-            <Col key={equipment.id} xs={12} sm={6} md={4} lg={3}>
-              <Card
-                onClick={() => handleCardClick(equipment)}
-                style={{ cursor: "pointer" }}
-              >
-                <Card.Body>
-                  <Card.Title>{equipment.name}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    Status: {equipment.status}
-                  </Card.Subtitle>
-                  <Card.Text>{equipment.description}</Card.Text>
-                  <Card.Text>Price: ${equipment.price}</Card.Text>
-                  <Card.Text>Owner: {equipment.owner}</Card.Text>
-                  <Button
-                    variant="danger"
-                    onClick={(e) => handleRemoveClick(e, equipment)}
+          {equipmentData.map(
+            (equipment) =>
+              equipment.owner === username && (
+                <Col key={equipment.id} xs={12} sm={6} md={4} lg={3}>
+                  <Card
+                    onClick={() => handleCardClick(equipment)}
+                    style={{ cursor: "pointer" }}
                   >
-                    Remove
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={(e) => handleUpdateClick(e, equipment)}
-                  >
-                    Update
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+                    <Card.Body>
+                      <Card.Title>{equipment.name}</Card.Title>
+                      <Card.Subtitle className="mb-2 text-muted">
+                        Status: {equipment.status}
+                      </Card.Subtitle>
+                      <Card.Text>{equipment.description}</Card.Text>
+                      <Card.Text>Price: ${equipment.price}</Card.Text>
+                      <Card.Text>Owner: {equipment.owner}</Card.Text>
+                      <Button
+                        variant="danger"
+                        onClick={(e) => handleRemoveClick(e, equipment)}
+                      >
+                        Remove
+                      </Button>
+                      <Button
+                        variant="primary"
+                        onClick={(e) => handleUpdateClick(e, equipment)}
+                      >
+                        Update
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              )
+          )}
         </Row>
       </Container>
 
@@ -244,21 +240,6 @@ function AllItemsPage() {
                 }
               />
             </Form.Group>
-            <Form.Group controlId="formOwner">
-              <Form.Label>Owner</Form.Label>
-              <Form.Control
-                type="text"
-                name="owner"
-                value={updateFormData.owner}
-                onChange={(e) =>
-                  setUpdateFormData({
-                    ...updateFormData,
-                    owner: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-
             <Button variant="primary" type="submit">
               Update
             </Button>
