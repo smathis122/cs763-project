@@ -21,6 +21,7 @@ import bcrypt
 import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
+from google.auth import jwt
 
 app = Flask(__name__)
 load_dotenv()
@@ -359,32 +360,34 @@ def register():
         return jsonify({"error": str(e)}), 500
     
 #Google login method start
-@app.route('/api/register-google', methods=['GET', 'POST'])
+@app.route('/api/register-google', methods=['POST'])
 def googleLogin():
-    data = request.get_json()
-    print("register-google request data: ", data)
     #GOOGLE ADDITION START
-    return # oauth.GearToGoApp.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
+    try:
+        # Get data from the front-end request
+        data = request.get_json()
+        google_data = data["googleData"]
+        token = google_data["credential"]
+        print("register-google token: ", token)
 
-# Logic for Google sign-in 
-@app.route("/api/signin-google")
-def googleCallback():
-    token = oauth.GearToGoApp.authorize_access_token()
-    user_info = token.get('userinfo', None)
-    user_email = user_info.email
-    #Tech debt to be implemented later
-    user_birthday = token.get('birthdate', None)
-    session["user"] = token
-    #logic to check database for matching email
-    if User.query.filter_by(email=user_email).first():
-         return jsonify({"message": "User validate unsuccessful"},), 201
-    #Logic to add to database
-    else:
-         new_user = User(email=user_email, password="Google account, password not available")
-         db.session.add(new_user)
-         db.session.commit()
-         return jsonify({"message": "User validated successfully"},), 201
-#Google login method stop
+        claims = jwt.decode(token, verify=False)
+        print("register-google data: ", claims)
+        user_email = claims["email"]
+
+        session["user"] = token
+
+        #logic to check database for matching email
+        if User.query.filter_by(email=user_email).first():
+            return jsonify({"message": "User validated successfully"},), 201
+        #Logic to add to database
+        else:
+            new_user = User(email=user_email, password="Google account, password not available")
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({"message": "User added successfully"},), 201
+    except Exception as e:
+        return jsonify({"error": "Error validating user: " + str(e)}), 500
+#Google login method end
 
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():

@@ -5,6 +5,8 @@ import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 // Google import start
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import "../styles/pages/register.css";
+
 // Google import stop
 
 
@@ -32,7 +34,7 @@ function RegisterPage() {
     const res = await fetch('http://127.0.0.1:5000/api/register-google', {
       method: 'POST',
       body: JSON.stringify({
-        token: googleData.tokenId,
+        googleData: googleData,
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -105,6 +107,7 @@ function RegisterPage() {
       <h1>Register</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
+          
           <FormGroup className="contact-page-form-group">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -127,39 +130,38 @@ function RegisterPage() {
               required
             />
           </FormGroup>
+          <div className="FormButtonDiv">
           <Button
+            className="FormButton"
             variant="primary"
             type="submit"
-            style={{
-              fontSize: "20px",
-              width: "150px",
-              marginLeft: "15px",
-              marginBottom: "25px",
-            }}
             id="submitButton"
           >
             Submit
           </Button>
+          </div>
+
         </Form>
         {/* Google button start */}
         <div className="App">
-          <div>
+          <div className="GoogleLoginDiv">
             {loginData ? (
               <div>
                 <h3>You logged in as {loginData.email}</h3>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             ) : (
-              <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                <GoogleLogin
-                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                  // clientSecret={"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"}
-                  buttonText="Log in with Google"
-                  onSuccess={handleLogin}
-                  onFailure={handleFailure}
-                  cookiePolicy={'single_host_origin'}
-                ></GoogleLogin>
-              </GoogleOAuthProvider>
+              <div className="GoogleLogin">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                  <GoogleLogin
+                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                    buttonText="Log in with Google"
+                    onSuccess={handleLogin}
+                    onFailure={handleFailure}
+                    cookiePolicy={'single_host_origin'}
+                  ></GoogleLogin>
+                </GoogleOAuthProvider>
+              </div>
             )}
           </div>
         </div>
