@@ -50,26 +50,22 @@ function LoginPage() {
 
     const data = await res.json();
     // TRYCODESTART
-    axios
-      .post("http://127.0.0.1:5000/api/login", formData)
-      .then((data) => {
-        setLoginData(data);
-        localStorage.setItem('loginData', JSON.stringify(data));
-        setSubmitMsg("Login successful!");
-        const username = JSON.stringify(data).name;
-        setUsername(username);
-        console.log("Logged in", username);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setSubmitMsg("Login failed. Please try again.");
-      });
+    if (data && data.name) {
+      setSubmitMsg("Login successful!");
+      const username = data.name;
+      setUsername(username);
+      console.log("Logged in", username);
+      navigate("/");
+    } else {
+      setSubmitMsg("Login failed. Please try again.");
 
-    // TRYCODESTOP
+
+      setLoginData(data);
+      localStorage.setItem('loginData', JSON.stringify(data));
+    };
   };
+  // TRYCODESTOP
   // Login handling for google login stop
-
   const handleLogout = () => {
     localStorage.removeItem('loginData');
     setLoginData(null);
