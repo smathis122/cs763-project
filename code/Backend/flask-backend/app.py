@@ -222,11 +222,11 @@ def load_user(user_id):
         app.logger.info(f"Loaded user: {user}")
     return user
     
-# class User(UserMixin):
-#     def __init__(self, id, email, password):
-#         self.id = id
-#         self.email = email
-#         self.password = password
+class regUser(UserMixin):
+    def __init__(self, id, email, password):
+        self.id = id
+        self.email = email
+        self.password = password
 
 # class User(db.Model, UserMixin):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -296,7 +296,7 @@ def login():
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
-                    user = User(user_data[0], email, db_password)
+                    user = regUser(user_data[0], email, db_password)
                     login_user(user)
                     flash('Login successful!', 'success')
                     return jsonify({"message": "User logged in successfully"}), 201
