@@ -28,7 +28,7 @@ function LoginPage() {
     setShowPassword(!showPassword);
   };
 
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -42,11 +42,8 @@ function LoginPage() {
           setSubmitMsg("Login successful!");
           const user = response.data;
           const username = user.username;
-          // Store the username in state
           setUsername(username.split("@")[0]);
           console.log("Logged in", username);
-
-          // Navigate to the dashboard page
           navigate("/");
         } else if (response.status === 202) {
           // Going here when password wrong but email right
