@@ -16,3 +16,5 @@ marshmallow-sqlalchemy
 oauthlib
 authlib
 pyjwt
+requests
+google.auth

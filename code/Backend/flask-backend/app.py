@@ -54,12 +54,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Database table for user
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(200), nullable=False)
-
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer,primary_key = True)
     itemid = db.Column(db.Integer, nullable = False)
@@ -93,10 +87,6 @@ oauth.register("GearToGoApp",
                )
 
 #Google sign-up parameters end
-
-@app.route("/")         
-def home():
-    return render_template("")
 
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -215,12 +205,6 @@ class regUser(UserMixin):
         self.id = id
         self.email = email
         self.password = password
-
-# class User(db.Model, UserMixin):
-#     id = db.Column(db.Integer, primary_key=True)
-#     email = db.Column(db.String(20), nullable=False, unique=True)
-#     password = db.Column(db.String(200), nullable=False)
-
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[

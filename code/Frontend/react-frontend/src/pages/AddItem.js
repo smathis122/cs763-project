@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/Form";
-import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/esm/Form";
+import FormGroup from "react-bootstrap/esm/FormGroup";
+import Button from "react-bootstrap/esm/Button";
 import { useUser } from "../Components/UserContext";
 
 function EquipmentForm() {

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/Form";
-import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/esm/Form";
+import FormGroup from "react-bootstrap/esm/FormGroup";
+import Button from "react-bootstrap/esm/Button";
 // Google import start
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import "../styles/pages/register.css";
-
 // Google import stop
 
 
@@ -45,25 +44,7 @@ function RegisterPage() {
     localStorage.setItem('loginData', JSON.stringify(data));
   };
   // Login handling for google login stop
-  // const handleGoogleLoginSuccess = (response) => {
-  //   const googleId = response.googleId;
-  //   const email = response.profileObj.email;
-  //   // Send the email and googleId to your backend for registration
-  //   fetch('http://127.0.0.1:5000/signin-google', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify({ email, google_id: googleId })
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => console.log(data))
-  //     .catch(error => console.error('Error:', error));
-  // };
 
-  // const handleGoogleLoginFailure = (response) => {
-  //   alert('Google login failed');
-  // };
   const handleLogout = () => {
     localStorage.removeItem('loginData');
     setLoginData(null);
@@ -155,7 +136,7 @@ function RegisterPage() {
                 <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
                   <GoogleLogin
                     clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                    buttonText="Log in with Google"
+                    buttonText="Sign up with Google"
                     onSuccess={handleLogin}
                     onFailure={handleFailure}
                     cookiePolicy={'single_host_origin'}
@@ -170,12 +151,6 @@ function RegisterPage() {
       </div>
     </div>
   );
-<<<<<<< HEAD
 
 }
 export default RegisterPage
-=======
-}
-
-export default RegisterPage;
->>>>>>> main
