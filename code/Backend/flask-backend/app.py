@@ -198,12 +198,12 @@ def load_user(user_id):
     if user_info:
         db_password = user_info[2][2:].encode('utf-8')
         hashed_db_password = binascii.unhexlify(db_password)
-        user = User(user_info[0], user_info[1], hashed_db_password)
+        user = regUser(user_info[0], user_info[1], hashed_db_password)
         print(user)
         app.logger.info(f"Loaded user: {user}")
     return user
     
-class User(UserMixin):
+class regUser(UserMixin):
     def __init__(self, id, email, password):
         self.id = id
         self.email = email
@@ -274,7 +274,7 @@ def login():
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
-                    user = User(user_data[0], email, db_password)
+                    user = regUser(user_data[0], email, db_password)
                     username = user_data[1]
                     session['username'] = username
                     login_user(user)
