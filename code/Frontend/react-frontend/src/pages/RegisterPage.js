@@ -24,13 +24,11 @@ function RegisterPage() {
   );
   // Failure handling for google login start
   const handleFailure = (result) => {
-    console.log("HangleFailure: ", result)
-    // alert(JSON.stringify.result);
+    alert(JSON.stringify.result);
   };
   // Failure handling for google login stop
   // Login handling for google login start
   const handleLogin = async (googleData) => {
-    console.log("HangleLogin: ", googleData)
     const res = await fetch('http://127.0.0.1:5000/api/register-google', {
       method: 'POST',
       body: JSON.stringify({
@@ -42,6 +40,7 @@ function RegisterPage() {
     });
 
     const data = await res.json();
+
     setLoginData(data);
     localStorage.setItem('loginData', JSON.stringify(data));
   };
@@ -147,7 +146,7 @@ function RegisterPage() {
           <div className="GoogleLoginDiv">
             {loginData ? (
               <div>
-                <h3>You logged in as {loginData.email}</h3>
+                <h3>You logged in as {loginData.name}</h3>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             ) : (

@@ -364,22 +364,20 @@ def register():
 def googleLogin():
     #GOOGLE ADDITION START
     try:
-        # Get data from the front-end request
+        # Get data from the frontend request
         data = request.get_json()
         google_data = data["googleData"]
         token = google_data["credential"]
-        print("register-google token: ", token)
 
         claims = jwt.decode(token, verify=False)
-        print("register-google data: ", claims)
         user_email = claims["email"]
-
+        user_name = claims["given_name"] + " " + claims["family_name"]
         session["user"] = token
 
-        #logic to check database for matching email
+        # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully"},), 201
-        #Logic to add to database
+            return jsonify({"message": "User validated successfully", "name": user_name},), 201
+        # Logic to add to database
         else:
             new_user = User(email=user_email, password="Google account, password not available")
             db.session.add(new_user)
