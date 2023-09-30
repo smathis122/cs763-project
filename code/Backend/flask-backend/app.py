@@ -12,7 +12,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 import re
-# from flask_bcrypt import Bcrypt
 import os
 import secrets
 from dotenv import load_dotenv
@@ -39,6 +38,8 @@ class User(db.Model):
 
 
 CORS(app) # Allow all origins for development; restrict in production
+secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
+app.config['SECRET_KEY'] = secret_key
 
 # PostgreSQL connection settings
 db_connection_settings = {
@@ -49,6 +50,15 @@ db_connection_settings = {
     "port": "5432",
 }
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Database table for user
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(200), nullable=False)
 
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer,primary_key = True)
@@ -84,24 +94,9 @@ oauth.register("GearToGoApp",
 
 #Google sign-up parameters end
 
-
-# Fetch all equipment items
-@app.route("/api/getAllEquipment", methods=["GET"])
-def get_all_equipment():
-    try:
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
-        # Fetch all equipment items from the database
-        cursor.execute("SELECT * FROM Equipment")
-        equipment_data = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
-
-        return jsonify(equipment_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route("/")         
+def home():
+    return render_template("")
 
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -151,9 +146,6 @@ def update_equipment(item_id):
         return jsonify({"error": str(e)}), 500
 
 
-secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
-app.config['SECRET_KEY'] = secret_key
-
 @app.route("/api/getEquipment", methods=["GET"])
 def get_equipment():
     try:
@@ -197,10 +189,6 @@ def add_equipment():
         return jsonify({"message": "Equipment added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -278,7 +266,7 @@ def login():
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
         form = LoginForm(meta={'csrf': False})
-
+        session['username'] = None
         if form.validate_on_submit():
             email = form.email.data
             password = form.password.data.encode('utf-8')
@@ -297,9 +285,11 @@ def login():
                     print(user_data[0])
                     print(type(user_data[0]))
                     user = regUser(user_data[0], email, db_password)
+                    username = user_data[1]
+                    session['username'] = username
                     login_user(user)
                     flash('Login successful!', 'success')
-                    return jsonify({"message": "User logged in successfully"}), 201
+                    return jsonify({"message": "User logged in successfully", "username": username}), 201
                     # return redirect(url_for('dashboard'))
                 else:
                     flash('Login failed. Please try again.', 'danger')
@@ -313,12 +303,6 @@ def login():
         # return render_template('flasklogin.html', form=form)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route('/api/dashboard', methods=['GET', 'POST'])
-@login_required
-def dashboard():
-    return jsonify({"message": "Entered Dashboard"}), 201
-
 
 @app.route('/api/logout', methods=['GET', 'POST'])
 @login_required
@@ -504,7 +488,6 @@ def get_unavailable_items():
         return jsonify({"error": str(e)}), 500
 
 
-    #Main method
 if __name__ == "__main__":
     app.run(debug=True)
 

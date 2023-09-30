@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
@@ -31,8 +31,8 @@ function ReservationForm() {
     setSubmitMsg("Loading...");
     setTimeout(() => setSubmitMsg("Your reservation has been made!"), 3000);
     setFormData({
-        start_date: "",
-        end_date: "",
+      start_date: "",
+      end_date: "",
     });
   };
 

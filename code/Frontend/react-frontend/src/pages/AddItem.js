@@ -1,29 +1,29 @@
 import React, { useState } from "react";
-import { NavbarCustom } from "../Components/navbar";
+import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
+import { useUser } from "../Components/UserContext";
+
 function EquipmentForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
+  const { username } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     status: "",
     price: "",
-    owner: "",
   });
 
   const handleSubmit = () => {
-    // Create the equipment object with the user's ID as the owner
     const newEquipment = {
       name: formData.name,
       description: formData.description,
       status: formData.status,
       price: formData.price,
-      owner: formData.owner, // Include the user's ID as the owner
+      owner: username,
     };
 
-    // Send a POST request to your API to create the equipment
     fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
@@ -34,7 +34,6 @@ function EquipmentForm() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // Handle successful equipment creation
       })
       .catch((error) => console.error("Error:", error));
     setSubmitMsg("Loading...");
@@ -44,7 +43,6 @@ function EquipmentForm() {
       description: "",
       status: "",
       price: "",
-      owner: "",
     });
   };
 
@@ -61,7 +59,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Name</Form.Label>
             <Form.Control
-              type="text" // Use "text" for a text input field
+              type="text"
               placeholder="Enter Name for Item"
               name="name"
               value={formData.name}
@@ -72,7 +70,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Condition</Form.Label>
             <Form.Control
-              type="text" // Use "text" for a text input field
+              type="text"
               placeholder="Enter Condition of Item"
               name="status"
               value={formData.status}
@@ -83,7 +81,7 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Price</Form.Label>
             <Form.Control
-              type="number" // Use "number" for numeric input
+              type="number"
               placeholder="Enter Price for object"
               name="price"
               value={formData.price}
@@ -94,22 +92,11 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Description</Form.Label>
             <Form.Control
-              as="textarea" // Use "textarea" for multi-line text input
+              as="textarea"
               placeholder="Enter Description"
               rows={5}
               name="description"
               value={formData.description}
-              onChange={handleInputChange}
-              required
-            />
-          </FormGroup>
-           <FormGroup className="contact-page-form-group">
-            <Form.Label>Owner</Form.Label>
-            <Form.Control
-              type="text" // Use "text" for a text input field
-              placeholder="Enter owner of Item"
-              name="owner"
-              value={formData.owner}
               onChange={handleInputChange}
               required
             />

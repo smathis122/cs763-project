@@ -2,8 +2,10 @@ import React from "react";
 import { Tabs, Tab, Navbar, Container, Nav } from "react-bootstrap";
 import { HashLink as Link } from "react-router-hash-link";
 import "../styles/Components/navbar.css";
+import { useUser } from "./UserContext";
 
 export function NavbarCustom(props) {
+  const { username } = useUser();
   return (
     <Navbar
       collapseOnSelect
@@ -15,6 +17,7 @@ export function NavbarCustom(props) {
         <Navbar.Brand style={{ fontSize: "35px" }} href="/">
           GearOnTheGo
         </Navbar.Brand>
+        <p>Welcome, {username || "Guest"}!</p>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
