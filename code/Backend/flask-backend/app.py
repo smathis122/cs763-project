@@ -328,9 +328,11 @@ def register():
         return jsonify({"error": str(e)}), 500
     
 #Google login method start
-@app.route('/api/register-google', methods=['POST'])
+@app.route('/api/register-google', methods=['POST', 'OPTIONS'])
 def googleLogin():
     #GOOGLE ADDITION START
+    if (request.method == "OPTIONS"):
+        return jsonify({"message": "Success"}), 200
     try:
         # Get data from the frontend request
         data = request.get_json()
@@ -350,7 +352,7 @@ def googleLogin():
             new_user = User(email=user_email, password="Google account, password not available")
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({"message": "User added successfully"},), 201
+            return jsonify({"message": "User added successfully"}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 #Google login method end
