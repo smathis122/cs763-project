@@ -9,7 +9,7 @@ import urllib.parse as up
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify, session
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 import re
 import os
@@ -180,10 +180,11 @@ def load_user(user_id):
     return user
     
 class regUser(UserMixin):
-    def __init__(self, id, email, password):
+    def __init__(self, id, email, password, user_type):
         self.id = id
         self.email = email
         self.password = password
+        self.user_type = user_type
 
 # class User(db.Model, UserMixin):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -197,6 +198,9 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+    
+    user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host')],
+                           validators=[InputRequired()])
 
     submit = SubmitField('Register')
 
@@ -212,7 +216,6 @@ class RegisterForm(FlaskForm):
         cursor.close()
         conn.close()
         if existing_user_email:
-            flash('Email already in use. Please choose another one.', 'danger')
             raise ValidationError('That email already exists. Please choose a different one.')
 
 
@@ -311,8 +314,9 @@ def register():
             email = form.email.data
             hashed_password = bcrypt.hashpw(
                 form.password.data.encode('utf-8'), bcrypt.gensalt())
+            user_type = form.user_type.data
             cursor.execute(
-                'INSERT INTO "user" (email, password) VALUES (%s, %s)', (email, hashed_password))
+                'INSERT INTO "user" (email, password, user_type) VALUES (%s, %s, %s)', (email, hashed_password, user_type))
             conn.commit()
             cursor.close()
             conn.close()

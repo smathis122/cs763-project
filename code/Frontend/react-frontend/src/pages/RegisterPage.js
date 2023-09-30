@@ -10,14 +10,19 @@ function RegisterPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    user_type: "",
   });
-
+  const [userType, setUserType] = useState("");
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "user_type") {
+      setUserType(value); // Update the userType state
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -35,7 +40,7 @@ function RegisterPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, user_type: userType }),
     })
       .then((response) => {
         if(!response.ok) {
@@ -106,6 +111,20 @@ function RegisterPage() {
                 )}
               </span>
             </div>
+          </FormGroup>
+          <FormGroup className="contact-page-form-group">
+            <Form.Label>User Type</Form.Label>
+            <Form.Control
+              as="select" // Use "as" prop to render as a select input
+              name="user_type"
+              value={userType}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select User Type</option>
+              <option value="renter">Renter</option>
+              <option value="host">Host</option>
+            </Form.Control>
           </FormGroup>
           <Button
             variant="primary"
