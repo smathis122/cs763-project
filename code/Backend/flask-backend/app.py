@@ -60,34 +60,6 @@ class paymentInfo(db.Model):
     is_paid = db.Column(db.Boolean, nullable = False)
     Price = db.Column(db.Integer, nullable = False)
 
-@app.route("/")         
-def home():
-    return render_template("home.html")
-
-#configuration parameters
-conf= {
-    #Google sign-up parameters start
-    "OAUTH_CLIENT_ID" : "95479501580-7om6n792bbd8em6l76a2sf14a8dg2h80.apps.googleusercontent.com",
-    "OAUTH_CLIENT_SECRET" : "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",
-    "OAUTH_META_URL" : "https://accounts.google.com/.well-known/openid-configuration",
-    #Google sign-up parameters end
-    "FLASK_PORT" : 5014,
-    "FLASK_SECRET" : "SECRET1234"
-}
-#Google sign-up parameters start
-oauth = OAuth(app)
-
-oauth.register("GearToGoApp",
-               client_id = conf.get("OAUTH_CLIENT_ID"),
-               client_secret = conf.get("OAUTH_CLIENT_SECRET"),
-               server_metadata_url=conf.get("OAUTH_META_URL"),
-               client_kwargs = {
-                     "scope":"openid profile email https://www.googleapis.com/auth/user.birthday.read https://www.googleapis.com/auth/user.gender.read",
-               }
-               )
-
-#Google sign-up parameters end
-
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
     try:
