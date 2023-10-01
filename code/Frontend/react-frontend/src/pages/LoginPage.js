@@ -10,7 +10,7 @@ import "../styles/pages/password.css";
 
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
-  const { setUsername } = useUser();
+  const { setUsername, setUserType } = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -42,9 +42,20 @@ function LoginPage() {
           setSubmitMsg("Login successful!");
           const user = response.data;
           const username = user.username;
+          const userType = user.user_type;
           setUsername(username.split("@")[0]);
-          console.log("Logged in", username);
-          navigate("/");
+          setUserType(userType)
+          console.log("Logged in", username, "as", userType);
+
+          if (userType === "renter") {
+            navigate("/"); // Redirect to the home page
+          } else if (userType === "host") {
+            navigate("/profile"); // Redirect to the profile page
+          } else {
+            // Handle other user types or scenarios
+            console.log("Unknown user type");
+          }
+
         } else if (response.status === 202) {
           // Going here when password wrong but email right
           setErrors(response.data || {});

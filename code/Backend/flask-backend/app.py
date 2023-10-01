@@ -253,11 +253,13 @@ def login():
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
-                    user = regUser(user_data[0], email, db_password)
+                    user = regUser(user_data[0], email, db_password, user_data[3])
                     username = user_data[1]
+                    user_type = user_data[3]
+                    print(user_type)
                     session['username'] = username
                     login_user(user)
-                    return jsonify({"message": "User logged in successfully", "username": username}), 201
+                    return jsonify({"message": "User logged in successfully", "username": username, "user_type": user_type}), 201
                     # return redirect(url_for('dashboard'))
                 else:
                     print("Wrong pass")
