@@ -54,7 +54,7 @@ function RegisterPage() {
       <h1>Register</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
-          
+
           <FormGroup className="contact-page-form-group">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -78,16 +78,15 @@ function RegisterPage() {
             />
           </FormGroup>
           <div className="FormButtonDiv">
-          <Button
-            className="FormButton"
-            variant="primary"
-            type="submit"
-            id="submitButton"
-          >
-            Submit
-          </Button>
+            <Button
+              className="FormButton"
+              variant="primary"
+              type="submit"
+              id="submitButton"
+            >
+              Submit
+            </Button>
           </div>
-
         </Form>
         <GoogleLoginButton redirectOnLogin={false}></GoogleLoginButton>
       </div>

@@ -23,6 +23,10 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSubmitMessageChange = (message) => {
+    setSubmitMsg(message)
+  }
+
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -90,7 +94,7 @@ function LoginPage() {
             Submit
           </Button>
         </Form>
-        <GoogleLoginButton redirectOnLogin={true}></GoogleLoginButton>
+        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange}></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>

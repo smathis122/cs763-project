@@ -299,9 +299,9 @@ def register():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#Google login method start
+#Google register method start
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
-def googleLogin():
+def googleRegister():
     #GOOGLE ADDITION START
     if (request.method == "OPTIONS"):
         return jsonify({"message": "Success"}), 200
@@ -318,7 +318,7 @@ def googleLogin():
 
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully", "name": user_name},), 201
+            return jsonify({"message": "User validated successfully", "name": user_name},), 200
         # Logic to add to database
         else:
             new_user = User(email=user_email, password="Google account, password not available")
@@ -327,7 +327,31 @@ def googleLogin():
             return jsonify({"message": "User added successfully"}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
-#Google login method end
+#Google register method end
+
+#Google login method start
+@app.route('/api/login-google', methods=['POST', 'OPTIONS'])
+def googleLogin():
+    if (request.method == "OPTIONS"):
+            return jsonify({"message": "Success"}), 200
+    try:
+        # Get data from the frontend request
+        data = request.get_json()
+        google_data = data["googleData"]
+        token = google_data["credential"]
+
+        claims = jwt.decode(token, verify=False)
+        user_email = claims["email"]
+        user_name = claims["given_name"] + " " + claims["family_name"]
+        session["user"] = token
+
+        # Logic to check database for matching email
+        if User.query.filter_by(email=user_email).first():
+            return jsonify({"message": "User validated successfully", "name": user_name},), 200
+        
+        return jsonify({"message": "Please register first", "name": user_name},), 404
+    except Exception as e:
+        return jsonify({"error": "Error validating user: " + str(e)}), 500
 
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():

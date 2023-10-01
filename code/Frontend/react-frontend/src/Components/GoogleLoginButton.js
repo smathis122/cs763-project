@@ -8,7 +8,7 @@ import "../styles/pages/register.css";
 // Google import stop
 
 export function GoogleLoginButton(props) {
-    const [submitMsg, setSubmitMsg] = useState("");
+    const [submitMsg, setSubmitMsg] = React.useState("");
     const navigate = useNavigate();
     const { setUsername } = useUser();
 
@@ -17,6 +17,7 @@ export function GoogleLoginButton(props) {
             ? JSON.parse(localStorage.getItem('loginData'))
             : null
     );
+
     // Failure handling for google login start
     const handleFailure = (result) => {
         alert(JSON.stringify.result);
@@ -24,7 +25,11 @@ export function GoogleLoginButton(props) {
     // Failure handling for google login stop
     // Login handling for google login start
     const handleLogin = async (googleData) => {
-        const res = await fetch('http://127.0.0.1:5000/api/register-google', {
+        var url = 'http://127.0.0.1:5000/api/register-google'
+        if (props.redirectOnLogin)
+            url = 'http://127.0.0.1:5000/api/login-google'
+
+        const res = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
                 googleData: googleData,
@@ -36,23 +41,21 @@ export function GoogleLoginButton(props) {
 
         const data = await res.json();
 
-        if (data && data.name) {
-            setSubmitMsg("Login successful!");
+        if (res.ok && data && data.name) {
+            props.handleMessage("Login successful!");
             const username = data.name;
-            setUsername(username);
+            props.handleMessage(username);
             console.log("Logged in", username);
 
-            setLoginData(data);
+            props.handleMessage(data);
             localStorage.setItem('loginData', JSON.stringify(data));
-            if (props.redirectOnLogin)
-                navigate("/");
         } else {
-            setSubmitMsg("Login failed. Please try again.");
-
-
-            setLoginData(data);
-            localStorage.setItem('loginData', JSON.stringify(data));
+            props.handleMessage("Login failed. Please try again.");
+            console.log(submitMsg)
         };
+
+        if (res.ok && props.redirectOnLogin)
+            navigate("/")
     };
     // Login handling for google login stop
     const handleLogout = () => {
