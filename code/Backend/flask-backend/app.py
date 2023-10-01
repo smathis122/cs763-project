@@ -352,7 +352,7 @@ def googleLogin():
             new_user = User(email=user_email, password="Google account, password not available")
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({"message": "User added successfully"}), 201
+            return jsonify({"message": "User added successfully", "name": user_name}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 #Google login method end
