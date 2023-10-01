@@ -47,10 +47,10 @@ export function GoogleLoginButton(props) {
             props.handleMessage(username);
             console.log("Logged in", username);
 
-            props.handleMessage(data);
+            setUsername(username);
             localStorage.setItem('loginData', JSON.stringify(data));
         } else {
-            props.handleMessage("Login failed. Please try again.");
+            props.handleMessage("Google login failed. Please register.");
             console.log(submitMsg)
         };
 
@@ -61,6 +61,7 @@ export function GoogleLoginButton(props) {
     const handleLogout = () => {
         localStorage.removeItem('loginData');
         setLoginData(null);
+        setUsername("Guest");
     };
 
     return (

@@ -88,7 +88,7 @@ function RegisterPage() {
             </Button>
           </div>
         </Form>
-        <GoogleLoginButton redirectOnLogin={false}></GoogleLoginButton>
+        <GoogleLoginButton redirectOnLogin={false} handleMessage={() => {}}></GoogleLoginButton>
       </div>
     </div>
   );
