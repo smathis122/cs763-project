@@ -91,6 +91,7 @@ function LoginPage() {
               type="email"
               placeholder="Enter Email"
               name="email"
+              id="email"
               value={formData.email}
               onChange={handleInputChange}
               required
@@ -103,6 +104,7 @@ function LoginPage() {
                 type={showPassword ? "text" : "password"} // Toggle password visibility
                 placeholder="Enter Password"
                 name="password"
+                id="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -132,7 +134,7 @@ function LoginPage() {
           >
             Submit
           </Button>
-          <div className="error-messages">
+          <div className="error-messages" id="error_messages">
             {errors.email && <p>{errors.email.join(', ')}</p>}
             {errors.password && <p>{errors.password.join(', ')}</p>}
             {errors.message && <p>{errors.message}</p>}
