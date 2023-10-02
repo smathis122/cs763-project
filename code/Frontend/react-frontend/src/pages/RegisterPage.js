@@ -4,6 +4,11 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 import "../styles/pages/password.css";
+// Google import start
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import "../styles/pages/register.css";
+// Google import stop
+
 
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
@@ -12,10 +17,46 @@ function RegisterPage() {
     password: "",
     user_type: "",
   });
+
   const [userType, setUserType] = useState("");
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  //Google stuff start
+  const [loginData, setLoginData] = useState(
+    localStorage.getItem('loginData')
+      ? JSON.parse(localStorage.getItem('loginData'))
+      : null
+  );
+  // Failure handling for google login start
+  const handleFailure = (result) => {
+    alert(JSON.stringify.result);
+  };
+  // Failure handling for google login stop
+  // Login handling for google login start
+  
+  const handleLogin = async (googleData) => {
+    const res = await fetch('http://127.0.0.1:5000/api/register-google', {
+      method: 'POST',
+      body: JSON.stringify({
+        googleData: googleData,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
+    const data = await res.json();
+
+    setLoginData(data);
+    localStorage.setItem('loginData', JSON.stringify(data));
+  };
+  // Login handling for google login stop
+
+  const handleLogout = () => {
+    localStorage.removeItem('loginData');
+    setLoginData(null);
+  };
+  //Google stuff stop
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -78,6 +119,7 @@ function RegisterPage() {
       <h1>Register</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
+          
           <FormGroup className="contact-page-form-group">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -126,29 +168,50 @@ function RegisterPage() {
               <option value="host">Host</option>
             </Form.Control>
           </FormGroup>
+          <div className="FormButtonDiv">
           <Button
+            className="FormButton"
             variant="primary"
             type="submit"
-            style={{
-              fontSize: "20px",
-              width: "150px",
-              marginLeft: "15px",
-              marginBottom: "25px",
-            }}
             id="submitButton"
           >
             Submit
           </Button>
           <div className="error-messages">
-            {errors.email && <p>{errors.email.join(', ')}</p>}
-            {errors.password && <p>{errors.password.join(', ')}</p>}
-            {/* Display other validation errors as needed */}
+           {errors.email && <p>{errors.email.join(', ')}</p>}
+           {errors.password && <p>{errors.password.join(', ')}</p>}
+           {/* Display other validation errors as needed */}
           </div>
-        </Form>
+          </Form>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
+
+        {/* Google button start */}
+        <div className="App">
+          <div className="GoogleLoginDiv">
+            {loginData ? (
+              <div>
+                <h3>You logged in as {loginData.name}</h3>
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            ) : (
+              <div className="GoogleLogin">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                  <GoogleLogin
+                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                    buttonText="Sign up with Google"
+                    onSuccess={handleLogin}
+                    onFailure={handleFailure}
+                    cookiePolicy={'single_host_origin'}
+                  ></GoogleLogin>
+                </GoogleOAuthProvider>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Google button stop */}
       </div>
     </div>
   );
-}
 
-export default RegisterPage;
+}
+export default RegisterPage

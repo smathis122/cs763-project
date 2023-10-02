@@ -20,6 +20,7 @@ import bcrypt
 import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
+from google.auth import jwt
 
 app = Flask(__name__)
 load_dotenv()
@@ -29,8 +30,16 @@ app.secret_key = os.environ.get('SECRET_KEY')
 
 db = SQLAlchemy(app)
 
-CORS(app)
-secret_key = secrets.token_hex(16)
+# Database table for user
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+
+
+CORS(app) # Allow all origins for development; restrict in production
+secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
+
 app.config['SECRET_KEY'] = secret_key
 
 db_connection_settings = {
@@ -45,67 +54,20 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-conf= {
-    "FLASK_PORT" : 5014,
-    "FLASK_SECRET" : "SECRET1234"
-}
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(200), nullable=False)
-
-class User(UserMixin):
-    def __init__(self, id, email, password):
-        self.id = id
-        self.email = email
-        self.password = password
-
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer,primary_key = True)
     itemid = db.Column(db.Integer, nullable = False)
     is_paid = db.Column(db.Boolean, nullable = False)
     Price = db.Column(db.Integer, nullable = False)
 
-class LoginForm(FlaskForm):
-    email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
-    submit = SubmitField('Login')
-
-class RegisterForm(FlaskForm):
-    email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20), Email(), DataRequired()], render_kw={"placeholder": "Email"})
-
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
-    submit = SubmitField('Register')
-
-    def validate_email(self, email):
-        if not re.match(r'^[a-zA-Z0-9.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$', email.data):
-            raise ValidationError('Invalid email address.')
-        
-        conn = psycopg2.connect(**db_connection_settings)
-        
-        cursor = conn.cursor()
-        cursor.execute('SELECT email FROM "user" WHERE email = %s', (email.data,))
-        existing_user_email = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if existing_user_email:
-            flash('Email already in use. Please choose another one.', 'danger')
-            raise ValidationError('That email already exists. Please choose a different one.')
-
-            class regUser(UserMixin):
+class regUser(UserMixin):
     def __init__(self, id, email, password, user_type):
         self.id = id
         self.email = email
         self.password = password
         self.user_type = user_type
+
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[
@@ -248,7 +210,6 @@ def load_user(user_id):
     return user
     
 
-
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
     try:
@@ -273,7 +234,9 @@ def login():
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
+
                     user = regUser(user_data[0], email, db_password, user_data[3])
+
                     username = user_data[1]
                     user_type = user_data[3]
                     print(user_type)
@@ -315,6 +278,9 @@ def profile():
 def logout():
     logout_user()
     flash('Logged out successfully.', 'info')
+    #Google logic start
+    session.pop("user", None)
+    #Google logic stop
     return redirect(url_for('login'))
 
 
@@ -345,6 +311,36 @@ def register():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+#Google login method start
+@app.route('/api/register-google', methods=['POST', 'OPTIONS'])
+def googleLogin():
+    #GOOGLE ADDITION START
+    if (request.method == "OPTIONS"):
+        return jsonify({"message": "Success"}), 200
+    try:
+        # Get data from the frontend request
+        data = request.get_json()
+        google_data = data["googleData"]
+        token = google_data["credential"]
+
+        claims = jwt.decode(token, verify=False)
+        user_email = claims["email"]
+        user_name = claims["given_name"] + " " + claims["family_name"]
+        session["user"] = token
+
+        # Logic to check database for matching email
+        if User.query.filter_by(email=user_email).first():
+            return jsonify({"message": "User validated successfully", "name": user_name},), 201
+        # Logic to add to database
+        else:
+            new_user = User(email=user_email, password="Google account, password not available")
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({"message": "User added successfully", "name": user_name}), 201
+    except Exception as e:
+        return jsonify({"error": "Error validating user: " + str(e)}), 500
+#Google login method end
 
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():

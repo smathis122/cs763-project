@@ -11,7 +11,6 @@ import ItemSearchAndFilter from "./pages/search";
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import GoogleLogin from "./pages/GoogleLogin";
 import View from "./pages/ViewItem";
 import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
 import ProfilePage from "./pages/ProfilePage"
@@ -78,7 +77,6 @@ function App() {
 
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="GoogleLogin" element={<GoogleLogin />} />
         </Route>
       </Routes>
     </HashRouter>
