@@ -9,15 +9,45 @@ import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
 
-function AllItemsPage() {
+function ProfileInfo({ userType, username }) {
+  if (userType === "renter") {
+    return (
+      <div>
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a renter!</p>
+        {/* Display the user's profile information */}
+      </div>
+    );
+  } else if (userType === "host") {
+    return (
+      <div>
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a host!</p>
+        {/* Display the user's profile information */}
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>I don't know what you are!</p>
+        {/* Display the user's profile information */}
+      </div>
+    );
+  }
+}
+
+function View() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const { username } = useUser();
-
+  const { username, userType } = useUser();
   const [updateFormData, setUpdateFormData] = useState({
     id: null,
     name: "",
@@ -108,6 +138,7 @@ function AllItemsPage() {
   return (
     <div>
       <NavbarCustom />
+      <ProfileInfo userType={userType} username={username} />
       <Container>
         <Row>
           {equipmentData.map(
@@ -128,14 +159,14 @@ function AllItemsPage() {
                       <Card.Text>Owner: {equipment.owner}</Card.Text>
                       <Button
                         variant="danger"
-                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
+                        name={`remove-${equipment.itemid}`}
                         onClick={(e) => handleRemoveClick(e, equipment)}
                       >
                         Remove
                       </Button>
                       <Button
                         variant="primary"
-                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
+                        name={`remove-${equipment.itemid}`}
                         onClick={(e) => handleUpdateClick(e, equipment)}
                       >
                         Update
@@ -147,7 +178,6 @@ function AllItemsPage() {
           )}
         </Row>
       </Container>
-
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{selectedEquipment?.name}</Modal.Title>
@@ -261,4 +291,4 @@ function AllItemsPage() {
   );
 }
 
-export default AllItemsPage;
+export default View;

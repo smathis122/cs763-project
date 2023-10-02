@@ -15,7 +15,6 @@ import View from "./pages/ViewItem";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/UserProfile";
-import ProfilePage from "./pages/ProfilePage";
 import { Navigate } from "react-router-dom";
 
 function App() {
@@ -53,6 +52,14 @@ function App() {
             }
           />
           <Route
+            path="View"
+            element={
+              <ProtectedRoute>
+                <View />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="reservations"
             element={
               <ProtectedRoute>
@@ -60,25 +67,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="AllProfile" element={<Profile />} />
           <Route
-            path="View"
-            element={
-              <ProtectedRoute>
-                {userType === "host" ? <View /> : <Navigate to="/" />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="Profile" element={<Profile />} />
-          <Route
-            path="profile/user/:usernameSelected"
+            path="AllProfile/user/:usernameSelected"
             element={<UserProfile />}
           />
 
