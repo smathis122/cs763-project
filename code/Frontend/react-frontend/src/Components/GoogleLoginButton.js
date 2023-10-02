@@ -74,8 +74,9 @@ export function GoogleLoginButton(props) {
                     </div>
                 ) : (
                     <div className="GoogleLogin">
-                        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID} id={"google-login-auth"}>
                             <GoogleLogin
+                                id="google-login-button"
                                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                                 buttonText="Sign up with Google"
                                 onSuccess={handleLogin}
