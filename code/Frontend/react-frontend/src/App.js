@@ -11,13 +11,15 @@ import ItemSearchAndFilter from "./pages/search";
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-import GoogleLogin from "./pages/GoogleLogin";
 import View from "./pages/ViewItem";
 import Profile from "./pages/profile";
-import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
+import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/UserProfile";
+import ProfilePage from "./pages/ProfilePage";
+import { Navigate } from "react-router-dom";
+
 function App() {
-  const { username } = useUser();
+  const { username, userType } = useUser();
 
   return (
     <HashRouter>
@@ -30,7 +32,7 @@ function App() {
             path="Items"
             element={
               <ProtectedRoute>
-                <Items />
+                {userType === "host" ? <Items /> : <Navigate to="/" />}
               </ProtectedRoute>
             }
           />
@@ -54,7 +56,7 @@ function App() {
             path="reservations"
             element={
               <ProtectedRoute>
-                <Reservations />
+                {userType === "renter" ? <Reservations /> : <Navigate to="/" />}
               </ProtectedRoute>
             }
           />
@@ -62,7 +64,15 @@ function App() {
             path="View"
             element={
               <ProtectedRoute>
-                <View />
+                {userType === "host" ? <View /> : <Navigate to="/" />}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
@@ -74,7 +84,6 @@ function App() {
 
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="GoogleLogin" element={<GoogleLogin />} />
         </Route>
       </Routes>
     </HashRouter>

@@ -14,10 +14,10 @@ export function NavbarCustom(props) {
       style={{ backgroundColor: "#918C78" }}
     >
       <Container>
-        <Navbar.Brand style={{ fontSize: "35px" }} href="/">
+        <Navbar.Brand style={{ fontSize: "35px" }} href="#/">
           GearOnTheGo
         </Navbar.Brand>
-        <p>Welcome, {username || "Guest"}!</p>
+        <p id="welcomeMessage">Welcome, {username || "Guest"}!</p>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
@@ -27,7 +27,7 @@ export function NavbarCustom(props) {
             <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>
             <Nav.Link href="#/search">Search</Nav.Link>
-            <Nav.Link href="#/login">Login</Nav.Link>
+            <Nav.Link href="#/login" id="loginTab">Login</Nav.Link>
             <Nav.Link href="#/register">Register</Nav.Link>
             <Nav.Link href="#/profile">Profile</Nav.Link>
           </Nav>

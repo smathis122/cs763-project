@@ -1,24 +1,28 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/Form";
-import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/esm/Form";
+import FormGroup from "react-bootstrap/esm/FormGroup";
+import Button from "react-bootstrap/esm/Button";
 import { useUser } from "../Components/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function EquipmentForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const { username } = useUser();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
+    info: "",
     status: "",
     price: "",
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const newEquipment = {
       name: formData.name,
-      description: formData.description,
+      description: formData.info,
       status: formData.status,
       price: formData.price,
       owner: username,
@@ -40,7 +44,7 @@ function EquipmentForm() {
     setTimeout(() => setSubmitMsg("Your Item has been added!"), 2000);
     setFormData({
       name: "",
-      description: "",
+      info: "",
       status: "",
       price: "",
     });
@@ -92,11 +96,10 @@ function EquipmentForm() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>Description</Form.Label>
             <Form.Control
-              as="textarea"
-              placeholder="Enter Description"
-              rows={5}
-              name="description"
-              value={formData.description}
+              type="text"
+              placeholder="Enter Description of Item"
+              name="info"
+              value={formData.info}
               onChange={handleInputChange}
               required
             />

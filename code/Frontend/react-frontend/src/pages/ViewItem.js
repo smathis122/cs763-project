@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/esm/Card";
+import Container from "react-bootstrap/esm/Container";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import Modal from "react-bootstrap/esm/Modal";
+import Button from "react-bootstrap/esm/Button";
+import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
 
 function AllItemsPage() {
@@ -128,12 +128,14 @@ function AllItemsPage() {
                       <Card.Text>Owner: {equipment.owner}</Card.Text>
                       <Button
                         variant="danger"
+                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
                         onClick={(e) => handleRemoveClick(e, equipment)}
                       >
                         Remove
                       </Button>
                       <Button
                         variant="primary"
+                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
                         onClick={(e) => handleUpdateClick(e, equipment)}
                       >
                         Update
@@ -157,7 +159,11 @@ function AllItemsPage() {
           <p>Owner: {selectedEquipment?.owner}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button
+            variant="secondary"
+            name="close"
+            onClick={() => setShowModal(false)}
+          >
             Close
           </Button>
         </Modal.Footer>
@@ -172,10 +178,14 @@ function AllItemsPage() {
           Are you sure you want to remove {selectedItem?.name}?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleRemoveConfirm}>
+          <Button name="remove2" variant="danger" onClick={handleRemoveConfirm}>
             Remove
           </Button>
-          <Button variant="secondary" onClick={() => setShowRemoveModal(false)}>
+          <Button
+            name="cancel"
+            variant="secondary"
+            onClick={() => setShowRemoveModal(false)}
+          >
             Cancel
           </Button>
         </Modal.Footer>
