@@ -10,18 +10,27 @@ import { useUser } from "../Components/UserContext";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import "../styles/pages/register.css";
 // Google import stop
+import "../styles/pages/password.css";
+
 
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
-  const { setUsername } = useUser();
+  const { setUsername, setUserType } = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const navigate = useNavigate();
@@ -74,22 +83,48 @@ function LoginPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    setErrors({});
+    setSubmitMsg("Logging in...");
     axios
       .post("http://127.0.0.1:5000/api/login", formData)
       .then((response) => {
         if (response.status === 201) {
+          // Going here when email right and password right
           setSubmitMsg("Login successful!");
           const user = response.data;
           const username = user.username;
+          const userType = user.user_type;
           setUsername(username.split("@")[0]);
-          console.log("Logged in", username);
-          navigate("/");
-        } else {
-          setSubmitMsg("Login failed. Please try again.");
+          setUserType(userType)
+          console.log("Logged in", username, "as", userType);
+
+          if (userType === "renter") {
+            navigate("/"); // Redirect to the home page
+          } else if (userType === "host") {
+            navigate("/profile"); // Redirect to the profile page
+          } else {
+            // Handle other user types or scenarios
+            console.log("Unknown user type");
+          }
+
+        } else if (response.status === 202) {
+          // Going here when password wrong but email right
+          setErrors(response.data || {});
+          console.log("Wrong Password")
+          console.log(response.data);
+          setSubmitMsg("Login failed. Please try again!");
+        } else if (response.status === 203) {
+          // Going here when user wrong
+          setErrors(response.data || {});
+          console.log("Wrong User")
+          console.log(response.data);
+          setSubmitMsg("Login failed. Please try again!");
         }
       })
       .catch((error) => {
+        // Going here when email and/or password format wrong
+        setErrors(error.response.data.errors || {});
+        console.log(errors);
         console.error("Error:", error);
         setSubmitMsg("Login failed. Please try again.");
       });
@@ -107,6 +142,7 @@ function LoginPage() {
               type="email"
               placeholder="Enter Email"
               name="email"
+              id="email"
               value={formData.email}
               onChange={handleInputChange}
               required
@@ -114,14 +150,27 @@ function LoginPage() {
           </FormGroup>
           <FormGroup className="contact-page-form-group">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="password-input-container">
+              <Form.Control
+                type={showPassword ? "text" : "password"} // Toggle password visibility
+                placeholder="Enter Password"
+                name="password"
+                id="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+              <span
+                className={`password-toggle ${showPassword ? "visible" : ""}`}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </span>
+            </div>
           </FormGroup>
           <Button
             variant="primary"
@@ -136,6 +185,12 @@ function LoginPage() {
           >
             Submit
           </Button>
+          <div className="error-messages" id="error_messages">
+            {errors.email && <p>{errors.email.join(', ')}</p>}
+            {errors.password && <p>{errors.password.join(', ')}</p>}
+            {errors.message && <p>{errors.message}</p>}
+            {/* Display other validation errors as needed */}
+          </div>
         </Form>
         {/* Google button start */}
         <div className="App">
