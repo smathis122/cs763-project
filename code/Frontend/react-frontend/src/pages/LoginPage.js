@@ -57,6 +57,7 @@ function LoginPage() {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
+              id="email"
               placeholder="Enter Email"
               name="email"
               value={formData.email}
@@ -68,6 +69,7 @@ function LoginPage() {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
+              id="password"
               placeholder="Enter Password"
               name="password"
               value={formData.password}
