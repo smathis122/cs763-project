@@ -127,12 +127,14 @@ function AllItemsPage() {
                       <Card.Text>Owner: {equipment.owner}</Card.Text>
                       <Button
                         variant="danger"
+                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
                         onClick={(e) => handleRemoveClick(e, equipment)}
                       >
                         Remove
                       </Button>
                       <Button
                         variant="primary"
+                        name={`remove-${equipment.itemid}`} // Use the equipment's ID as part of the name
                         onClick={(e) => handleUpdateClick(e, equipment)}
                       >
                         Update
@@ -156,7 +158,11 @@ function AllItemsPage() {
           <p>Owner: {selectedEquipment?.owner}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button
+            variant="secondary"
+            name="close"
+            onClick={() => setShowModal(false)}
+          >
             Close
           </Button>
         </Modal.Footer>
@@ -171,10 +177,14 @@ function AllItemsPage() {
           Are you sure you want to remove {selectedItem?.name}?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleRemoveConfirm}>
+          <Button name="remove2" variant="danger" onClick={handleRemoveConfirm}>
             Remove
           </Button>
-          <Button variant="secondary" onClick={() => setShowRemoveModal(false)}>
+          <Button
+            name="cancel"
+            variant="secondary"
+            onClick={() => setShowRemoveModal(false)}
+          >
             Cancel
           </Button>
         </Modal.Footer>
