@@ -13,8 +13,9 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import GoogleLogin from "./pages/GoogleLogin";
 import View from "./pages/ViewItem";
+import Profile from "./pages/profile";
 import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
-
+import UserProfile from "./Components/UserProfile";
 function App() {
   const { username } = useUser();
 
@@ -64,6 +65,11 @@ function App() {
                 <View />
               </ProtectedRoute>
             }
+          />
+          <Route path="Profile" element={<Profile />} />
+          <Route
+            path="profile/user/:usernameSelected"
+            element={<UserProfile />}
           />
 
           <Route path="register" element={<RegisterPage />} />

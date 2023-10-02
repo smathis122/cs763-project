@@ -17,6 +17,7 @@ function AllItemsPage() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { username } = useUser();
+
   const [updateFormData, setUpdateFormData] = useState({
     id: null,
     name: "",

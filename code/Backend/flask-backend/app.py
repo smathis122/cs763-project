@@ -159,6 +159,46 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/getUsers", methods=["GET"])
+def get_users():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT email FROM "user"') 
+        users = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+
+        print(users) 
+
+        return jsonify(users), 200
+    except Exception as e:
+        print("Error:", str(e)) 
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/items/<username>")
+def user_items(username):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        user_name = username.split("@")[0]
+        # Fetch items associated with the user using their ID
+        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (user_name,))
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+        return jsonify({"items": equipment_data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 @login_manager.user_loader
 def load_user(user_id):
     print("User ID:", user_id)
