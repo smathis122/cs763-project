@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/esm/Form";
-import FormGroup from "react-bootstrap/esm/FormGroup";
-import Button from "react-bootstrap/esm/Button";
+import Form from "react-bootstrap/Form";
+import FormGroup from "react-bootstrap/FormGroup";
+import Button from "react-bootstrap/Button";
+import "../styles/pages/password.css";
 // Google import start
 import "../styles/pages/register.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
@@ -14,34 +15,65 @@ function RegisterPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    user_type: "",
   });
+
+
+  const [userType, setUserType] = useState("");
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "user_type") {
+      setUserType(value); // Update the userType state
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const csrfToken =
-      "IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ";
+    setErrors({});
+    setSubmitMsg("Registering...");
+    // const csrfToken = 'IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ';
     // Send the formData as JSON to your Flask back-end here
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, user_type: userType }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if(!response.ok) {
+          return response.json().then((data) => {
+            // Handle validation errors
+            setErrors(data.errors || {});
+            console.log(data.errors)
+            setSubmitMsg("Failed to register");
+          });
+        }
+        else {
+          return response.json().then((data) => {
+            // Display the success message to the user
+            console.log(data.message); // This will log "User added successfully"
+            setSubmitMsg(data.message); // Set the message in your component state
+          });
+        }
+        // return response.json();
+      })
       .then((data) => {
-        const csrfToken = data.csrf_token;
-        console.log(data);
+        // const csrfToken = data.csrf_token;
+        console.log(data)
       })
       .catch((error) => console.error("Error:", error));
-    setSubmitMsg("Registering...");
-    setTimeout(() => setSubmitMsg("You have registered!"), 2000);
+    // setTimeout(() => setSubmitMsg("You have registered!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -68,27 +100,58 @@ function RegisterPage() {
           </FormGroup>
           <FormGroup className="contact-page-form-group">
             <Form.Label>Password</Form.Label>
+            <div className="password-input-container">
+              <Form.Control
+                type={showPassword ? "text" : "password"} // Toggle password visibility
+                placeholder="Enter Password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+              <span
+                className={`password-toggle ${showPassword ? "visible" : ""}`}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <i className="fas fa-eye-slash"></i>
+                ) : (
+                  <i className="fas fa-eye"></i>
+                )}
+              </span>
+            </div>
+          </FormGroup>
+          <FormGroup className="contact-page-form-group">
+            <Form.Label>User Type</Form.Label>
             <Form.Control
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              value={formData.password}
+              as="select" // Use "as" prop to render as a select input
+              name="user_type"
+              value={userType}
               onChange={handleInputChange}
               required
-            />
+            >
+              <option value="">Select User Type</option>
+              <option value="renter">Renter</option>
+              <option value="host">Host</option>
+            </Form.Control>
           </FormGroup>
           <div className="FormButtonDiv">
-            <Button
-              className="FormButton"
-              variant="primary"
-              type="submit"
-              id="submitButton"
-            >
-              Submit
-            </Button>
+          <Button
+            className="FormButton"
+            variant="primary"
+            type="submit"
+            id="submitButton"
+          >
+            Submit
+          </Button>
+          <div className="error-messages">
+           {errors.email && <p>{errors.email.join(', ')}</p>}
+           {errors.password && <p>{errors.password.join(', ')}</p>}
+           {/* Display other validation errors as needed */}
           </div>
         </Form>
         <GoogleLoginButton redirectOnLogin={false} handleMessage={() => {}}></GoogleLoginButton>
+        {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
   );
