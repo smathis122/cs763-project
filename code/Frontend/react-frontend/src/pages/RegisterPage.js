@@ -4,10 +4,8 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 import "../styles/pages/password.css";
-// Google import start
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import "../styles/pages/register.css";
-// Google import stop
 
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
@@ -20,18 +18,14 @@ function RegisterPage() {
   const [userType, setUserType] = useState("");
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  //Google stuff start
   const [loginData, setLoginData] = useState(
     localStorage.getItem("loginData")
       ? JSON.parse(localStorage.getItem("loginData"))
       : null
   );
-  // Failure handling for google login start
   const handleFailure = (result) => {
     alert(JSON.stringify.result);
   };
-  // Failure handling for google login stop
-  // Login handling for google login start
 
   const handleLogin = async (googleData) => {
     const res = await fetch("http://127.0.0.1:5000/api/register-google", {
@@ -49,13 +43,11 @@ function RegisterPage() {
     setLoginData(data);
     localStorage.setItem("loginData", JSON.stringify(data));
   };
-  // Login handling for google login stop
 
   const handleLogout = () => {
     localStorage.removeItem("loginData");
     setLoginData(null);
   };
-  //Google stuff stop
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -73,8 +65,6 @@ function RegisterPage() {
     event.preventDefault();
     setErrors({});
     setSubmitMsg("Registering...");
-    // const csrfToken = 'IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ';
-    // Send the formData as JSON to your Flask back-end here
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
@@ -85,26 +75,21 @@ function RegisterPage() {
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
-            // Handle validation errors
             setErrors(data.errors || {});
             console.log(data.errors);
             setSubmitMsg("Failed to register");
           });
         } else {
           return response.json().then((data) => {
-            // Display the success message to the user
-            console.log(data.message); // This will log "User added successfully"
-            setSubmitMsg(data.message); // Set the message in your component state
+            console.log(data.message);
+            setSubmitMsg(data.message);
           });
         }
-        // return response.json();
       })
       .then((data) => {
-        // const csrfToken = data.csrf_token;
         console.log(data);
       })
       .catch((error) => console.error("Error:", error));
-    // setTimeout(() => setSubmitMsg("You have registered!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -132,8 +117,7 @@ function RegisterPage() {
             <Form.Label>Password</Form.Label>
             <div className="password-input-container">
               <Form.Control
-                type={showPassword ? "text" : "password"} // Toggle password visibility
-                placeholder="Enter Password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -154,7 +138,7 @@ function RegisterPage() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>User Type</Form.Label>
             <Form.Control
-              as="select" // Use "as" prop to render as a select input
+              as="select"
               name="user_type"
               value={userType}
               onChange={handleInputChange}
@@ -166,7 +150,6 @@ function RegisterPage() {
             </Form.Control>
           </FormGroup>
           <div className="FormButtonDiv">
-            {/* Submit button */}
             <Button
               className="FormButton"
               variant="primary"
@@ -176,17 +159,14 @@ function RegisterPage() {
               Submit
             </Button>
             <div className="error-messages">
-              {/* Error messages */}
               {errors.email && <p>{errors.email.join(", ")}</p>}
               {errors.password && <p>{errors.password.join(", ")}</p>}
-              {/* Display other validation errors as needed */}
             </div>
           </div>
         </Form>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
 
-      {/* Google button */}
       <div className="App">
         <div className="GoogleLoginDiv">
           {loginData ? (
