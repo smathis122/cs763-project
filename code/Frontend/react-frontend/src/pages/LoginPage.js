@@ -7,11 +7,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
 // Google import start
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import "../styles/pages/register.css";
+import GoogleLoginButton from "../Components/GoogleLoginButton";
 // Google import stop
 import "../styles/pages/password.css";
-
 
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
@@ -29,57 +27,15 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+
+  const handleSubmitMessageChange = (message) => {
+    setSubmitMsg(message)
+  }
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+  
   const navigate = useNavigate();
-  //Google stuff start
-  const [loginData, setLoginData] = useState(
-    localStorage.getItem('loginData')
-      ? JSON.parse(localStorage.getItem('loginData'))
-      : null
-  );
-  // Failure handling for google login start
-  const handleFailure = (result) => {
-    alert(JSON.stringify.result);
-  };
-  // Failure handling for google login stop
-  // Login handling for google login start
-  const handleLogin = async (googleData) => {
-    const res = await fetch('http://127.0.0.1:5000/api/register-google', {
-      method: 'POST',
-      body: JSON.stringify({
-        googleData: googleData,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await res.json();
-    // TRYCODESTART
-    if (data && data.name) {
-      setSubmitMsg("Login successful!");
-      const username = data.name;
-      setUsername(username);
-      console.log("Logged in", username);
-      navigate("/");
-    } else {
-      setSubmitMsg("Login failed. Please try again.");
-
-
-      setLoginData(data);
-      localStorage.setItem('loginData', JSON.stringify(data));
-    };
-  };
-  // TRYCODESTOP
-  // Login handling for google login stop
-  const handleLogout = () => {
-    localStorage.removeItem('loginData');
-    setLoginData(null);
-  };
-  //Google stuff stop
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -95,28 +51,27 @@ function LoginPage() {
           const username = user.username;
           const userType = user.user_type;
           setUsername(username.split("@")[0]);
-          setUserType(userType)
+          setUserType(userType);
           console.log("Logged in", username, "as", userType);
 
           if (userType === "renter") {
             navigate("/"); // Redirect to the home page
           } else if (userType === "host") {
-            navigate("/profile"); // Redirect to the profile page
+            navigate("/View"); // Redirect to the profile page
           } else {
             // Handle other user types or scenarios
             console.log("Unknown user type");
           }
-
         } else if (response.status === 202) {
           // Going here when password wrong but email right
           setErrors(response.data || {});
-          console.log("Wrong Password")
+          console.log("Wrong Password");
           console.log(response.data);
           setSubmitMsg("Login failed. Please try again!");
         } else if (response.status === 203) {
           // Going here when user wrong
           setErrors(response.data || {});
-          console.log("Wrong User")
+          console.log("Wrong User");
           console.log(response.data);
           setSubmitMsg("Login failed. Please try again!");
         }
@@ -187,36 +142,13 @@ function LoginPage() {
             Submit
           </Button>
           <div className="error-messages" id="error_messages">
-            {errors.email && <p>{errors.email.join(', ')}</p>}
-            {errors.password && <p>{errors.password.join(', ')}</p>}
+            {errors.email && <p>{errors.email.join(", ")}</p>}
+            {errors.password && <p>{errors.password.join(", ")}</p>}
             {errors.message && <p>{errors.message}</p>}
             {/* Display other validation errors as needed */}
           </div>
         </Form>
-        {/* Google button start */}
-        <div className="App">
-          <div className="GoogleLoginDiv">
-            {loginData ? (
-              <div>
-                <h3>You logged in as {loginData.name}</h3>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            ) : (
-              <div className="GoogleLogin">
-                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                  <GoogleLogin
-                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                    buttonText="Sign up with Google"
-                    onSuccess={handleLogin}
-                    onFailure={handleFailure}
-                    cookiePolicy={'single_host_origin'}
-                  ></GoogleLogin>
-                </GoogleOAuthProvider>
-              </div>
-            )}
-          </div>
-        </div>
-        {/* Google button stop */}
+        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange}></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>

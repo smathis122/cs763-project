@@ -12,8 +12,9 @@ import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import View from "./pages/ViewItem";
-import ProtectedRoute from "./Components/ProtectedRoute"; // Correct import path
-import ProfilePage from "./pages/ProfilePage"
+import Profile from "./pages/profile";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import UserProfile from "./Components/UserProfile";
 import { Navigate } from "react-router-dom";
 
 function App() {
@@ -51,6 +52,14 @@ function App() {
             }
           />
           <Route
+            path="View"
+            element={
+              <ProtectedRoute>
+                <View />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="reservations"
             element={
               <ProtectedRoute>
@@ -58,21 +67,11 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="AllProfile" element={<Profile />} />
           <Route
-            path="View"
-            element={
-              <ProtectedRoute>
-                {userType === "host" ? <View /> : <Navigate to="/" />}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
+            path="AllProfile/user/:usernameSelected"
+            element={<UserProfile />}
           />
 
           <Route path="register" element={<RegisterPage />} />

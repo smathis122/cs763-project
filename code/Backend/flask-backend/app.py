@@ -112,6 +112,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
     
+
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
     try:
@@ -194,6 +195,46 @@ def add_equipment():
         return jsonify({"message": "Equipment added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/api/getUsers", methods=["GET"])
+def get_users():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT email FROM "user"') 
+        users = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+
+        print(users) 
+
+        return jsonify(users), 200
+    except Exception as e:
+        print("Error:", str(e)) 
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/items/<username>")
+def user_items(username):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        user_name = username.split("@")[0]
+        # Fetch items associated with the user using their ID
+        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (user_name,))
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        cursor.close()
+        conn.close()
+        return jsonify({"items": equipment_data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -318,9 +359,9 @@ def register():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-#Google login method start
+#Google register method start
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
-def googleLogin():
+def googleRegister():
     #GOOGLE ADDITION START
     if (request.method == "OPTIONS"):
         return jsonify({"message": "Success"}), 200
@@ -337,7 +378,7 @@ def googleLogin():
 
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully", "name": user_name},), 201
+            return jsonify({"message": "User validated successfully", "name": user_name},), 200
         # Logic to add to database
         else:
             new_user = User(email=user_email, password="Google account, password not available")
@@ -346,7 +387,31 @@ def googleLogin():
             return jsonify({"message": "User added successfully", "name": user_name}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
-#Google login method end
+#Google register method end
+
+#Google login method start
+@app.route('/api/login-google', methods=['POST', 'OPTIONS'])
+def googleLogin():
+    if (request.method == "OPTIONS"):
+            return jsonify({"message": "Success"}), 200
+    try:
+        # Get data from the frontend request
+        data = request.get_json()
+        google_data = data["googleData"]
+        token = google_data["credential"]
+
+        claims = jwt.decode(token, verify=False)
+        user_email = claims["email"]
+        user_name = claims["given_name"] + " " + claims["family_name"]
+        session["user"] = token
+
+        # Logic to check database for matching email
+        if User.query.filter_by(email=user_email).first():
+            return jsonify({"message": "User validated successfully", "name": user_name},), 200
+        
+        return jsonify({"message": "Please register first", "name": user_name},), 404
+    except Exception as e:
+        return jsonify({"error": "Error validating user: " + str(e)}), 500
 
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():
