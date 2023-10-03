@@ -11,7 +11,6 @@ import GoogleLoginButton from "../Components/GoogleLoginButton";
 // Google import stop
 import "../styles/pages/password.css";
 
-
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
   const { setUsername, setUserType } = useUser();
@@ -52,28 +51,27 @@ function LoginPage() {
           const username = user.username;
           const userType = user.user_type;
           setUsername(username.split("@")[0]);
-          setUserType(userType)
+          setUserType(userType);
           console.log("Logged in", username, "as", userType);
 
           if (userType === "renter") {
             navigate("/"); // Redirect to the home page
           } else if (userType === "host") {
-            navigate("/profile"); // Redirect to the profile page
+            navigate("/View"); // Redirect to the profile page
           } else {
             // Handle other user types or scenarios
             console.log("Unknown user type");
           }
-
         } else if (response.status === 202) {
           // Going here when password wrong but email right
           setErrors(response.data || {});
-          console.log("Wrong Password")
+          console.log("Wrong Password");
           console.log(response.data);
           setSubmitMsg("Login failed. Please try again!");
         } else if (response.status === 203) {
           // Going here when user wrong
           setErrors(response.data || {});
-          console.log("Wrong User")
+          console.log("Wrong User");
           console.log(response.data);
           setSubmitMsg("Login failed. Please try again!");
         }
@@ -143,8 +141,8 @@ function LoginPage() {
             Submit
           </Button>
           <div className="error-messages" id="error_messages">
-            {errors.email && <p>{errors.email.join(', ')}</p>}
-            {errors.password && <p>{errors.password.join(', ')}</p>}
+            {errors.email && <p>{errors.email.join(", ")}</p>}
+            {errors.password && <p>{errors.password.join(", ")}</p>}
             {errors.message && <p>{errors.message}</p>}
             {/* Display other validation errors as needed */}
           </div>

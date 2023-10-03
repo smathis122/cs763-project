@@ -9,7 +9,6 @@ import "../styles/pages/register.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
 // Google import stop
 
-
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
@@ -18,12 +17,10 @@ function RegisterPage() {
     user_type: "",
   });
 
-
   const [userType, setUserType] = useState("");
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
-
+  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -41,8 +38,6 @@ function RegisterPage() {
     event.preventDefault();
     setErrors({});
     setSubmitMsg("Registering...");
-    // const csrfToken = 'IjE3NDRiYzhhODAyNzk4YWRiMmY4ZTkzZWRjMmVjNGVhYTAwZDE5MDgi.ZREz5A.-U1U9_3qPQnG52YRuSHSPnUk-kQ';
-    // Send the formData as JSON to your Flask back-end here
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
@@ -51,29 +46,23 @@ function RegisterPage() {
       body: JSON.stringify({ ...formData, user_type: userType }),
     })
       .then((response) => {
-        if(!response.ok) {
+        if (!response.ok) {
           return response.json().then((data) => {
-            // Handle validation errors
             setErrors(data.errors || {});
-            console.log(data.errors)
+            console.log(data.errors);
             setSubmitMsg("Failed to register");
           });
-        }
-        else {
+        } else {
           return response.json().then((data) => {
-            // Display the success message to the user
-            console.log(data.message); // This will log "User added successfully"
-            setSubmitMsg(data.message); // Set the message in your component state
+            console.log(data.message);
+            setSubmitMsg(data.message);
           });
         }
-        // return response.json();
       })
       .then((data) => {
-        // const csrfToken = data.csrf_token;
-        console.log(data)
+        console.log(data);
       })
       .catch((error) => console.error("Error:", error));
-    // setTimeout(() => setSubmitMsg("You have registered!"), 2000);
     setFormData({
       email: "",
       password: "",
@@ -86,7 +75,6 @@ function RegisterPage() {
       <h1>Register</h1>
       <div className="form" id="formDiv">
         <Form className="contact-form" onSubmit={handleSubmit}>
-
           <FormGroup className="contact-page-form-group">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -102,8 +90,7 @@ function RegisterPage() {
             <Form.Label>Password</Form.Label>
             <div className="password-input-container">
               <Form.Control
-                type={showPassword ? "text" : "password"} // Toggle password visibility
-                placeholder="Enter Password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -124,7 +111,7 @@ function RegisterPage() {
           <FormGroup className="contact-page-form-group">
             <Form.Label>User Type</Form.Label>
             <Form.Control
-              as="select" // Use "as" prop to render as a select input
+              as="select"
               name="user_type"
               value={userType}
               onChange={handleInputChange}
@@ -136,18 +123,18 @@ function RegisterPage() {
             </Form.Control>
           </FormGroup>
           <div className="FormButtonDiv">
-          <Button
-            className="FormButton"
-            variant="primary"
-            type="submit"
-            id="submitButton"
-          >
-            Submit
-          </Button>
-          <div className="error-messages">
-           {errors.email && <p>{errors.email.join(', ')}</p>}
-           {errors.password && <p>{errors.password.join(', ')}</p>}
-           {/* Display other validation errors as needed */}
+            <Button
+              className="FormButton"
+              variant="primary"
+              type="submit"
+              id="submitButton"
+            >
+              Submit
+            </Button>
+            <div className="error-messages">
+              {errors.email && <p>{errors.email.join(", ")}</p>}
+              {errors.password && <p>{errors.password.join(", ")}</p>}
+            </div>
           </div>
         </Form>
         <GoogleLoginButton redirectOnLogin={false} handleMessage={() => {}}></GoogleLoginButton>
@@ -155,6 +142,5 @@ function RegisterPage() {
       </div>
     </div>
   );
-
 }
-export default RegisterPage
+export default RegisterPage;
