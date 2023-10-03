@@ -20,7 +20,7 @@ function RegisterPage() {
   const [userType, setUserType] = useState("");
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -137,7 +137,10 @@ function RegisterPage() {
             </div>
           </div>
         </Form>
-        <GoogleLoginButton redirectOnLogin={false} handleMessage={() => {}}></GoogleLoginButton>
+        <GoogleLoginButton
+          redirectOnLogin={false}
+          handleMessage={() => {}}
+        ></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>

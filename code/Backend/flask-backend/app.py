@@ -229,6 +229,44 @@ def user_items(username):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/addReviews", methods=["POST"])
+def add_reviews():
+    try:
+        data = request.get_json()
+
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        insert_sql = "INSERT INTO reviews (target_username, origin_username, name, rating, description) VALUES (%s, %s, %s, %s, %s)"
+
+        cursor.execute(insert_sql, (data["target_username"], data["origin_username"], data["name"], data["rating"], data["description"]))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Review added successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/getReviews", methods=["GET"])
+def get_reviews():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT target_username FROM "reviews"') 
+        reviews = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+
+        print(reviews) 
+
+        return jsonify(reviews), 200
+    except Exception as e:
+        print("Error:", str(e)) 
+        return jsonify({"error": str(e)}), 500
 
 @login_manager.user_loader
 def load_user(user_id):

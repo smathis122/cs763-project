@@ -7,16 +7,18 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import { useUser } from "./UserContext";
 
 function UserProfile() {
   const { usernameSelected } = useParams();
   const usernameParts = usernameSelected.split("@")[0];
   const { username } = useUser();
-  console.log(username);
   const [equipmentData, setEquipmentData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
+  const [showReviewModal, setShowReviewModal] = useState(false); // New state for review modal
+  const [reviewText, setReviewText] = useState(""); // State to store review text
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,11 +37,35 @@ function UserProfile() {
     setShowModal(true);
   };
 
+  const handleReviewSubmit = (event) => {
+    event.preventDefault();
+    // Send the review data to your server
+    // You can use fetch or any other method to post the review
+    // After posting the review, you can close the modal
+    // Example:
+    // fetch('your-api-endpoint-for-posting-reviews', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ text: reviewText, userId: usernameSelected }),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    // .then((response) => {
+    //   if (response.ok) {
+    //     setShowReviewModal(false);
+    //     setReviewText(""); // Clear the review text
+    //   } else {
+    //     // Handle error
+    //   }
+    // })
+    // .catch((error) => console.error("Error:", error));
+  };
   console.log("selected" + usernameParts);
   console.log("current" + username);
-  if (username == usernameParts) {
+  if (username === usernameParts) {
     navigate("/View");
   }
+
   if (!equipmentData) {
     return <div>Loading...</div>;
   }
@@ -87,7 +113,34 @@ function UserProfile() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
+          <Button variant="primary" onClick={() => setShowReviewModal(true)}>
+            Write Review
+          </Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Review Form Modal */}
+      <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Write a Review</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleReviewSubmit}>
+            <Form.Group controlId="formReviewText">
+              <Form.Label>Review Text</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit Review
+            </Button>
+          </Form>
+        </Modal.Body>
       </Modal>
     </div>
   );
