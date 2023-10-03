@@ -22,6 +22,7 @@ authlib = "*"
 by = "*"
 selenium = "*"
 werkzeug = "*"
+email-validator = "*"
 
 [dev-packages]
 
