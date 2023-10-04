@@ -11,6 +11,8 @@ import Form from "react-bootstrap/Form";
 import { useUser } from "./UserContext";
 import FormGroup from "react-bootstrap/esm/FormGroup";
 
+// ... (previous imports)
+
 function UserProfile() {
   const { usernameSelected } = useParams();
   const { username } = useUser();
@@ -27,24 +29,26 @@ function UserProfile() {
   });
 
   useEffect(() => {
-    // Fetch user details, items, and reviews for the specified user using the username
-    Promise.all([
-      fetch(
-        `http://127.0.0.1:5000/api/items/${usernameSelected}`
-      ).then((response) => response.json()),
-      fetch(
-        `http://127.0.0.1:5000/api/getReviews/${usernameSelected}`
-      ).then((response) => response.json()),
-    ])
-      .then(([equipmentResponse, reviewsResponse]) => {
-        console.log("Equipment Data received from API:", equipmentResponse);
-        console.log("Reviews received from API:", reviewsResponse);
+    fetchEquipmentData();
+    fetchReviewsData();
+  }, [usernameSelected]);
 
-        setEquipmentData(equipmentResponse);
-        setReviews(reviewsResponse);
+  const fetchEquipmentData = () => {
+    fetch(`http://127.0.0.1:5000/api/items/${usernameSelected}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched equipment data:", data); // Debug statement
+        setEquipmentData(data);
       })
       .catch((error) => console.error("Error:", error));
-  }, [usernameSelected]);
+  };
+
+  const fetchReviewsData = () => {
+    fetch(`http://127.0.0.1:5000/api/getReviews/${usernameSelected}`)
+      .then((response) => response.json())
+      .then((data) => setReviews(data))
+      .catch((error) => console.error("Error:", error));
+  };
 
   const handleCardClick = (equipment) => {
     setSelectedEquipment(equipment);
@@ -76,6 +80,12 @@ function UserProfile() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        if (data.message === "Review added successfully") {
+          // Review was added successfully, fetch reviews data to update the UI
+          fetchReviewsData();
+        } else {
+          // Handle other responses or errors as needed
+        }
       })
       .catch((error) => console.error("Error:", error));
 
@@ -100,45 +110,38 @@ function UserProfile() {
         <Row>
           <Col md={8} className="equipment-column">
             <h2>Items Hosted by {usernameSelected}</h2>
-            {equipmentData && equipmentData.items.length > 0 ? (
-              <div>
-                <Button
-                  variant="primary"
-                  onClick={() => setShowReviewModal(true)}
-                >
-                  Write Review
-                </Button>
-                <Row>
-                  {equipmentData.items.map((equipment) => (
-                    <Col
-                      key={equipment.itemId}
-                      xs={12}
-                      sm={6}
-                      md={6}
-                      lg={6}
-                      className="equipment-card-col"
-                    >
-                      <Card
-                        onClick={() => handleCardClick(equipment)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <Card.Body>
-                          <Card.Title>{equipment.name}</Card.Title>
-                          <Card.Subtitle className="mb-2 text-muted">
-                            Status: {equipment.status}
-                          </Card.Subtitle>
-                          <Card.Text>{equipment.description}</Card.Text>
-                          <Card.Text>Price: ${equipment.price}</Card.Text>
-                          <Card.Text>Owner: {equipment.owner}</Card.Text>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            ) : (
-              <p>{usernameSelected} has no equipment items hosted.</p>
-            )}
+            <Button variant="primary" onClick={() => setShowReviewModal(true)}>
+              Write Review
+            </Button>
+            <Row>
+              {equipmentData &&
+              equipmentData.items &&
+              equipmentData.items.length > 0 ? (
+                equipmentData.items.map(
+                  (equipment) =>
+                    equipment.owner === usernameSelected && ( // Filter items for the selected user
+                      <Col key={equipment.id} xs={12} sm={6} md={6} lg={6}>
+                        <Card
+                          onClick={() => handleCardClick(equipment)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <Card.Body>
+                            <Card.Title>{equipment.name}</Card.Title>
+                            <Card.Subtitle className="mb-2 text-muted">
+                              Status: {equipment.status}
+                            </Card.Subtitle>
+                            <Card.Text>{equipment.description}</Card.Text>
+                            <Card.Text>Price: ${equipment.price}</Card.Text>
+                            <Card.Text>Owner: {equipment.owner}</Card.Text>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    )
+                )
+              ) : (
+                <p>{usernameSelected} has no equipment items hosted.</p>
+              )}
+            </Row>
           </Col>
           <Col md={4} className="reviews-column">
             <h2>Reviews for {usernameSelected}</h2>
