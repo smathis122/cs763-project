@@ -250,10 +250,10 @@ function View() {
               reviews.map((review, index) => (
                 <Card key={index} style={{ marginBottom: "10px" }}>
                   <Card.Body>
-                    <Card.Title>{review[0]}</Card.Title>
-                    <Card.Text>Rating: {review[1]}</Card.Text>
-                    <Card.Text>{review[2]}</Card.Text>
-                    <Card.Text>By: {review[3]}</Card.Text>
+                    <Card.Title>{review[3]}</Card.Title>
+                    <Card.Text>Rating: {review[4]}</Card.Text>
+                    <Card.Text>{review[5]}</Card.Text>
+                    <Card.Text>By: {review[2]}</Card.Text>
                   </Card.Body>
                 </Card>
               ))
