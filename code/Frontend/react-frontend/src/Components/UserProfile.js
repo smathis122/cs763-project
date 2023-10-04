@@ -65,7 +65,7 @@ function UserProfile() {
     const newReview = {
       title: formReviewData.title,
       description: formReviewData.description,
-      rating: formReviewData.rating,
+      rating: parseInt(formReviewData.rating), // Convert to an integer
       source: username,
       target: usernameSelected,
     };
@@ -196,17 +196,22 @@ function UserProfile() {
                 required
               />
             </FormGroup>
-
             <FormGroup className="contact-page-form-group">
               <Form.Label className="form-label">Rating</Form.Label>
               <Form.Control
-                type="number"
-                placeholder="Rating"
+                as="select" // Use a <select> element for the dropdown
                 name="rating"
                 value={formReviewData.rating}
                 onChange={handleInputChange}
                 required
-              />
+              >
+                <option value="">Select Rating</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </Form.Control>
             </FormGroup>
             <Form.Group controlId="formReviewText">
               <Form.Label>Review Text</Form.Label>
