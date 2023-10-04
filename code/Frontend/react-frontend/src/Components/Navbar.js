@@ -22,9 +22,7 @@ export function NavbarCustom(props) {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
           <Nav className="topnav" style={{ fontSize: "35px" }}>
-            <Nav.Link href="#/Items">Add Items</Nav.Link>
             <Nav.Link href="#/reservations">Reservations</Nav.Link>
-            <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>
             <Nav.Link href="#/search">Search</Nav.Link>
             <Nav.Link href="#/login" id="loginTab">
@@ -32,7 +30,6 @@ export function NavbarCustom(props) {
             </Nav.Link>
             <Nav.Link href="#/register">Register</Nav.Link>
             <Nav.Link href="#/View">Profile</Nav.Link>
-            <Nav.Link href="#/AllProfile">All Profile</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

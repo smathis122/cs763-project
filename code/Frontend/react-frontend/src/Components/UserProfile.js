@@ -9,94 +9,154 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useUser } from "./UserContext";
+import FormGroup from "react-bootstrap/esm/FormGroup";
 
 function UserProfile() {
   const { usernameSelected } = useParams();
-  const usernameParts = usernameSelected.split("@")[0];
   const { username } = useUser();
   const [equipmentData, setEquipmentData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
-  const [showReviewModal, setShowReviewModal] = useState(false); // New state for review modal
-  const [reviewText, setReviewText] = useState(""); // State to store review text
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
+  const [formReviewData, setFormReviewData] = useState({
+    title: "",
+    description: "",
+    rating: "",
+  });
 
   useEffect(() => {
-    // Fetch user details and items for the specified user using the username
-    fetch(`http://127.0.0.1:5000/api/items/${usernameSelected}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Data received from API:", data);
-        setEquipmentData(data);
+    // Fetch user details, items, and reviews for the specified user using the username
+    Promise.all([
+      fetch(
+        `http://127.0.0.1:5000/api/items/${usernameSelected}`
+      ).then((response) => response.json()),
+      fetch(
+        `http://127.0.0.1:5000/api/getReviews/${usernameSelected}`
+      ).then((response) => response.json()),
+    ])
+      .then(([equipmentResponse, reviewsResponse]) => {
+        console.log("Equipment Data received from API:", equipmentResponse);
+        console.log("Reviews received from API:", reviewsResponse);
+
+        setEquipmentData(equipmentResponse);
+        setReviews(reviewsResponse);
       })
       .catch((error) => console.error("Error:", error));
-  }, [username]);
+  }, [usernameSelected]);
 
   const handleCardClick = (equipment) => {
     setSelectedEquipment(equipment);
     setShowModal(true);
   };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormReviewData({ ...formReviewData, [name]: value });
+  };
+
   const handleReviewSubmit = (event) => {
     event.preventDefault();
-    // Send the review data to your server
-    // You can use fetch or any other method to post the review
-    // After posting the review, you can close the modal
-    // Example:
-    // fetch('your-api-endpoint-for-posting-reviews', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ text: reviewText, userId: usernameSelected }),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    // .then((response) => {
-    //   if (response.ok) {
-    //     setShowReviewModal(false);
-    //     setReviewText(""); // Clear the review text
-    //   } else {
-    //     // Handle error
-    //   }
-    // })
-    // .catch((error) => console.error("Error:", error));
-  };
-  console.log("selected" + usernameParts);
-  console.log("current" + username);
-  if (username === usernameParts) {
-    navigate("/View");
-  }
+    const newReview = {
+      title: formReviewData.title,
+      description: formReviewData.description,
+      rating: formReviewData.rating,
+      source: username,
+      target: usernameSelected,
+    };
 
-  if (!equipmentData) {
-    return <div>Loading...</div>;
+    fetch("http://127.0.0.1:5000/api/addReviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newReview),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error("Error:", error));
+
+    setShowReviewModal(false);
+    setFormReviewData({
+      title: "",
+      description: "",
+      rating: "",
+    });
+  };
+
+  console.log("selected" + usernameSelected);
+  console.log("current" + username);
+  if (username === usernameSelected) {
+    navigate("/View");
   }
 
   return (
     <div>
       <NavbarCustom />
-
-      <Container>
-        <h2>Items Hosted by {usernameParts}</h2>
-      </Container>
-      <Container>
+      <Container fluid>
         <Row>
-          {equipmentData.items.map((equipment) => (
-            <Col key={equipment.itemId} xs={12} sm={6} md={4} lg={3}>
-              <Card
-                onClick={() => handleCardClick(equipment)}
-                style={{ cursor: "pointer" }}
-              >
-                <Card.Body>
-                  <Card.Title>{equipment.name}</Card.Title>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    Status: {equipment.status}
-                  </Card.Subtitle>
-                  <Card.Text>{equipment.description}</Card.Text>
-                  <Card.Text>Price: ${equipment.price}</Card.Text>
-                  <Card.Text>Owner: {equipment.owner}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+          <Col md={8} className="equipment-column">
+            <h2>Items Hosted by {usernameSelected}</h2>
+            {equipmentData && equipmentData.items.length > 0 ? (
+              <div>
+                <Button
+                  variant="primary"
+                  onClick={() => setShowReviewModal(true)}
+                >
+                  Write Review
+                </Button>
+                <Row>
+                  {equipmentData.items.map((equipment) => (
+                    <Col
+                      key={equipment.itemId}
+                      xs={12}
+                      sm={6}
+                      md={6}
+                      lg={6}
+                      className="equipment-card-col"
+                    >
+                      <Card
+                        onClick={() => handleCardClick(equipment)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <Card.Body>
+                          <Card.Title>{equipment.name}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Status: {equipment.status}
+                          </Card.Subtitle>
+                          <Card.Text>{equipment.description}</Card.Text>
+                          <Card.Text>Price: ${equipment.price}</Card.Text>
+                          <Card.Text>Owner: {equipment.owner}</Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            ) : (
+              <p>{usernameSelected} has no equipment items hosted.</p>
+            )}
+          </Col>
+          <Col md={4} className="reviews-column">
+            <h2>Reviews for {usernameSelected}</h2>
+            {reviews.length === 0 ? (
+              <p>This person has no reviews yet.</p>
+            ) : (
+              reviews.map((review, index) => (
+                <Card key={index} style={{ marginBottom: "10px" }}>
+                  <Card.Body>
+                    <Card.Title>{review[3]}</Card.Title>
+                    <Card.Text>Rating: {review[4]}</Card.Text>
+                    <Card.Text>{review[5]}</Card.Text>
+                    <Card.Text>By: {review[2]}</Card.Text>
+                  </Card.Body>
+                </Card>
+              ))
+            )}
+          </Col>
         </Row>
       </Container>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -113,29 +173,50 @@ function UserProfile() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => setShowReviewModal(true)}>
-            Write Review
-          </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* Review Form Modal */}
+      {/* Add a "Write Review" Button */}
       <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Write a Review</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleReviewSubmit}>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label className="form-label">Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Title"
+                name="title"
+                value={formReviewData.title}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+
+            <FormGroup className="contact-page-form-group">
+              <Form.Label className="form-label">Rating</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Rating"
+                name="rating"
+                value={formReviewData.rating}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
             <Form.Group controlId="formReviewText">
               <Form.Label>Review Text</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={4}
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
+                name="description"
+                value={formReviewData.description}
+                onChange={handleInputChange}
                 required
               />
             </Form.Group>
+
             <Button variant="primary" type="submit">
               Submit Review
             </Button>
