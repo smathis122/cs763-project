@@ -118,8 +118,9 @@ function RegisterPage() {
               required
             >
               <option value="">Select User Type</option>
-              <option value="renter">Renter</option>
-              <option value="host">Host</option>
+              {/* <option value="renter">Renter</option>
+              <option value="host">Host</option> */}
+              <option value="general">Renter/Host</option>
             </Form.Control>
           </FormGroup>
           <div className="FormButtonDiv">

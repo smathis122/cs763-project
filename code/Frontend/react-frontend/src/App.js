@@ -31,7 +31,7 @@ function App() {
             path="Items"
             element={
               <ProtectedRoute>
-                {userType === "host" ? <Items /> : <Navigate to="/" />}
+                <Items />
               </ProtectedRoute>
             }
           />
@@ -63,7 +63,7 @@ function App() {
             path="reservations"
             element={
               <ProtectedRoute>
-                {userType === "renter" ? <Reservations /> : <Navigate to="/" />}
+                <Reservations />
               </ProtectedRoute>
             }
           />

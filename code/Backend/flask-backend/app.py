@@ -82,7 +82,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
     
-    user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host')],
+    user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host'), ('general', 'Renter/Host')],
                            validators=[InputRequired()])
 
     submit = SubmitField('Register')
@@ -266,8 +266,6 @@ def login():
         session['username'] = None
         if form.validate_on_submit():
             email = form.email.data
-            password = form.password.data.encode('utf-8')
-            print('Entered pass:', password)
             cursor.execute('SELECT * FROM "user" WHERE email = %s', (email,))
             user_data = cursor.fetchone()
             cursor.close()
@@ -277,7 +275,7 @@ def login():
                 print("Hex pass:", db_password)
                 hashed_db_password = binascii.unhexlify(db_password)
                 print("Unhexed pass:", hashed_db_password)
-                if bcrypt.checkpw(password, hashed_db_password):
+                if bcrypt.checkpw(form.password.data.encode('utf-8'), hashed_db_password):
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))

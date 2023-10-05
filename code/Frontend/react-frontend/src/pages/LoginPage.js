@@ -54,10 +54,13 @@ function LoginPage() {
           setUserType(userType);
           console.log("Logged in", username, "as", userType);
 
+          // ***Will remove types other than general***
           if (userType === "renter") {
             navigate("/"); // Redirect to the home page
           } else if (userType === "host") {
             navigate("/View"); // Redirect to the profile page
+          } else if (userType === "general") {
+            navigate("/");
           } else {
             // Handle other user types or scenarios
             console.log("Unknown user type");
