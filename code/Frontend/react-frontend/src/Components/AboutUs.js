@@ -8,10 +8,10 @@ function AboutUs() {
             <br />
             <h2>Step into a world of adventure with Gear On the Go! </h2>
             <p>
-                Hey there, thrill-seekers and outdoor enthusiasts! Get ready to embark on a game-changing
-                journey with our cutting-edge web application. Picture this: a dynamic team forged in the
-                crucible of Boston University's Software Engineering class, driven by the mission to revolutionize
-                how we experience the great outdoors!
+                Hey there, thrill-seekers, outdoor enthusiasts and gear heads! Get ready to embark on a game-changing
+                journey with our cutting-edge web application. Picture this: a dynamic team formed as part of
+                Boston University's Software Engineering class, driven by the mission to revolutionize
+                following our passion wherever we are!
             </p>
             <br />
             <p>
