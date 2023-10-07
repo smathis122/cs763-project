@@ -23,7 +23,6 @@ function RegisterPage() {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
-  //Adding Google Pop up constants (start)
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
@@ -32,7 +31,6 @@ function RegisterPage() {
   }
 
   //Adding Google Pop up constants (stop)
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
