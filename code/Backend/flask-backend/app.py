@@ -220,11 +220,8 @@ def user_items(username):
     try:
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
+        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (username,))
 
-        user_name = username.split("@")[0]
-        # Fetch items associated with the user using their ID
-        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (user_name,))
-        # Fetch all rows and store them in a list of dictionaries
         columns = [desc[0] for desc in cursor.description]
         equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
@@ -235,6 +232,44 @@ def user_items(username):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/addReviews", methods=["POST"])
+def add_reviews():
+    try:
+        data = request.get_json()
+
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        print(data)
+        insert_sql = "INSERT INTO reviews (target_username, origin_username, name, rating, description) VALUES (%s, %s, %s, %s, %s)"
+
+        cursor.execute(insert_sql, (data["target"], data["source"], data["title"], data["rating"], data["description"]))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Review added successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/getReviews/<username>", methods=["GET"])
+def get_reviews(username):
+    try:
+        print(username)
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM "reviews" WHERE target_username = %s', (username,)) 
+        reviews = cursor.fetchall()
+
+
+        cursor.close()
+        conn.close()
+        print("before", reviews)
+
+        return jsonify(reviews), 200
+    except Exception as e:
+        print("Error:", str(e)) 
+        return jsonify({"error": str(e)}), 500
 
 @login_manager.user_loader
 def load_user(user_id):
