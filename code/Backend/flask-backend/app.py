@@ -488,6 +488,10 @@ def search_items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Adding Info Page
+@app.route('/api/info')
+def info():
+    return jsonify({"message": "Entered Info"}), 201
     
 @app.route('/api/items', methods=['GET'])
 def get_items():
