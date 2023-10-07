@@ -30,6 +30,12 @@ app.secret_key = os.environ.get('SECRET_KEY')
 
 db = SQLAlchemy(app)
 
+# SQL Queries for Search endpounts
+SEARCH_QUERY = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
+AVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = true"
+UNAVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = false"
+
+
 # Database table for user
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -470,71 +476,58 @@ def get_reservation():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+
+# Define the function to execute SQL queries and fetch data
+def execute_database_query(query, params=None):
+    try:
+        # Connect to the PostgreSQL database
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        if params is not None:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        # Fetch all rows and store them in a list of dictionaries
+        columns = [desc[0] for desc in cursor.description]
+        data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        cursor.close()
+        conn.close()
+        return data
+    except Exception as e:
+        return None, str(e)
+
 @app.route('/api/searchItems', methods=['GET'])
 def search_items():
     try:
+
         search_query = request.args.get('q')
         print(f"Received search query: {search_query}")
-
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
         query = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
-        cursor.execute(query, (f"%{search_query}%", f"%{search_query}%"))
-
-        columns = [desc[0] for desc in cursor.description]
-        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-        cursor.close()
-        conn.close()
-
+        params = (f"%{search_query}%", f"%{search_query}%")
+        equipment_data = execute_database_query(query, params)
         if equipment_data:
             return jsonify(equipment_data), 200
         else:
             return jsonify({"message": "No matching items found"}), 404
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/availableItems', methods=['GET'])
-def get_available_items():
+    
+@app.route('/api/items', methods=['GET'])
+def get_items():
     try:
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM Equipment WHERE available = true")
-        columns = [desc[0] for desc in cursor.description]
-        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-        cursor.close()
-        conn.close()
-
+        availability = request.args.get('availability')
+        query = "SELECT * FROM Equipment"
+        if availability == "available":
+            query += " WHERE available = true"
+        elif availability == "unavailable":
+            query += " WHERE available = false"
+        equipment_data = execute_database_query(query)
         if equipment_data:
             return jsonify(equipment_data), 200
         else:
-            return jsonify({"message": "No available items found"}), 404
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/unavailableItems', methods=['GET'])
-def get_unavailable_items():
-    try:
-        conn = psycopg2.connect(**db_connection_settings)
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM Equipment WHERE available = false")
-        columns = [desc[0] for desc in cursor.description]
-        equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-        cursor.close()
-        conn.close()
-
-        if equipment_data:
-            return jsonify(equipment_data), 200
-        else:
-            return jsonify({"message": "No unavailable items found"}), 404
-
+            return jsonify({"message": f"No {availability} items found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

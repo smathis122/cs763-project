@@ -95,9 +95,9 @@ function LoginPage() {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
+              id="email"
               placeholder="Enter Email"
               name="email"
-              id="email"
               value={formData.email}
               onChange={handleInputChange}
               required
@@ -126,6 +126,7 @@ function LoginPage() {
                 )}
               </span>
             </div>
+
           </FormGroup>
           <Button
             variant="primary"

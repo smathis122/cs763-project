@@ -26,10 +26,8 @@ export function NavbarCustom(props) {
             <Nav.Link href="#/reservations">Reservations</Nav.Link>
             <Nav.Link href="#/info">Info</Nav.Link>
             <Nav.Link href="#/contact">Contact</Nav.Link>
-            <Nav.Link href="#/search">Search</Nav.Link>
-            <Nav.Link href="#/login" id="loginTab">
-              Login
-            </Nav.Link>
+            <Nav.Link href="#/search" id="searchTab">Search</Nav.Link>
+            <Nav.Link href="#/login" id="loginTab">Login</Nav.Link>
             <Nav.Link href="#/register">Register</Nav.Link>
             <Nav.Link href="#/View">Profile</Nav.Link>
             <Nav.Link href="#/AllProfile">All Profile</Nav.Link>
