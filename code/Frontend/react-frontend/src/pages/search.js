@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import { Button, Container, Row, Col, Card, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavbarCustom from "../Components/Navbar";
+// import MakeReservation from "./MakeReservation.js";
 
 function ItemSearchAndFilter() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -9,6 +12,7 @@ function ItemSearchAndFilter() {
   const [results, setResults] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch initial data when the component mounts
@@ -20,13 +24,15 @@ function ItemSearchAndFilter() {
     const endpoint =
       availabilityFilter === "searchItems"
         ? `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}`
-        : `http://127.0.0.1:5000/api/${availabilityFilter}`;
+        : `http://127.0.0.1:5000/api/items?availability=${availabilityFilter}`;
 
     fetch(endpoint).then(handleResponse).catch(handleError);
   };
 
   const handleResponse = (response) => {
     if (!response.ok) {
+      console.error("Response not OK:", response.status, response.statusText);
+    response.text().then((errorText) => console.error("Error response:", errorText));
       throw new Error("Network response was not ok");
     }
 
@@ -48,6 +54,10 @@ function ItemSearchAndFilter() {
     setShowModal(true);
   };
 
+  const handleReserveClick = () => {
+    navigate("/reservations",{state:{selectedItem:selectedItem}});
+  };
+
   return (
     <div>
       <NavbarCustom />
@@ -61,7 +71,7 @@ function ItemSearchAndFilter() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button onClick={fetchItems}>Search</Button>
+        <Button id="searchButton" onClick={fetchItems}>Search</Button>
 
         {/* Filter Options */}
         <h2>Filter by Availability Status:</h2>
@@ -78,20 +88,22 @@ function ItemSearchAndFilter() {
         <label>
           <input
             type="radio"
+            id="radioAvailable"
             name="availabilityFilter"
-            value="availableItems"
-            checked={availabilityFilter === "availableItems"}
-            onChange={() => setAvailabilityFilter("availableItems")}
+            value="available"
+            checked={availabilityFilter === "available"}
+            onChange={() => setAvailabilityFilter("available")}
           />{" "}
           Available
         </label>
         <label>
           <input
             type="radio"
+            id="radioUnavailable"
             name="availabilityFilter"
-            value="unavailableItems"
-            checked={availabilityFilter === "unavailableItems"}
-            onChange={() => setAvailabilityFilter("unavailableItems")}
+            value="unavailable"
+            checked={availabilityFilter === "unavailable"}
+            onChange={() => setAvailabilityFilter("unavailable")}
           />{" "}
           Unavailable
         </label>
@@ -131,6 +143,7 @@ function ItemSearchAndFilter() {
             <p>Owner: {selectedItem?.owner}</p>
           </Modal.Body>
           <Modal.Footer>
+            <Button onClick={handleReserveClick}>Reserve</Button>
             <Button variant="secondary" onClick={() => setShowModal(false)}>
               Close
             </Button>

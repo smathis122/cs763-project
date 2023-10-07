@@ -3,3 +3,5 @@ __pycache__/
 flask_session/
 .env/
 bin/
+Pipfile/
+Pipfile.lock/
