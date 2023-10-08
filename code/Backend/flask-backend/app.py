@@ -441,7 +441,7 @@ def googleRegister():
             return jsonify({"message": "User validated successfully", "name": user_name, "isNew": False, "email": user_email},), 200
         # Logic to add to database
         else:
-            new_user = User(email=user_email, password="Google account, password not available")
+            new_user = User(email=user_email, password="Google account, password not available", user_type="renter")
             db.session.add(new_user)
             db.session.commit()
             return jsonify({"message": "User added successfully", "name": user_name, "isNew": True, "email": user_email}), 201
