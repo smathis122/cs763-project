@@ -27,6 +27,7 @@ def test_google_login_registered_user(client):
     response = client.post('/api/login-google', json=data)
     assert response.status_code == 200
     assert response.json["message"] == "User validated successfully"
+    assert response.json["name"] == "valid_test user"
 
 def test_google_login_unregistered_user(client):
     data = {
@@ -37,6 +38,7 @@ def test_google_login_unregistered_user(client):
     response = client.post('/api/login-google', json=data)
     assert response.status_code == 404
     assert response.json["message"] == "Please register first"
+    assert response.json["name"] == "test user"
 
 def test_google_login_invalid_request(client):
     data = {

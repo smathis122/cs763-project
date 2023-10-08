@@ -13,7 +13,7 @@ def client():
 
     # Add test user to db
     with app.app_context():
-        new_user = User(email=user_email, password="Google account, password not available", user_type="renter")
+        new_user = User(id=1, email=user_email, password="Google account, password not available", user_type="renter")
         db.session.add(new_user)
         db.session.commit()
 
