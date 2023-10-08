@@ -1,6 +1,6 @@
 import pytest
 import requests
-from app import app
+from app import app, db, User
 
 unregistered_user_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2OTY3Mzk2MDQsImV4cCI6MTcyODI3NTYwNCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImdpdmVuX25hbWUiOiJ0ZXN0IiwiZmFtaWx5X25hbWUiOiJ1c2VyIiwiZW1haWwiOiJpbnZhbGlkLnVzZXJAZW1haWwuY29tIiwiUm9sZSI6WyJNYW5hZ2VyIiwiUHJvamVjdCBBZG1pbmlzdHJhdG9yIl19.8lZBVMDGwVD-hyeRE175PVclazPARJIqymDoazKFEmA"
 registered_user_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2OTY3Mzk2MDQsImV4cCI6MTcyODI3NTYwNCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImdpdmVuX25hbWUiOiJ2YWxpZF90ZXN0IiwiZmFtaWx5X25hbWUiOiJ1c2VyIiwiZW1haWwiOiJhYmNAZGVmLmNvbSIsIlJvbGUiOlsiTWFuYWdlciIsIlByb2plY3QgQWRtaW5pc3RyYXRvciJdfQ.tzp6tmLmDHiHWJIwGwukIEoRoNpfCAunMFjRlZwaW5o"
@@ -12,38 +12,54 @@ def client():
 
     yield client
 
-# Tests for app.route /api/login-google
-def test_google_login_options(client):
-    response = client.options('/api/login-google')
+# Tests for app.route /api/register-google
+def test_google_register_options(client):
+    response = client.options('/api/register-google')
     assert response.status_code == 200
-    assert response.json == {'message': 'Success'}
+    assert response.json["message"] == "Success"
 
-def test_google_login_registered_user(client):
+def test_google_register_registered_user(client):
     data = {
         "googleData": {
             "credential": registered_user_token
         }
     }
-    response = client.post('/api/login-google', json=data)
+    response = client.post('/api/register-google', json=data)
     assert response.status_code == 200
     assert response.json["message"] == "User validated successfully"
 
-def test_google_login_unregistered_user(client):
+def test_google_register_unregistered_user(client):
+    user_email = "invalid.user@email.com"
     data = {
         "googleData": {
             "credential": unregistered_user_token
         }
     }
-    response = client.post('/api/login-google', json=data)
-    assert response.status_code == 404
-    assert response.json["message"] == "Please register first"
+    response = client.post('/api/register-google', json=data)
+    assert response.status_code == 201
+    assert response.json["message"] == "User added successfully"
+    
+    with app.app_context():
+        assert User.query.filter_by(email=user_email).first()
+        User.query.filter_by(email=user_email).delete()
+        db.session.commit()
 
-def test_google_login_invalid_request(client):
+def test_google_register_invalid_request_credential(client):        
     data = {
-        "bad_request_format": {
+        "googleData": {
             "invalid_credential": registered_user_token
         }
     }
-    response = client.post('/api/login-google', json=data)
+    response = client.post('/api/register-google', json=data)
+    assert response.status_code == 500
+    assert "Error validating user" in response.json["error"]
+
+def test_google_register_invalid_request_googledata(client):        
+    data = {
+        "bad_request_format": {
+            "credential": registered_user_token
+        }
+    }
+    response = client.post('/api/register-google', json=data)
     assert response.status_code == 500
     assert "Error validating user" in response.json["error"]
