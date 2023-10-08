@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function CheckoutForm() {
   window.onload = function () {
@@ -8,13 +9,26 @@ function CheckoutForm() {
   };
   function youClicked() {
     alert(
-      "Please fill in the boxes below.\nIncomplete information will not be submitted."
+      "Please fill in the boxes below you numpty.\nIncomplete information will not be submitted."
     );
   }
+
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleHelpClick = () => {
-    setShowAlert(true);
+
+  const navigate = useNavigate(); 
+
+  const handleSuccessfulPayment = () => {
+    
+    navigate("/PaymentSuccessful"); 
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log("Form is valid. Submitting...");
+      handleSuccessfulPayment(); 
+    }
   };
 
   return (
@@ -27,12 +41,7 @@ function CheckoutForm() {
         method="post"
         action=""
         noValidate
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (validateForm()) {
-            console.log("Form is valid. Submitting...");
-          }
-        }}
+        onSubmit= {handleFormSubmit}
       >
         <Form.Group>
           <Form.Label className="text-info">
@@ -151,7 +160,7 @@ function validateForm() {
   }
 
   var state = document.getElementById("state");
-  if (state.value.length != 2) {
+  if (state.value.length !== 2) {
     alert("Sorry: State should be only 2 characters, e.g: MA");
     state.focus();
     return false;
@@ -165,7 +174,7 @@ function validateForm() {
   }
 
   var cvc = document.getElementById("cvc");
-  if (cvc.value.length != 3) {
+  if (cvc.value.length !== 3) {
     alert("Sorry: The CVC number should be of 3 digits");
     cvc.focus();
     return false;
@@ -201,7 +210,7 @@ function validateForm() {
 
     const valid = cardDigits.reduce((acc, val) => acc + val, 0);
 
-    if (valid % 10 == 0) {
+    if (valid % 10 === 0) {
       alert("Card number is valid");
       return true;
     } else {
@@ -210,6 +219,5 @@ function validateForm() {
     }
   }
 }
-// The rest of your code for the validateForm function and export statement
 
 export default CheckoutForm;

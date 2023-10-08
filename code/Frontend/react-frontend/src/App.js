@@ -7,8 +7,9 @@ import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
 //import CheckoutHelp from "./pages/form_helpbutton";
-import CheckoutValidation from "./pages/payment_validation";
-// import PaymentSuccessful from "./pages/payment_successful";
+import Checkout from "./pages/payment_validation";
+import PaymentSuccessful from "./pages/payment_successful";
+import PaymentUnsuccessful from "./pages/payment_unsuccessful";
 
 import ItemSearchAndFilter from "./pages/search";
 
@@ -31,8 +32,9 @@ function App() {
           <Route path="Items" element={<Items />} />
           <Route path="contact" element={<Contact />} />
 
-          <Route path="CheckoutValidation" element={<CheckoutValidation />} />
-          {/* <Route path="PaymentSuccessful" element={<PaymentSuccessful />} /> */}
+          <Route path="Checkout" element={<Checkout />} />
+          <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
+          <Route path="PaymentUnsuccessful" element={<PaymentUnsuccessful />} />
 
           <Route path="search" element={<ItemSearchAndFilter />} />
           <Route path="reservations" element={<Reservations />} />

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function PaymentSuccessful() {
+function PaymentUnsuccessful() {
 
     const marginStyle = {
         marginLeft: "20px",
@@ -20,18 +20,19 @@ function PaymentSuccessful() {
     <div>
         <br />
         <br />
-        <h2 style = {marginStyle}>Payment Successfully Processed</h2>
+        <h2 style = {marginStyle}>Payment Unsuccessful</h2>
          <br />
          <br />
-        <h3 style = {marginStyle}>Thank you for renting with GearOnTheGo!</h3>
-        <h3 style = {marginStyle}>A copy of your purchase has been sent to your email</h3>
+        <h3 style = {marginStyle}>Please make sure to input the correct Payment Information</h3>
         
       <div style = {containerStyle}>
-           <h5 style = {marginStyle}>Have any questions? Refer to our {" "}
-           <Link to= "/contact">FAQ page</Link></h5>
+     
+          <h5 style={marginStyle}>Having trouble making a payment? Feel free to {" "}
+          < Link to= "/contact">Contact Us!</Link></h5>
+       
       </div>
       </div>
  );
  }
 
- export default PaymentSuccessful;
+ export default PaymentUnsuccessful;
