@@ -47,3 +47,7 @@ def test_google_login_invalid_request(client):
     response = client.post('/api/login-google', json=data)
     assert response.status_code == 500
     assert "Error validating user" in response.json["error"]
+
+def test_google_login_unsuported_request_method(client):
+    response = client.get('/api/login-google')
+    assert response.status_code == 405

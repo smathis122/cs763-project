@@ -63,3 +63,7 @@ def test_google_register_invalid_request_googledata(client):
     response = client.post('/api/register-google', json=data)
     assert response.status_code == 500
     assert "Error validating user" in response.json["error"]
+
+def test_google_register_unsuported_request_method(client):
+    response = client.get('/api/register-google')
+    assert response.status_code == 405

@@ -51,7 +51,7 @@ def test_google_update_unregistered_user(client):
     assert response.status_code == 404
     assert response.json["error"] == "User not found"
 
-def test_google_update_invalid_request(client):
+def test_google_update_invalid_request_content(client):
     data = {
         "missing_email": user_email,
         "type": "invalid_user_type"
@@ -59,3 +59,7 @@ def test_google_update_invalid_request(client):
     response = client.post('/api/update-google', json=data)
     assert response.status_code == 500
     assert "Error validating user" in response.json["error"]
+
+def test_google_update_unsuported_request_method(client):
+    response = client.get('/api/update-google')
+    assert response.status_code == 405
