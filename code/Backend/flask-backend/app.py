@@ -21,6 +21,7 @@ import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
+from datetime import datetime
 
 app = Flask(__name__)
 load_dotenv()
@@ -456,15 +457,18 @@ def make_reservation():
  
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-
-        insert_sql = "INSERT INTO Reservation (start_date, end_date) VALUES (%s, %s)"
-        cursor.execute(insert_sql, (data["start_date"], data["end_date"]))
         
-        conn.commit()
-        cursor.close()
-        conn.close()
+        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
+        if data["end_date"] >= data["start_date"] and datetime.strptime(data["start_date"], "%Y-%m-%d") >= datetime.now():
+            cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"]))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
 
-        return jsonify({"message": "Reservation made successfully"}), 200
+            return jsonify({"message": "Reservation made successfully"}), 200
+        else:
+            return jsonify({"message": "Date inputs are invalid"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -486,6 +490,47 @@ def get_reservation():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/api/removeReservation/<reservation_id>", methods=["DELETE"])
+def remove_reservation(reservation_id):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM Reservation WHERE reservation_id = %s", (reservation_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Reservation with ID {reservation_id} removed successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/updateReservation/<reservation_id>", methods=["PUT"])
+def update_reservation(reservation_id):
+    try:
+        data = request.get_json()
+        
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            UPDATE Reservation
+            SET
+                start_date = %s,
+                end_date = %s
+            WHERE reservation_id = %s
+        """, (data["start_date"], data["end_date"], reservation_id))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Reservation with ID {reservation_id} updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Define the function to execute SQL queries and fetch data

@@ -50,11 +50,13 @@ function ItemSearchAndFilter() {
   };
 
   const handleCardClick = (item) => {
+    console.log(selectedItem);
     setSelectedItem(item);
     setShowModal(true);
   };
 
   const handleReserveClick = () => {
+    console.log(selectedItem);
     navigate("/reservations",{state:{selectedItem:selectedItem}});
   };
 
