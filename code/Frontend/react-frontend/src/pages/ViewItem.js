@@ -62,7 +62,6 @@ function View() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  console.log(selectedItem);
   const { username, userType } = useUser();
   const navigate = useNavigate();
   const [updateFormData, setUpdateFormData] = useState({

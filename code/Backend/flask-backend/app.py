@@ -21,6 +21,7 @@ import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
+from datetime import datetime
 
 app = Flask(__name__)
 load_dotenv()
@@ -456,15 +457,18 @@ def make_reservation():
  
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-
-        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
-        cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"]))
         
-        conn.commit()
-        cursor.close()
-        conn.close()
+        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
+        if data["end_date"] >= data["start_date"] and datetime.strptime(data["start_date"], "%Y-%m-%d") >= datetime.now():
+            cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"]))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
 
-        return jsonify({"message": "Reservation made successfully"}), 200
+            return jsonify({"message": "Reservation made successfully"}), 200
+        else:
+            return jsonify({"message": "Date inputs are invalid"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
