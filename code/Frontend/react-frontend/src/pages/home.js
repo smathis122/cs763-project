@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavbarCustom } from "../Components/Navbar";
+import {useNavigate} from "react-router-dom";
+import { useUser } from "../Components/UserContext";
 import Card from "react-bootstrap/esm/Card";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
@@ -12,7 +14,8 @@ function EquipmentList() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
-
+  const {userType } = useUser();
+  const navigate = useNavigate();
   useEffect(() => {
     fetchEquipmentData();
   }, []);
@@ -28,6 +31,14 @@ function EquipmentList() {
   const handleCardClick = (equipment) => {
     setSelectedEquipment(equipment);
     setShowModal(true);
+  };
+
+  const handleReserveClickRegister = () => {
+    navigate("/register",{state:{selectedEquipment:selectedEquipment}});
+  };
+  
+  const handleReserveClickReserve = () => {
+    navigate("/reservations",{state:{selectedEquipment:selectedEquipment}});
   };
 
   return (
@@ -68,6 +79,7 @@ function EquipmentList() {
           <p>Owner: {selectedEquipment?.owner}</p>
         </Modal.Body>
         <Modal.Footer>
+          {userType === "renter" ? <Button onClick={handleReserveClickReserve}>Reserve</Button> :<Button onClick={handleReserveClickRegister}>Reserve</Button>}
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>

@@ -32,9 +32,6 @@ db = SQLAlchemy(app)
 
 # SQL Queries for Search endpounts
 SEARCH_QUERY = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
-AVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = true"
-UNAVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = false"
-
 
 # Database table for user
 class User(db.Model):
@@ -475,12 +472,22 @@ def execute_database_query(query, params=None):
 @app.route('/api/searchItems', methods=['GET'])
 def search_items():
     try:
-
         search_query = request.args.get('q')
+        min_price = request.args.get('minPrice', 0)
+        max_price = request.args.get('maxPrice', float('inf'))
+
         print(f"Received search query: {search_query}")
-        query = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
-        params = (f"%{search_query}%", f"%{search_query}%")
-        equipment_data = execute_database_query(query, params)
+        params = (f"%{search_query}%", f"%{search_query}%", min_price, max_price)
+        
+        # Modify the SQL query to include price filtering
+        SEARCH_QUERY_WITH_PRICE = """
+            SELECT * FROM Equipment
+            WHERE (name ILIKE %s OR description ILIKE %s)
+            AND price >= %s AND price <= %s
+        """
+
+        equipment_data = execute_database_query(SEARCH_QUERY_WITH_PRICE, params)
+        
         if equipment_data:
             return jsonify(equipment_data), 200
         else:
@@ -491,8 +498,8 @@ def search_items():
     
 @app.route('/api/items', methods=['GET'])
 def get_items():
-    try:
-        availability = request.args.get('availability')
+    try: 
+        availability = request.args.get('availability')      
         query = "SELECT * FROM Equipment"
         if availability == "available":
             query += " WHERE available = true"
@@ -501,11 +508,11 @@ def get_items():
         equipment_data = execute_database_query(query)
         if equipment_data:
             return jsonify(equipment_data), 200
+            
         else:
             return jsonify({"message": f"No {availability} items found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=True)
