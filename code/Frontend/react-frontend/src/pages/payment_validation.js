@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
+import {useLocation} from 'react-router-dom';
 
 function CheckoutForm() {
+  const location = useLocation();
+  console.log(location.state.reservationDetails.item_id)
   window.onload = function () {
     var clickMeButton = document.getElementById("clickme");
     clickMeButton.onclick = youClicked;

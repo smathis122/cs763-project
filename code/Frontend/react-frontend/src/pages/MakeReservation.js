@@ -5,12 +5,14 @@ import FormGroup from "react-bootstrap/esm/FormGroup";
 import Button from "react-bootstrap/esm/Button";
 import {useLocation} from 'react-router-dom';
 import { useUser } from "../Components/UserContext";
+import {useNavigate} from "react-router-dom";
 
 
 function ReservationForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const location = useLocation();
   const { username, userType } = useUser();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
@@ -21,6 +23,10 @@ function ReservationForm() {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCheckoutClick = () => {
+    navigate("/CheckoutValidation",{state:{reservationDetails:formData}});
   };
 
   const handleSubmit = (event) => {
@@ -79,9 +85,10 @@ function ReservationForm() {
               required
             />
           </FormGroup>
-          <Button
+          <Button 
             variant="primary"
             type="submit"
+            onClick={handleCheckoutClick}
             style={{
               fontSize: "20px",
               width: "150px",
@@ -90,7 +97,7 @@ function ReservationForm() {
             }}
             id="submitButton"
           >
-            Submit
+            Checkout
           </Button>
         </Form>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
