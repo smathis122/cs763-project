@@ -3,11 +3,19 @@ import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/esm/Form";
 import FormGroup from "react-bootstrap/esm/FormGroup";
 import Button from "react-bootstrap/esm/Button";
+import {useLocation} from 'react-router-dom';
+import { useUser } from "../Components/UserContext";
+
+
 function ReservationForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
+  const location = useLocation();
+  const { username, userType } = useUser();
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
+    item_id: location.state.selectedItem.itemid,
+    user_name: username
   });
 
   const handleInputChange = (event) => {
@@ -33,6 +41,8 @@ function ReservationForm() {
     setFormData({
       start_date: "",
       end_date: "",
+      item_id: location.state.selectedItem.itemid,
+      user_name: username
     });
   };
 
