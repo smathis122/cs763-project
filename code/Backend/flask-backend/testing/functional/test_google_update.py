@@ -2,6 +2,7 @@ import pytest
 import requests
 from app import app, db, User
 
+#tokens and input for testing
 user_email = "pytest@abc.com"
 user_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUZXN0IEdvb2dsZSIsImlhdCI6MTY5Njc0NDM4OSwiZXhwIjoxNzI4MjgwMzg5LCJhdWQiOiJ3d3cudGVzdC5jb20iLCJzdWIiOiJweXRlc3RAYWJjLmNvbSIsImdpdmVuX25hbWUiOiJQeVRlc3QiLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6InB5dGVzdEBhYmMuY29tIn0.1hjTqE9Nh6nYPB9CBBfB2rT3hpf5NMgCV6gnYsEu2zs"
 
