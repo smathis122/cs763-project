@@ -461,7 +461,7 @@ def googleRegister():
 
         claims = jwt.decode(token, verify=False)
         user_email = claims["email"]
-        user_name = claims["given_name"] + " " + claims["family_name"]
+        user_name = claims["email"]
         session["user"] = token
 
         # Logic to check database for matching email
@@ -494,7 +494,7 @@ def googleLogin():
 
         claims = jwt.decode(token, verify=False)
         user_email = claims["email"]
-        user_name = claims["given_name"] + " " + claims["family_name"]
+        user_name = claims["email"]
         session["user"] = token
 
         # Logic to check database for matching email
