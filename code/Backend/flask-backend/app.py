@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from oauthlib.oauth2 import WebApplicationClient
-from authlib.integrations.flask_client import OAuth 
+from authlib.integrations.flask_client import OAuth
 import requests
 import json
 import urllib
@@ -43,8 +43,9 @@ class User(db.Model):
     user_type = db.Column(db.String(40), nullable = False)
 
 
-CORS(app) # Allow all origins for development; restrict in production
-secret_key = secrets.token_hex(16)  # Generate a 32-character (16 bytes) random hexadecimal string
+CORS(app)  # Allow all origins for development; restrict in production
+# Generate a 32-character (16 bytes) random hexadecimal string
+secret_key = secrets.token_hex(16)
 
 app.config['SECRET_KEY'] = secret_key
 
@@ -60,11 +61,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
 class paymentInfo(db.Model):
-    payment_id = db.Column(db.Integer,primary_key = True)
-    itemid = db.Column(db.Integer, nullable = False)
-    is_paid = db.Column(db.Boolean, nullable = False)
-    Price = db.Column(db.Integer, nullable = False)
+    payment_id = db.Column(db.Integer, primary_key=True)
+    itemid = db.Column(db.Integer, nullable=False)
+    is_paid = db.Column(db.Boolean, nullable=False)
+    Price = db.Column(db.Integer, nullable=False)
 
 
 class regUser(UserMixin):
@@ -77,41 +79,42 @@ class regUser(UserMixin):
 
 class RegisterForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
+        InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-    
+
     user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host')],
-                           validators=[InputRequired()])
+                            validators=[InputRequired()])
 
     submit = SubmitField('Register')
 
     def validate_email(self, email):
         if not re.match(r'^[a-zA-Z0-9.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$', email.data):
             raise ValidationError('Invalid email address.')
-        
+
         conn = psycopg2.connect(**db_connection_settings)
-        
+
         cursor = conn.cursor()
-        cursor.execute('SELECT email FROM "user" WHERE email = %s', (email.data,))
+        cursor.execute(
+            'SELECT email FROM "user" WHERE email = %s', (email.data,))
         existing_user_email = cursor.fetchone()
         cursor.close()
         conn.close()
         if existing_user_email:
-            raise ValidationError('That email already exists. Please choose a different one.')
+            raise ValidationError(
+                'That email already exists. Please choose a different one.')
 
 
 class LoginForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
+        InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Login')
 
-    
 
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -134,7 +137,7 @@ def remove_equipment(item_id):
 def update_equipment(item_id):
     try:
         data = request.get_json()
-        
+
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
 
@@ -164,7 +167,7 @@ def get_equipment():
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM Equipment") 
+        cursor.execute("SELECT * FROM Equipment")
 
         columns = [desc[0] for desc in cursor.description]
         equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
@@ -176,6 +179,7 @@ def get_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/api/addEquipment", methods=["POST"])
 def add_equipment():
     try:
@@ -186,8 +190,9 @@ def add_equipment():
 
         insert_sql = "INSERT INTO Equipment (name, description, status, price, owner, available) VALUES (%s, %s, %s, %s, %s, %s)"
 
-        cursor.execute(insert_sql, (data["name"], data["description"], data["status"], data["price"], data["owner"], 't'))
-        
+        cursor.execute(insert_sql, (data["name"], data["description"],
+                       data["status"], data["price"], data["owner"], 't'))
+
         conn.commit()
         cursor.close()
         conn.close()
@@ -196,24 +201,26 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/api/getUsers", methods=["GET"])
 def get_users():
     try:
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
 
-        cursor.execute('SELECT email FROM "user"') 
+        cursor.execute('SELECT email FROM "user"')
         users = cursor.fetchall()
-        
+
         cursor.close()
         conn.close()
 
-        print(users) 
+        print(users)
 
         return jsonify(users), 200
     except Exception as e:
-        print("Error:", str(e)) 
+        print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/api/items/<username>")
 def user_items(username):
@@ -242,8 +249,9 @@ def add_reviews():
         print(data)
         insert_sql = "INSERT INTO reviews (target_username, origin_username, name, rating, description) VALUES (%s, %s, %s, %s, %s)"
 
-        cursor.execute(insert_sql, (data["target"], data["source"], data["title"], data["rating"], data["description"]))
-        
+        cursor.execute(insert_sql, (data["target"], data["source"],
+                       data["title"], data["rating"], data["description"]))
+
         conn.commit()
         cursor.close()
         conn.close()
@@ -252,15 +260,16 @@ def add_reviews():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/api/getReviews/<username>", methods=["GET"])
 def get_reviews(username):
     try:
         print(username)
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM "reviews" WHERE target_username = %s', (username,)) 
+        cursor.execute(
+            'SELECT * FROM "reviews" WHERE target_username = %s', (username,))
         reviews = cursor.fetchall()
-
 
         cursor.close()
         conn.close()
@@ -268,8 +277,9 @@ def get_reviews(username):
 
         return jsonify(reviews), 200
     except Exception as e:
-        print("Error:", str(e)) 
+        print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -290,7 +300,7 @@ def load_user(user_id):
         print(user)
         app.logger.info(f"Loaded user: {user}")
     return user
-    
+
 
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
@@ -317,7 +327,8 @@ def login():
                     print(user_data[0])
                     print(type(user_data[0]))
 
-                    user = regUser(user_data[0], email, db_password, user_data[3])
+                    user = regUser(user_data[0], email,
+                                   db_password, user_data[3])
 
                     username = user_data[1]
                     user_type = user_data[3]
@@ -339,10 +350,12 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/api/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return jsonify({"message": "Entered Dashboard"}), 201
+
 
 @app.route('/api/profile')
 @login_required
@@ -355,14 +368,28 @@ def profile():
         return 'User not authenticated'
 
 
+#@app.route('/api/checkout', methods=['GET', 'POST'])
+#@login_required
+#def payment_checkout(item_id, reservation_id):
+ #   try:
+   #     data = request.get_json()
+   #     conn=psycopg2.connect(**db_connection_settings)
+   #     cursor=conn.cursor()
+    #    cursor.execute()
+   #     price_query = “SELECT price FROM equipment WHERE item_id = (%d)”
+   #     insert_payment_sql = "INSERT INTO paymentInfo (itemid, reservationid, is_paid, price) VALUES (%d, %d, %s, %d)"
+
+   # except:
+
+
 @app.route('/api/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     flash('Logged out successfully.', 'info')
-    #Google logic start
+    # Google logic start
     session.pop("user", None)
-    #Google logic stop
+    # Google logic stop
     return redirect(url_for('login'))
 
 
@@ -388,11 +415,12 @@ def register():
         else:
             print("Form validation failed")
             errors = form.errors
-            print(errors) 
+            print(errors)
             return jsonify({"errors": errors}), 400
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 #Google update user registration start
 @app.route('/api/update-google', methods=['POST', 'OPTIONS'])
@@ -419,9 +447,10 @@ def googleUpdate():
 
     
 #Google register method start
+
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
 def googleRegister():
-    #GOOGLE ADDITION START
+    # GOOGLE ADDITION START
     if (request.method == "OPTIONS"):
         return jsonify({"message": "Success"}), 200
     try:
@@ -440,19 +469,23 @@ def googleRegister():
             return jsonify({"message": "User validated successfully", "name": user_name, "isNew": False, "email": user_email},), 200
         # Logic to add to database
         else:
+            
             new_user = User(email=user_email, password="Google account, password not available", user_type="renter")
+
             db.session.add(new_user)
             db.session.commit()
             return jsonify({"message": "User added successfully", "name": user_name, "isNew": True, "email": user_email}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
-#Google register method end
+# Google register method end
 
-#Google login method start
+# Google login method start
+
+
 @app.route('/api/login-google', methods=['POST', 'OPTIONS'])
 def googleLogin():
     if (request.method == "OPTIONS"):
-            return jsonify({"message": "Success"}), 200
+        return jsonify({"message": "Success"}), 200
     try:
         # Get data from the frontend request
         data = request.get_json()
@@ -467,19 +500,21 @@ def googleLogin():
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
             return jsonify({"message": "User validated successfully", "name": user_name},), 200
-        
+
         return jsonify({"message": "Please register first", "name": user_name},), 404
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
+
 
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():
     try:
 
         data = request.get_json()
- 
+
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
+
         
         insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
         if data["end_date"] >= data["start_date"] and datetime.strptime(data["start_date"], "%Y-%m-%d") >= datetime.now():
@@ -489,11 +524,13 @@ def make_reservation():
             cursor.close()
             conn.close()
 
+
             return jsonify({"message": "Reservation made successfully"}), 200
         else:
             return jsonify({"message": "Date inputs are invalid"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/api/getReservation", methods=["GET"])
 def get_reservation():
@@ -501,10 +538,11 @@ def get_reservation():
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM Reservation") 
+        cursor.execute("SELECT * FROM Reservation")
 
         columns = [desc[0] for desc in cursor.description]
-        reservation_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        reservation_data = [dict(zip(columns, row))
+                            for row in cursor.fetchall()]
 
         cursor.close()
         conn.close()
@@ -512,6 +550,7 @@ def get_reservation():
         return jsonify(reservation_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route("/api/removeReservation/<reservation_id>", methods=["DELETE"])
@@ -556,6 +595,7 @@ def update_reservation(reservation_id):
         return jsonify({"error": str(e)}), 500
 
 
+
 # Define the function to execute SQL queries and fetch data
 def execute_database_query(query, params=None):
     try:
@@ -574,6 +614,7 @@ def execute_database_query(query, params=None):
         return data
     except Exception as e:
         return None, str(e)
+
 
 @app.route('/api/searchItems', methods=['GET'])
 def search_items():
@@ -601,11 +642,13 @@ def search_items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 # Adding Info Page
 @app.route('/api/info')
 def info():
     return jsonify({"message": "Entered Info"}), 201
     
+
 @app.route('/api/items', methods=['GET'])
 def get_items():
     try: 
@@ -626,5 +669,3 @@ def get_items():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-

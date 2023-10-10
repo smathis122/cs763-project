@@ -5,8 +5,16 @@ import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
+
+
+//import CheckoutHelp from "./pages/form_helpbutton";
+import Checkout from "./pages/payment_validation";
+import PaymentSuccessful from "./pages/payment_successful";
+import PaymentUnsuccessful from "./pages/payment_unsuccessful";
+
+
 import { useUser } from "./Components/UserContext";
-import CheckoutValidation from "./pages/payment_validation";
+
 import ItemSearchAndFilter from "./pages/search";
 import Info from "./pages/info";
 import Reservations from "./pages/MakeReservation";
@@ -28,6 +36,11 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="contact" element={<Contact />} />
 
+
+          <Route path="Checkout" element={<Checkout />} />
+          <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
+          <Route path="PaymentUnsuccessful" element={<PaymentUnsuccessful />} />
+
           <Route
             path="Items"
             element={
@@ -37,10 +50,10 @@ function App() {
             }
           />
           <Route
-            path="CheckoutValidation"
+            path="Checkout"
             element={
               <ProtectedRoute>
-                <CheckoutValidation />
+                <Checkout />
               </ProtectedRoute>
             }
           />
@@ -85,6 +98,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
 
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
