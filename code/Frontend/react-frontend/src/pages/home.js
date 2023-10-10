@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { NavbarCustom } from "../Components/navbar";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import { NavbarCustom } from "../Components/Navbar";
+import Card from "react-bootstrap/esm/Card";
+import Container from "react-bootstrap/esm/Container";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import Modal from "react-bootstrap/esm/Modal";
+import Button from "react-bootstrap/esm/Button";
 import "../styles/pages/home.css";
 
 function EquipmentList() {
@@ -37,7 +37,7 @@ function EquipmentList() {
       <Container>
         <Row>
           {equipmentData.map((equipment) => (
-            <Col key={equipment.id} xs={12} sm={6} md={4} lg={3}>
+            <Col key={equipment.itemid} xs={12} sm={6} md={4} lg={3}>
               <Card
                 onClick={() => handleCardClick(equipment)}
                 style={{ cursor: "pointer" }}
