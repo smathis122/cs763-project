@@ -4,5 +4,4 @@ flask_session/
 .env/
 Pipfile/
 Pipfile.lock/
-.DS_Store
 /node_modules
