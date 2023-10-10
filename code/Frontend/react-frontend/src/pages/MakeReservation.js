@@ -3,10 +3,9 @@ import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/esm/Form";
 import FormGroup from "react-bootstrap/esm/FormGroup";
 import Button from "react-bootstrap/esm/Button";
-import {useLocation} from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { useUser } from "../Components/UserContext";
-import {useNavigate} from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 function ReservationForm() {
   let [submitMsg, setSubmitMsg] = React.useState("");
@@ -17,7 +16,7 @@ function ReservationForm() {
     start_date: "",
     end_date: "",
     item_id: location.state.selectedItem.itemid,
-    user_name: username
+    user_name: username,
   });
 
   const handleInputChange = (event) => {
@@ -26,7 +25,7 @@ function ReservationForm() {
   };
 
   const handleCheckoutClick = () => {
-    navigate("/CheckoutValidation",{state:{reservationDetails:formData}});
+    navigate("/Checkout", { state: { reservationDetails: formData } });
   };
 
   const handleSubmit = (event) => {
@@ -48,12 +47,12 @@ function ReservationForm() {
     } else if (new Date(formData.start_date) < new Date()) {
       setSubmitMsg("start date must be after today!");
     } else {
-    setTimeout(() => setSubmitMsg("Your reservation has been made!"), 3000);
-    setFormData({
-      start_date: "",
-      end_date: "",
-      item_id: location.state.selectedItem.itemid,
-      user_name: username
+      setTimeout(() => setSubmitMsg("Your reservation has been made!"), 3000);
+      setFormData({
+        start_date: "",
+        end_date: "",
+        item_id: location.state.selectedItem.itemid,
+        user_name: username,
       });
     }
   };
@@ -66,7 +65,7 @@ function ReservationForm() {
           <FormGroup className="reservation-page-form-group">
             <Form.Label>Rental Start Date</Form.Label>
             <Form.Control
-              type="date" 
+              type="date"
               placeholder="Enter Date"
               name="start_date"
               value={formData.start_date}
@@ -77,7 +76,7 @@ function ReservationForm() {
           <FormGroup className="reservation-page-form-group">
             <Form.Label>Rental End Date</Form.Label>
             <Form.Control
-              type="date" 
+              type="date"
               placeholder="Enter Date"
               name="end_date"
               value={formData.end_date}
@@ -85,7 +84,7 @@ function ReservationForm() {
               required
             />
           </FormGroup>
-          <Button 
+          <Button
             variant="primary"
             type="submit"
             onClick={handleCheckoutClick}
