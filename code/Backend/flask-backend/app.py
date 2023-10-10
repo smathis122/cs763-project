@@ -23,6 +23,7 @@ from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
 from datetime import datetime
 
+
 app = Flask(__name__)
 load_dotenv()
 
@@ -408,7 +409,7 @@ def googleUpdate():
         if User.query.filter_by(email=user_email).first():
             updated_user = User.query.filter_by(email=user_email).update(dict(user_type=user_type))
             db.session.commit()
-            return jsonify({"message": "User updated successfully"}), 200
+            return jsonify({"message": "User updated successfully"}), 201
         # User not found
         else:
             return jsonify({"error": "User not found"}), 404
