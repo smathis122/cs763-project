@@ -147,10 +147,7 @@ function LoginPage() {
             {/* Display other validation errors as needed */}
           </div>
         </Form>
-        <GoogleLoginButton
-          redirectOnLogin={true}
-          handleMessage={handleSubmitMessageChange}
-        ></GoogleLoginButton>
+        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange} setUserEmail={() => {}}></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
