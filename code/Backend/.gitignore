@@ -6,4 +6,5 @@ bin/
 */bin/*
 Pipfile/
 Pipfile.lock/
+/node_modules
 Users/
