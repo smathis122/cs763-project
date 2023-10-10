@@ -12,7 +12,6 @@ import { useUser } from "../Components/UserContext";
 
 function UserDataList() {
   const [userData, setUserData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const { username } = useUser();
   console.log(username);
@@ -31,7 +30,6 @@ function UserDataList() {
 
   const handleCardClick = (user) => {
     setSelectedUser(user);
-    setShowModal(true);
   };
 
   return (
@@ -56,18 +54,6 @@ function UserDataList() {
           ))}
         </Row>
       </Container>
-
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{selectedUser?.email}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{/* Add additional user information here */}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 }

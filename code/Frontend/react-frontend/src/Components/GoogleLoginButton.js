@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 // Google import start
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import "../styles/pages/register.css";
+import UserTypePopUp from "./UserTypePopUp";
 // Google import stop
 
 export function GoogleLoginButton(props) {
@@ -41,21 +42,23 @@ export function GoogleLoginButton(props) {
 
         const data = await res.json();
 
-        if (res.ok && data && data.name) {
+        if (res.ok && data && data.name && data.email) {
             props.handleMessage("Login successful!");
             const username = data.name;
             props.handleMessage(username);
-            console.log("Logged in", username);
+            props.setUserEmail(data.email);
 
             setUsername(username);
             localStorage.setItem('loginData', JSON.stringify(data));
         } else {
             props.handleMessage("Google login failed. Please register.");
-            console.log(submitMsg)
         };
 
-        if (res.ok && props.redirectOnLogin)
-            navigate("/")
+        if (res.ok && (props.redirectOnLogin || !data.isNew))
+            navigate("/");
+        //USER TYPE SELECTION
+        else if (res.ok && !props.redirectOnLogin && data.isNew)
+            props.showPopup();
     };
     // Login handling for google login stop
     const handleLogout = () => {
@@ -74,8 +77,9 @@ export function GoogleLoginButton(props) {
                     </div>
                 ) : (
                     <div className="GoogleLogin">
-                        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID} id={"google-login-auth"}>
                             <GoogleLogin
+                                id="google-login-button"
                                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                                 buttonText="Sign up with Google"
                                 onSuccess={handleLogin}

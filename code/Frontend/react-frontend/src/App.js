@@ -69,10 +69,21 @@ function App() {
             }
           />
 
-          <Route path="AllProfile" element={<Profile />} />
+          <Route
+            path="AllProfile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="AllProfile/user/:usernameSelected"
-            element={<UserProfile />}
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
           />
 
           <Route path="register" element={<RegisterPage />} />

@@ -21,6 +21,8 @@ import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
+from datetime import datetime
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -32,15 +34,13 @@ db = SQLAlchemy(app)
 
 # SQL Queries for Search endpounts
 SEARCH_QUERY = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
-AVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = true"
-UNAVAILABLE_ITEMS_QUERY = "SELECT * FROM Equipment WHERE available = false"
-
 
 # Database table for user
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    user_type = db.Column(db.String(40), nullable = False)
 
 
 CORS(app) # Allow all origins for development; restrict in production
@@ -220,11 +220,8 @@ def user_items(username):
     try:
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
+        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (username,))
 
-        user_name = username.split("@")[0]
-        # Fetch items associated with the user using their ID
-        cursor.execute("SELECT * FROM equipment WHERE owner = %s", (user_name,))
-        # Fetch all rows and store them in a list of dictionaries
         columns = [desc[0] for desc in cursor.description]
         equipment_data = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
@@ -235,6 +232,44 @@ def user_items(username):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/addReviews", methods=["POST"])
+def add_reviews():
+    try:
+        data = request.get_json()
+
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        print(data)
+        insert_sql = "INSERT INTO reviews (target_username, origin_username, name, rating, description) VALUES (%s, %s, %s, %s, %s)"
+
+        cursor.execute(insert_sql, (data["target"], data["source"], data["title"], data["rating"], data["description"]))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Review added successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/getReviews/<username>", methods=["GET"])
+def get_reviews(username):
+    try:
+        print(username)
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM "reviews" WHERE target_username = %s', (username,)) 
+        reviews = cursor.fetchall()
+
+
+        cursor.close()
+        conn.close()
+        print("before", reviews)
+
+        return jsonify(reviews), 200
+    except Exception as e:
+        print("Error:", str(e)) 
+        return jsonify({"error": str(e)}), 500
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -359,6 +394,30 @@ def register():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+#Google update user registration start
+@app.route('/api/update-google', methods=['POST', 'OPTIONS'])
+def googleUpdate():
+    if (request.method == "OPTIONS"):
+        return jsonify({"message": "Success"}), 200
+    try:
+        # Get data from the frontend request
+        data = request.get_json()
+        user_email = data["email"]
+        user_type = data["type"]
+
+        # Logic to check database for matching email and update user type
+        if User.query.filter_by(email=user_email).first():
+            updated_user = User.query.filter_by(email=user_email).update(dict(user_type=user_type))
+            db.session.commit()
+            return jsonify({"message": "User updated successfully"}), 201
+        # User not found
+        else:
+            return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": "Error validating user: " + str(e)}), 500
+#Google update user registration start
+
+    
 #Google register method start
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
 def googleRegister():
@@ -378,13 +437,13 @@ def googleRegister():
 
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully", "name": user_name},), 200
+            return jsonify({"message": "User validated successfully", "name": user_name, "isNew": False, "email": user_email},), 200
         # Logic to add to database
         else:
-            new_user = User(email=user_email, password="Google account, password not available")
+            new_user = User(email=user_email, password="Google account, password not available", user_type="renter")
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({"message": "User added successfully", "name": user_name}), 201
+            return jsonify({"message": "User added successfully", "name": user_name, "isNew": True, "email": user_email}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 #Google register method end
@@ -421,15 +480,18 @@ def make_reservation():
  
         conn = psycopg2.connect(**db_connection_settings)
         cursor = conn.cursor()
-
-        insert_sql = "INSERT INTO Reservation (start_date, end_date) VALUES (%s, %s)"
-        cursor.execute(insert_sql, (data["start_date"], data["end_date"]))
         
-        conn.commit()
-        cursor.close()
-        conn.close()
+        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
+        if data["end_date"] >= data["start_date"] and datetime.strptime(data["start_date"], "%Y-%m-%d") >= datetime.now():
+            cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"]))
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
 
-        return jsonify({"message": "Reservation made successfully"}), 200
+            return jsonify({"message": "Reservation made successfully"}), 200
+        else:
+            return jsonify({"message": "Date inputs are invalid"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -451,6 +513,47 @@ def get_reservation():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/api/removeReservation/<reservation_id>", methods=["DELETE"])
+def remove_reservation(reservation_id):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM Reservation WHERE reservation_id = %s", (reservation_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Reservation with ID {reservation_id} removed successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/updateReservation/<reservation_id>", methods=["PUT"])
+def update_reservation(reservation_id):
+    try:
+        data = request.get_json()
+        
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            UPDATE Reservation
+            SET
+                start_date = %s,
+                end_date = %s
+            WHERE reservation_id = %s
+        """, (data["start_date"], data["end_date"], reservation_id))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Reservation with ID {reservation_id} updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Define the function to execute SQL queries and fetch data
@@ -475,12 +578,22 @@ def execute_database_query(query, params=None):
 @app.route('/api/searchItems', methods=['GET'])
 def search_items():
     try:
-
         search_query = request.args.get('q')
+        min_price = request.args.get('minPrice', 0)
+        max_price = request.args.get('maxPrice', float('inf'))
+
         print(f"Received search query: {search_query}")
-        query = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
-        params = (f"%{search_query}%", f"%{search_query}%")
-        equipment_data = execute_database_query(query, params)
+        params = (f"%{search_query}%", f"%{search_query}%", min_price, max_price)
+        
+        # Modify the SQL query to include price filtering
+        SEARCH_QUERY_WITH_PRICE = """
+            SELECT * FROM Equipment
+            WHERE (name ILIKE %s OR description ILIKE %s)
+            AND price >= %s AND price <= %s
+        """
+
+        equipment_data = execute_database_query(SEARCH_QUERY_WITH_PRICE, params)
+        
         if equipment_data:
             return jsonify(equipment_data), 200
         else:
@@ -495,8 +608,8 @@ def info():
     
 @app.route('/api/items', methods=['GET'])
 def get_items():
-    try:
-        availability = request.args.get('availability')
+    try: 
+        availability = request.args.get('availability')      
         query = "SELECT * FROM Equipment"
         if availability == "available":
             query += " WHERE available = true"
@@ -505,11 +618,11 @@ def get_items():
         equipment_data = execute_database_query(query)
         if equipment_data:
             return jsonify(equipment_data), 200
+            
         else:
             return jsonify({"message": f"No {availability} items found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=True)
