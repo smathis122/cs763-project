@@ -16,6 +16,7 @@ import PaymentUnsuccessful from "./pages/payment_unsuccessful";
 import { useUser } from "./Components/UserContext";
 
 import ItemSearchAndFilter from "./pages/search";
+import Info from "./pages/info";
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
@@ -101,6 +102,7 @@ function App() {
 
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="info" element={<Info />} />
         </Route>
       </Routes>
     </HashRouter>

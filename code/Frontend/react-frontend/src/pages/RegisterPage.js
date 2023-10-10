@@ -6,7 +6,9 @@ import Button from "react-bootstrap/Button";
 import "../styles/pages/password.css";
 // Google import start
 import "../styles/pages/register.css";
+import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
+import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 
 function RegisterPage() {
@@ -21,6 +23,14 @@ function RegisterPage() {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
+  const [buttonPopup, setButtonPopup] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  const showPopup = () => {
+    setButtonPopup(true);
+  }
+
+  //Adding Google Pop up constants (stop)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -137,12 +147,13 @@ function RegisterPage() {
             </div>
           </div>
         </Form>
-        <GoogleLoginButton
-          redirectOnLogin={false}
-          handleMessage={() => {}}
-        ></GoogleLoginButton>
-        {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
+      {/* Google Logic start */}
+      <GoogleLoginButton redirectOnLogin={false} handleMessage={() => { }} setUserEmail={(email) => {setUserEmail(email)}} showPopup={showPopup}/>
+      <UserTypePopUp trigger={buttonPopup} updatePopup={(value) => {setButtonPopup(value)}} email={userEmail} />       
+      {/* Google Logic stop */}
+      {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
+
     </div>
   );
 }
