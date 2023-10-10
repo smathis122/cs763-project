@@ -27,8 +27,8 @@ function PaymentSuccessful() {
         <h3 style = {marginStyle}>A copy of your purchase has been sent to your email</h3>
         
       <div style = {containerStyle}>
-           <h5 style = {marginStyle}>Have any questions? Refer to our {" "}
-           <Link to= "/contact">FAQ page</Link></h5>
+           <h5 style = {marginStyle}>Have any questions? Feel free to {" "}
+          < Link to= "/contact">Contact Us!</Link></h5>
       </div>
       </div>
  );

@@ -9,11 +9,12 @@ function CheckoutForm() {
   };
   function youClicked() {
     alert(
-      "Please fill in the boxes below you numpty.\nIncomplete information will not be submitted."
+      "Please fill in the boxes below.\nIncomplete information will not be submitted."
     );
   }
 
   const [showAlert, setShowAlert] = useState(false);
+  const is_paid = false;
 
 
   const navigate = useNavigate(); 
@@ -27,6 +28,7 @@ function CheckoutForm() {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form is valid. Submitting...");
+      //is_paid = true;
       handleSuccessfulPayment(); 
     }
   };
@@ -179,6 +181,17 @@ function validateForm() {
     cvc.focus();
     return false;
   }
+
+  var monthValid = document.getElementById("validThru");
+var monthValue = monthValid.value.trim();
+
+var validPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+
+if (!validPattern.test(monthValue)) {
+    alert("Sorry: Please enter your Credit Card's 'valid thru' information in the form MM/YY. e.g: 12/23");
+    monthValid.focus();
+    return false;
+}
 
   var message = document.getElementById("message");
   if (message.value.length < 30) {
