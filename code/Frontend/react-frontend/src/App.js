@@ -1,17 +1,14 @@
 import React from "react";
-import { HashRouter, Route, Routes} from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
 import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
-
 //import CheckoutHelp from "./pages/form_helpbutton";
 import Checkout from "./pages/payment_validation";
 import PaymentSuccessful from "./pages/payment_successful";
-import PaymentUnsuccessful from "./pages/payment_unsuccessful";
-
 
 import { useUser } from "./Components/UserContext";
 
@@ -35,11 +32,7 @@ function App() {
         <Route path="/" element={<Index />}>
           <Route path="" element={<Home />} />
           <Route path="contact" element={<Contact />} />
-
-
-          <Route path="Checkout" element={<Checkout />} />
           <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
-          <Route path="PaymentUnsuccessful" element={<PaymentUnsuccessful />} />
 
           <Route
             path="Items"
@@ -98,7 +91,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
 
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
