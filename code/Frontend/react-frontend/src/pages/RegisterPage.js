@@ -91,6 +91,7 @@ function RegisterPage() {
             <div className="password-input-container">
               <Form.Control
                 type={showPassword ? "text" : "password"}
+                placeholder="Enter Password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
