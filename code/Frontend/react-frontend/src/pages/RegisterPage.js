@@ -108,21 +108,6 @@ function RegisterPage() {
               </span>
             </div>
           </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>User Type</Form.Label>
-            <Form.Control
-              as="select"
-              name="user_type"
-              value={userType}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select User Type</option>
-              {/* <option value="renter">Renter</option>
-              <option value="host">Host</option> */}
-              <option value="general">Renter/Host</option>
-            </Form.Control>
-          </FormGroup>
           <div className="FormButtonDiv">
             <Button
               className="FormButton"

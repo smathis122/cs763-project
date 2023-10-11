@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/esm/Form";
-import FormGroup from "react-bootstrap/esm/FormGroup";
-import Button from "react-bootstrap/esm/Button";
+import Form from "react-bootstrap/Form";
+import FormGroup from "react-bootstrap/FormGroup";
+import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
@@ -10,6 +10,7 @@ import { useUser } from "../Components/UserContext";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
 // Google import stop
 import "../styles/pages/password.css";
+import "../styles/pages/register.css";
 
 function LoginPage() {
   const [submitMsg, setSubmitMsg] = useState("");
@@ -55,12 +56,8 @@ function LoginPage() {
           console.log("Logged in", username, "as", userType);
 
           // ***Will remove types other than general***
-          if (userType === "renter") {
+          if (userType === "general") {
             navigate("/"); // Redirect to the home page
-          } else if (userType === "host") {
-            navigate("/View"); // Redirect to the profile page
-          } else if (userType === "general") {
-            navigate("/");
           } else {
             // Handle other user types or scenarios
             console.log("Unknown user type");
@@ -129,26 +126,21 @@ function LoginPage() {
                 )}
               </span>
             </div>
-
           </FormGroup>
-          <Button
-            variant="primary"
-            type="submit"
-            style={{
-              fontSize: "20px",
-              width: "150px",
-              marginLeft: "15px",
-              marginBottom: "25px",
-            }}
-            id="submitButton"
-          >
-            Submit
-          </Button>
-          <div className="error-messages" id="error_messages">
-            {errors.email && <p>{errors.email.join(", ")}</p>}
-            {errors.password && <p>{errors.password.join(", ")}</p>}
-            {errors.message && <p>{errors.message}</p>}
-            {/* Display other validation errors as needed */}
+          <div className="FormButtonDiv">
+            <Button
+              className="FormButton"
+              variant="primary"
+              type="submit"
+              id="submitButton"
+            >
+              Submit
+            </Button>
+            <div className="error-messages" id="error_messages">
+              {errors.email && <p>{errors.email.join(", ")}</p>}
+              {errors.password && <p>{errors.password.join(", ")}</p>}
+              {errors.message && <p>{errors.message}</p>}
+            </div>
           </div>
         </Form>
         <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange}></GoogleLoginButton>

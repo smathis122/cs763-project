@@ -81,9 +81,6 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-    
-    user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host'), ('general', 'Renter/Host')],
-                           validators=[InputRequired()])
 
     submit = SubmitField('Register')
 
@@ -341,7 +338,7 @@ def register():
             email = form.email.data
             hashed_password = bcrypt.hashpw(
                 form.password.data.encode('utf-8'), bcrypt.gensalt())
-            user_type = form.user_type.data
+            user_type = "general"
             cursor.execute(
                 'INSERT INTO "user" (email, password, user_type) VALUES (%s, %s, %s)', (email, hashed_password, user_type))
             conn.commit()
