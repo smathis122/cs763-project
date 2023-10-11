@@ -11,8 +11,6 @@ import Form from "react-bootstrap/Form";
 import { useUser } from "./UserContext";
 import FormGroup from "react-bootstrap/esm/FormGroup";
 
-// ... (previous imports)
-
 function UserProfile() {
   const { usernameSelected } = useParams();
   const { username } = useUser();
@@ -96,7 +94,9 @@ function UserProfile() {
       rating: "",
     });
   };
-
+  const handleProfileClick = () => {
+    navigate("/AllProfile");
+  };
   console.log("selected" + usernameSelected);
   console.log("current" + username);
   if (username === usernameSelected) {
@@ -106,13 +106,31 @@ function UserProfile() {
   return (
     <div>
       <NavbarCustom />
+      <Row>
+        <Col md={6}>
+          <h2>{usernameSelected}</h2>
+        </Col>
+        <Col md={6} className="text-right">
+          <Button
+            variant="secondary" // Set the desired Bootstrap button variant
+            onClick={() => handleProfileClick()} // Replace handleNewButtonClick with your logic
+            style={{
+              fontSize: "20px",
+              width: "100%",
+              marginRight: "5px",
+              marginTop: "15px",
+              marginBottom: "25px",
+            }}
+          >
+            View other Profiles
+          </Button>
+        </Col>
+      </Row>
       <Container fluid>
         <Row>
-          <Col md={8} className="equipment-column">
-            <h2>Items Hosted by {usernameSelected}</h2>
-            <Button variant="primary" onClick={() => setShowReviewModal(true)}>
-              Write Review
-            </Button>
+          <Col md={8} className="items-hosted-column">
+            <h2>Items Hosted</h2>
+
             <Row>
               {equipmentData &&
               equipmentData.items &&
@@ -143,8 +161,21 @@ function UserProfile() {
               )}
             </Row>
           </Col>
-          <Col md={4} className="reviews-column">
-            <h2>Reviews for {usernameSelected}</h2>
+          <Col md={4} className="reviews-reservations-column">
+            <Row>
+              <Col md={6}>
+                <h2>Reviews</h2>
+              </Col>
+              <Col md={6} className="text-right">
+                <Button
+                  style={{ width: "100%" }}
+                  variant="primary"
+                  onClick={() => setShowReviewModal(true)}
+                >
+                  Write Review
+                </Button>
+              </Col>
+            </Row>
             {reviews.length === 0 ? (
               <p>This person has no reviews yet.</p>
             ) : (

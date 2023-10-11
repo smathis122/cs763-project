@@ -1,0 +1,13 @@
+.equal-height-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .equal-height-cards .card {
+    flex: 1;
+    margin-right: 15px; /* Optional: Add some spacing between cards */
+    margin-bottom: 15px; /* Optional: Add some spacing between cards */
+  }
+  .container2 {
+    margin: 0 auto;
+  }

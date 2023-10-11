@@ -70,7 +70,7 @@ function App() {
             path="reservations"
             element={
               <ProtectedRoute>
-                {userType === "renter" ? <Reservations /> : <Navigate to="/" />}
+                <Reservations />
               </ProtectedRoute>
             }
           />
