@@ -8,3 +8,4 @@ Pipfile/
 Pipfile.lock/
 /node_modules
 Users/
+.DS_Store/
