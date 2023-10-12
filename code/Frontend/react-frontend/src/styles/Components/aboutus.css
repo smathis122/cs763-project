@@ -1,15 +1,16 @@
 /* Adding Styling for About Us Component */
-.container {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.logo {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 20px;
-}
+.containerAbout {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top:10px;
+  }
+  
+  .logo {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+  }
 
 @keyframes magnify {
   0% {

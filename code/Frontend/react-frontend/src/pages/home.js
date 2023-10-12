@@ -9,7 +9,7 @@ import Col from "react-bootstrap/esm/Col";
 import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import "../styles/pages/home.css";
-
+import "../styles/Components/card.css";
 function EquipmentList() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -44,12 +44,12 @@ function EquipmentList() {
   return (
     <div>
       <NavbarCustom />
-
-      <Container>
-        <Row>
+      <div className="container2">
+        <div className="row equal-height-cards">
           {equipmentData.map((equipment) => (
-            <Col key={equipment.itemid} xs={12} sm={6} md={4} lg={3}>
+            <Col key={equipment.itemid} className="col-md-4 col-12">
               <Card
+                className="custom-card"
                 onClick={() => handleCardClick(equipment)}
                 style={{ cursor: "pointer" }}
               >
@@ -65,9 +65,8 @@ function EquipmentList() {
               </Card>
             </Col>
           ))}
-        </Row>
-      </Container>
-
+        </div>
+      </div>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{selectedItem?.name}</Modal.Title>

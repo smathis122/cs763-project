@@ -2,11 +2,8 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
-import Home from "./pages/home";
-import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
-//import CheckoutHelp from "./pages/form_helpbutton";
 import Checkout from "./pages/payment_validation";
 import PaymentSuccessful from "./pages/payment_successful";
 
@@ -21,27 +18,16 @@ import View from "./pages/ViewItem";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/UserProfile";
-import { Navigate } from "react-router-dom";
 
 function App() {
-  const { username, userType } = useUser();
-
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Index />}>
-          <Route path="" element={<Home />} />
+          <Route path="" element={<ItemSearchAndFilter />} />
           <Route path="contact" element={<Contact />} />
           <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
 
-          <Route
-            path="Items"
-            element={
-              <ProtectedRoute>
-                <Items />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="Checkout"
             element={
@@ -50,14 +36,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="search"
-            element={
-              <ProtectedRoute>
-                <ItemSearchAndFilter />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="View"
             element={
