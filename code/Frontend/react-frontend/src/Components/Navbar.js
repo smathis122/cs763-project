@@ -36,9 +36,7 @@ export function NavbarCustom(props) {
           <Nav className="me-auto"></Nav>
           <Nav className="topnav" style={{ fontSize: "18px" }}>
             <Nav.Link href="#/contact">Contact</Nav.Link>
-            <Nav.Link href="#/search" id="searchTab">
-              Search
-            </Nav.Link>
+
             <NavDropdown title="Account" id="collapsible-nav-dropdown">
               {username ? (
                 <>

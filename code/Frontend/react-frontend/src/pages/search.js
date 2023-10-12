@@ -26,7 +26,7 @@ function ItemSearchAndFilter() {
   const fetchItems = () => {
     // Make an AJAX request to your backend API
     let endpoint;
-
+    console.log(searchQuery);
     if (availabilityFilter === "searchItems") {
       endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
     } else {
@@ -34,7 +34,7 @@ function ItemSearchAndFilter() {
     }
 
     console.log(availabilityFilter);
-
+    console.log(endpoint);
     fetch(endpoint).then(handleResponse).catch(handleError);
   };
 
@@ -50,6 +50,7 @@ function ItemSearchAndFilter() {
     response
       .json()
       .then((data) => {
+        console.log(data);
         setResults(data);
       })
       .catch(handleError);
@@ -114,7 +115,7 @@ function ItemSearchAndFilter() {
         {/* Filter Options */}
         {/* Filter Options */}
         <div className="filterOptions">
-          <Col className="col-md-6 col-12">
+          <Col md={6} sm={12}>
             {/* Price Range Slider */}
             <Slider
               range
@@ -133,7 +134,7 @@ function ItemSearchAndFilter() {
               <span>Max Price: ${priceRange[1]}</span>
             </div>
           </Col>
-          <Col className="col-md-4 col-12">
+          <Col md={4} sm={12}>
             <div className="availabilityFilter">
               <div className="availabilityRadio">
                 <label>

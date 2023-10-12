@@ -2,7 +2,6 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
-import Home from "./pages/home";
 import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
@@ -30,7 +29,7 @@ function App() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<Index />}>
-          <Route path="" element={<Home />} />
+          <Route path="" element={<ItemSearchAndFilter />} />
           <Route path="contact" element={<Contact />} />
           <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
 
@@ -50,14 +49,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="search"
-            element={
-              <ProtectedRoute>
-                <ItemSearchAndFilter />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="View"
             element={
