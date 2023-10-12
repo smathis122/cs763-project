@@ -16,10 +16,11 @@ function UserProfile() {
   const { username } = useUser();
   const [equipmentData, setEquipmentData] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
+
+  const [selectedItem, setSelectedItem] = useState(null);
   const [formReviewData, setFormReviewData] = useState({
     title: "",
     description: "",
@@ -48,8 +49,8 @@ function UserProfile() {
       .catch((error) => console.error("Error:", error));
   };
 
-  const handleCardClick = (equipment) => {
-    setSelectedEquipment(equipment);
+  const handleCardClick = (item) => {
+    setSelectedItem(item);
     setShowModal(true);
   };
 
@@ -103,12 +104,23 @@ function UserProfile() {
     navigate("/View");
   }
 
+  const handleReserveClick = () => {
+    console.log(selectedItem);
+    navigate("/reservations", { state: { selectedItem: selectedItem } });
+  };
   return (
     <div>
       <NavbarCustom />
       <Row>
         <Col md={6}>
-          <h2>{usernameSelected}</h2>
+          <h2
+            style={{
+              marginLeft: "15px",
+              marginTop: "20px",
+            }}
+          >
+            {usernameSelected}
+          </h2>
         </Col>
         <Col md={6} className="text-right">
           <Button
@@ -129,28 +141,29 @@ function UserProfile() {
       <Container fluid>
         <Row>
           <Col md={8} className="items-hosted-column">
-            <h2>Items Hosted</h2>
+            <h3>Items Hosted</h3>
 
             <Row>
               {equipmentData &&
               equipmentData.items &&
               equipmentData.items.length > 0 ? (
                 equipmentData.items.map(
-                  (equipment) =>
-                    equipment.owner === usernameSelected && ( // Filter items for the selected user
-                      <Col key={equipment.id} xs={12} sm={6} md={6} lg={6}>
+                  (item) =>
+                    item.owner === usernameSelected && ( // Filter items for the selected user
+                      <Col key={item.id} className="col-md-4 col-12">
                         <Card
-                          onClick={() => handleCardClick(equipment)}
+                          className="custom-card"
+                          onClick={() => handleCardClick(item)}
                           style={{ cursor: "pointer" }}
                         >
                           <Card.Body>
-                            <Card.Title>{equipment.name}</Card.Title>
+                            <Card.Title>{item.name}</Card.Title>
                             <Card.Subtitle className="mb-2 text-muted">
-                              Status: {equipment.status}
+                              Status: {item.status}
                             </Card.Subtitle>
-                            <Card.Text>{equipment.description}</Card.Text>
-                            <Card.Text>Price: ${equipment.price}</Card.Text>
-                            <Card.Text>Owner: {equipment.owner}</Card.Text>
+                            <Card.Text>{item.description}</Card.Text>
+                            <Card.Text>Price: ${item.price}</Card.Text>
+                            <Card.Text>Owner: {item.owner}</Card.Text>
                           </Card.Body>
                         </Card>
                       </Col>
@@ -164,7 +177,7 @@ function UserProfile() {
           <Col md={4} className="reviews-reservations-column">
             <Row>
               <Col md={6}>
-                <h2>Reviews</h2>
+                <h3>Reviews</h3>
               </Col>
               <Col md={6} className="text-right">
                 <Button
@@ -193,17 +206,19 @@ function UserProfile() {
           </Col>
         </Row>
       </Container>
+      {/* Modal for displaying details */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedEquipment?.name}</Modal.Title>
+          <Modal.Title>{selectedItem?.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Status: {selectedEquipment?.status}</p>
-          <p>Description: {selectedEquipment?.description}</p>
-          <p>Price: ${selectedEquipment?.price}</p>
-          <p>Owner: {selectedEquipment?.owner}</p>
+          <p>Status: {selectedItem?.available ? "Available" : "Unavailable"}</p>
+          <p>Description: {selectedItem?.description}</p>
+          <p>Price: {selectedItem?.price}</p>
+          <p>Owner: {selectedItem?.owner}</p>
         </Modal.Body>
         <Modal.Footer>
+          <Button onClick={handleReserveClick}>Reserve</Button>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
