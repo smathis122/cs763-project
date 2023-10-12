@@ -4,7 +4,6 @@ import "./App.css";
 import Index from "./pages";
 import Contact from "./pages/contact";
 
-//import CheckoutHelp from "./pages/form_helpbutton";
 import Checkout from "./pages/payment_validation";
 import PaymentSuccessful from "./pages/payment_successful";
 
@@ -19,11 +18,8 @@ import View from "./pages/ViewItem";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/UserProfile";
-import { Navigate } from "react-router-dom";
 
 function App() {
-  const { username, userType } = useUser();
-
   return (
     <HashRouter>
       <Routes>

@@ -9,7 +9,7 @@ import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
 import FormGroup from "react-bootstrap/esm/FormGroup";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 function View() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [reservationData, setReservationData] = useState([]);
@@ -19,7 +19,7 @@ function View() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const { username, userType } = useUser();
+  const { username } = useUser();
   const navigate = useNavigate();
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [formData, setFormData] = useState({

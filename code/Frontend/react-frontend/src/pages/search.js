@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Row, Col, Card, Modal } from "react-bootstrap";
+import { Button, Col, Card, Modal } from "react-bootstrap";
 import Slider, { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
