@@ -21,7 +21,6 @@ function ProfileInfo({ userType, username }) {
         <h1>Profile Page</h1>
         <p>Welcome, {username}!</p>
         <p>You are a renter!</p>
-        {/* Display the user's profile information */}
       </div>
     );
   } else if (userType === "host") {
@@ -34,7 +33,14 @@ function ProfileInfo({ userType, username }) {
         <h1>Profile Page</h1>
         <p>Welcome, {username}!</p>
         <p>You are a host!</p>
-        {/* Display the user's profile information */}
+      </div>
+    );
+  } else if (userType === "general") {
+    return (
+      <div>
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a renter/host!</p>
       </div>
     );
   } else {
@@ -47,7 +53,6 @@ function ProfileInfo({ userType, username }) {
         <h1>Profile Page</h1>
         <p>Welcome, {username}!</p>
         <p>I don't know what you are!</p>
-        {/* Display the user's profile information */}
       </div>
     );
   }
