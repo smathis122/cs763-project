@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
-import Form from "react-bootstrap/esm/Form";
-import FormGroup from "react-bootstrap/esm/FormGroup";
-import Button from "react-bootstrap/esm/Button";
+import Form from "react-bootstrap/Form";
+import FormGroup from "react-bootstrap/FormGroup";
+import Button from "react-bootstrap/Button";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../Components/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import "../styles/pages/reservations.css";
 function ReservationForm() {
-  let [submitMsg, setSubmitMsg] = React.useState("");
   const location = useLocation();
-  const { username, userType } = useUser();
+  let [submitMsg, setSubmitMsg] = React.useState("");
+  const { username } = useUser();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     start_date: "",
@@ -19,13 +19,17 @@ function ReservationForm() {
     user_name: username,
   });
 
+  const selectedItem = location.state.selectedItem;
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleCheckoutClick = () => {
-    navigate("/Checkout", { state: { reservationDetails: formData } });
+    navigate("/Checkout", {
+      state: { reservationDetails: formData, selectedItem },
+    });
   };
 
   const handleSubmit = (event) => {
@@ -62,8 +66,17 @@ function ReservationForm() {
       <NavbarCustom />
       <div className="form" id="formDiv">
         <Form className="reservation-form" onSubmit={handleSubmit}>
+          <h3>Reservation Details</h3>
           <FormGroup className="reservation-page-form-group">
-            <Form.Label>Rental Start Date</Form.Label>
+            <label>Item Name</label>
+            <p>{selectedItem.name}</p>
+          </FormGroup>
+          <FormGroup className="reservation-page-form-group">
+            <label>Item Description</label>
+            <p>{selectedItem.description}</p>
+          </FormGroup>
+          <FormGroup className="reservation-page-form-group">
+            <label>Rental Start Date</label>
             <Form.Control
               type="date"
               placeholder="Enter Date"
@@ -74,7 +87,7 @@ function ReservationForm() {
             />
           </FormGroup>
           <FormGroup className="reservation-page-form-group">
-            <Form.Label>Rental End Date</Form.Label>
+            <label>Rental End Date</label>
             <Form.Control
               type="date"
               placeholder="Enter Date"
@@ -91,7 +104,7 @@ function ReservationForm() {
             style={{
               fontSize: "20px",
               width: "150px",
-              marginLeft: "15px",
+              marginLeft: "35%",
               marginBottom: "25px",
             }}
             id="submitButton"
