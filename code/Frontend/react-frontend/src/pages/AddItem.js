@@ -19,7 +19,6 @@ function EquipmentForm() {
   });
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     const newEquipment = {
       name: formData.name,
       description: formData.info,
@@ -38,10 +37,9 @@ function EquipmentForm() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        navigate("/View");
       })
       .catch((error) => console.error("Error:", error));
-    setSubmitMsg("Loading...");
-    setTimeout(() => setSubmitMsg("Your Item has been added!"), 2000);
     setFormData({
       name: "",
       info: "",

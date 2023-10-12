@@ -28,14 +28,13 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleSubmitMessageChange = (message) => {
-    setSubmitMsg(message)
-  }
+    setSubmitMsg(message);
+  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  
+
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -51,7 +50,7 @@ function LoginPage() {
           const user = response.data;
           const username = user.username;
           const userType = user.user_type;
-          setUsername(username.split("@")[0]);
+          setUsername(username);
           setUserType(userType);
           console.log("Logged in", username, "as", userType);
 
@@ -143,7 +142,7 @@ function LoginPage() {
             </div>
           </div>
         </Form>
-        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange}></GoogleLoginButton>
+        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange} setUserEmail={() => {}}></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
