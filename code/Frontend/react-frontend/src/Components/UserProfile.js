@@ -228,7 +228,7 @@ function UserProfile() {
                 <Col md={6} className="text-right">
                   <Button
                     style={{ width: "100%" }}
-                    variant="primary"
+                    variant="success"
                     onClick={() => setShowReviewModal(true)}
                   >
                     Write Review
@@ -267,7 +267,9 @@ function UserProfile() {
           </Modal.Body>
           <Modal.Footer>
             {selectedItem?.available && (
-              <Button onClick={handleReserveClick}>Reserve</Button>
+              <Button variant="success" onClick={handleReserveClick}>
+                Reserve
+              </Button>
             )}
             <Button variant="secondary" onClick={() => setShowModal(false)}>
               Close
@@ -321,7 +323,11 @@ function UserProfile() {
                 />
               </Form.Group>
 
-              <Button variant="primary" type="submit">
+              <Button
+                variant="success"
+                type="submit"
+                style={{ marginTop: "5px" }}
+              >
                 Submit Review
               </Button>
             </Form>

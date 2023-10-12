@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
+import FormGroup from "react-bootstrap/esm/FormGroup";
 import { useParams, useNavigate } from "react-router-dom";
 function View() {
   const [equipmentData, setEquipmentData] = useState([]);
@@ -20,6 +21,51 @@ function View() {
   const [selectedItem, setSelectedItem] = useState(null);
   const { username, userType } = useUser();
   const navigate = useNavigate();
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    info: "",
+    status: "",
+    price: "",
+  });
+
+  const handleAddItem = () => {
+    const newEquipment = {
+      name: formData.name,
+      description: formData.info,
+      status: formData.status,
+      price: formData.price,
+      owner: username,
+    };
+
+    fetch("http://127.0.0.1:5000/api/addEquipment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEquipment),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        navigate("/View");
+        // Optionally, you can update the equipmentData state here
+        fetchEquipmentData();
+      })
+      .catch((error) => console.error("Error:", error));
+    setShowAddItemModal(false); // Close the modal after adding the item
+    setFormData({
+      name: "",
+      info: "",
+      status: "",
+      price: "",
+    });
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const [updateFormData, setUpdateFormData] = useState({
     id: null,
     name: "",
@@ -75,10 +121,6 @@ function View() {
     setShowRemoveModal(true);
   };
 
-  const handleAddClick = () => {
-    navigate("/Items");
-  };
-
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
       console.error("No item selected for removal.");
@@ -96,6 +138,14 @@ function View() {
         setSelectedItem(null);
       })
       .catch((error) => console.error("Error:", error));
+  };
+
+  const handleShowAddItemModal = () => {
+    setShowAddItemModal(true);
+  };
+
+  const handleCloseAddItemModal = () => {
+    setShowAddItemModal(false);
   };
 
   const handleUpdateClick = (event, equipment) => {
@@ -223,7 +273,7 @@ function View() {
                 marginBottom: "25px",
               }}
               id="submitButton"
-              onClick={() => handleAddClick()}
+              onClick={handleShowAddItemModal}
             >
               Add Item
             </Button>
@@ -249,13 +299,21 @@ function View() {
                             variant="danger"
                             name={`remove-${equipment.itemid}`}
                             onClick={(e) => handleRemoveClick(e, equipment)}
+                            style={{
+                              marginLeft: "5px",
+                              marginRight: "5px",
+                            }}
                           >
                             Remove
                           </Button>
                           <Button
-                            variant="primary"
+                            variant="success"
                             name={`remove-${equipment.itemid}`}
                             onClick={(e) => handleUpdateClick(e, equipment)}
+                            style={{
+                              marginLeft: "5px",
+                              marginRight: "5px",
+                            }}
                           >
                             Update
                           </Button>
@@ -295,7 +353,7 @@ function View() {
                             Cancel
                           </Button>
                           <Button
-                            variant="primary"
+                            variant="success"
                             name={`remove-${reservation.reservation_id}`}
                             onClick={(e) =>
                               handleUpdateReservationClick(e, reservation)
@@ -317,8 +375,8 @@ function View() {
               style={{ alignItems: "flex-start" }}
             >
               <Button
-                variant="secondary" // Set the desired Bootstrap button variant
-                onClick={() => handleProfileClick()} // Replace handleNewButtonClick with your logic
+                variant="success"
+                onClick={() => handleProfileClick()}
                 style={{
                   fontSize: "20px",
                   width: "100%",
@@ -406,11 +464,80 @@ function View() {
                 }
               />
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button variant="success" type="submit">
               Update
             </Button>
           </Form>
         </Modal.Body>
+      </Modal>
+      <Modal show={showAddItemModal} onHide={handleCloseAddItemModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form className="contact-form" onSubmit={handleAddItem}>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Name for Item"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Condition</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Condition of Item"
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter Price for object"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Description of Item"
+                name="info"
+                value={formData.info}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="success"
+            type="submit"
+            style={{
+              fontSize: "20px",
+              width: "150px",
+              marginLeft: "15px",
+              marginBottom: "25px",
+            }}
+            id="submitButton"
+            onClick={handleAddItem}
+          >
+            Submit
+          </Button>
+        </Modal.Footer>
       </Modal>
       <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
         {/* Remove confirmation modal */}
@@ -497,7 +624,11 @@ function View() {
                 }
               />
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button
+              variant="success"
+              style={{ marginTop: "5px" }}
+              type="submit"
+            >
               Update
             </Button>
           </Form>

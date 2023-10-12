@@ -6,7 +6,6 @@ import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavbarCustom from "../Components/Navbar";
 import "../styles/pages/search.css";
-import "../styles/pages/home.css";
 import "../styles/Components/card.css";
 function ItemSearchAndFilter() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,7 +110,7 @@ function ItemSearchAndFilter() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button id="searchButton" onClick={fetchItems}>
+            <Button id="searchButton" variant="success" onClick={fetchItems}>
               Search
             </Button>
 

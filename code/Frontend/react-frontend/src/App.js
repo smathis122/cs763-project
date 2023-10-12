@@ -2,7 +2,6 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
-import Items from "./pages/AddItem";
 import Contact from "./pages/contact";
 
 //import CheckoutHelp from "./pages/form_helpbutton";
@@ -33,14 +32,6 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
 
-          <Route
-            path="Items"
-            element={
-              <ProtectedRoute>
-                {userType === "host" ? <Items /> : <Navigate to="/" />}
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="Checkout"
             element={
