@@ -7,6 +7,7 @@ import json
 import urllib
 import urllib.parse as up
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify, session
+from werkzeug.urls import url_decode
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField
