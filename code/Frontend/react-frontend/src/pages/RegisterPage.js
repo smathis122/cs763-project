@@ -101,6 +101,7 @@ function RegisterPage() {
             <div className="password-input-container">
               <Form.Control
                 type={showPassword ? "text" : "password"}
+                placeholder="Enter Password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -117,20 +118,6 @@ function RegisterPage() {
                 )}
               </span>
             </div>
-          </FormGroup>
-          <FormGroup className="contact-page-form-group">
-            <Form.Label>User Type</Form.Label>
-            <Form.Control
-              as="select"
-              name="user_type"
-              value={userType}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select User Type</option>
-              <option value="renter">Renter</option>
-              <option value="host">Host</option>
-            </Form.Control>
           </FormGroup>
           <div className="FormButtonDiv">
             <Button

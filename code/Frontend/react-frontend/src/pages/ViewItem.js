@@ -8,8 +8,61 @@ import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
+<<<<<<< HEAD
 import FormGroup from "react-bootstrap/esm/FormGroup";
 import { useNavigate } from "react-router-dom";
+=======
+import { useParams, useNavigate } from "react-router-dom";
+
+function ProfileInfo({ userType, username }) {
+  if (userType === "renter") {
+    return (
+      <div
+        style={{
+          marginLeft: "10px",
+        }}
+      >
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a renter!</p>
+      </div>
+    );
+  } else if (userType === "host") {
+    return (
+      <div
+        style={{
+          marginLeft: "10px",
+        }}
+      >
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a host!</p>
+      </div>
+    );
+  } else if (userType === "general") {
+    return (
+      <div>
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>You are a renter/host!</p>
+      </div>
+    );
+  } else {
+    return (
+      <div
+        style={{
+          marginLeft: "10px",
+        }}
+      >
+        <h1>Profile Page</h1>
+        <p>Welcome, {username}!</p>
+        <p>I don't know what you are!</p>
+      </div>
+    );
+  }
+}
+
+>>>>>>> 78c64ad0ac1e00545a158733a677e6e274faa71f
 function View() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [reservationData, setReservationData] = useState([]);
