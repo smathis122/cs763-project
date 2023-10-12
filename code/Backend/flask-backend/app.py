@@ -30,6 +30,7 @@ load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.secret_key = os.environ.get('SECRET_KEY')
 
+
 db = SQLAlchemy(app)
 
 # SQL Queries for Search endpounts
@@ -62,13 +63,14 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
+# Class to collect payment information
 class paymentInfo(db.Model):
     payment_id = db.Column(db.Integer, primary_key=True)
     itemid = db.Column(db.Integer, nullable=False)
     is_paid = db.Column(db.Boolean, nullable=False)
     Price = db.Column(db.Integer, nullable=False)
 
-
+# Class to register a user
 class regUser(UserMixin):
     def __init__(self, id, email, password, user_type):
         self.id = id
@@ -76,7 +78,7 @@ class regUser(UserMixin):
         self.password = password
         self.user_type = user_type
 
-
+# Class for taking data for the registration form
 class RegisterForm(FlaskForm):
     email = StringField(validators=[
         InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
@@ -89,6 +91,7 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
+    # Method to ensure email is valid
     def validate_email(self, email):
         if not re.match(r'^[a-zA-Z0-9.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$', email.data):
             raise ValidationError('Invalid email address.')
@@ -105,7 +108,7 @@ class RegisterForm(FlaskForm):
             raise ValidationError(
                 'That email already exists. Please choose a different one.')
 
-
+# Class to take input data to login
 class LoginForm(FlaskForm):
     email = StringField(validators=[
         InputRequired(), Length(min=4, max=40), Email(), DataRequired()], render_kw={"placeholder": "Email"})
@@ -115,7 +118,7 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login')
 
-
+#API route to remove item from equipment database table
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
     try:
@@ -132,7 +135,7 @@ def remove_equipment(item_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API route to update an item in the equipment database table
 @app.route("/api/updateEquipment/<int:item_id>", methods=["PUT"])
 def update_equipment(item_id):
     try:
@@ -160,7 +163,7 @@ def update_equipment(item_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API to retrieve all items in the equipment database table
 @app.route("/api/getEquipment", methods=["GET"])
 def get_equipment():
     try:
@@ -179,7 +182,7 @@ def get_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API to add an item to the equipment database table
 @app.route("/api/addEquipment", methods=["POST"])
 def add_equipment():
     try:
@@ -201,7 +204,7 @@ def add_equipment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API to retrieve a user from the user database table
 @app.route("/api/getUsers", methods=["GET"])
 def get_users():
     try:
@@ -221,7 +224,7 @@ def get_users():
         print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
 
-
+# API to retrieve items associated with from the equpment and user database table
 @app.route("/api/items/<username>")
 def user_items(username):
     try:
@@ -238,7 +241,7 @@ def user_items(username):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API to add reviews to the user
 @app.route("/api/addReviews", methods=["POST"])
 def add_reviews():
     try:
@@ -260,7 +263,7 @@ def add_reviews():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API to retreive the reveiws that is stored on the user database table
 @app.route("/api/getReviews/<username>", methods=["GET"])
 def get_reviews(username):
     try:
@@ -280,7 +283,7 @@ def get_reviews(username):
         print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
 
-
+# Flask Login to load a user retrieve the users information
 @login_manager.user_loader
 def load_user(user_id):
     print("User ID:", user_id)
@@ -301,7 +304,7 @@ def load_user(user_id):
         app.logger.info(f"Loaded user: {user}")
     return user
 
-
+# API that will handle all user login requests
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
     try:
@@ -350,13 +353,13 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# API used to ensure that someone loging in is a user, ad to provide access to a users dashboard
 @app.route('/api/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return jsonify({"message": "Entered Dashboard"}), 201
 
-
+# API that will provide access to a users profile
 @app.route('/api/profile')
 @login_required
 def profile():
@@ -368,20 +371,7 @@ def profile():
         return 'User not authenticated'
 
 
-#@app.route('/api/checkout', methods=['GET', 'POST'])
-#@login_required
-#def payment_checkout(item_id, reservation_id):
- #   try:
-   #     data = request.get_json()
-   #     conn=psycopg2.connect(**db_connection_settings)
-   #     cursor=conn.cursor()
-    #    cursor.execute()
-   #     price_query = “SELECT price FROM equipment WHERE item_id = (%d)”
-   #     insert_payment_sql = "INSERT INTO paymentInfo (itemid, reservationid, is_paid, price) VALUES (%d, %d, %s, %d)"
-
-   # except:
-
-
+# API that will be used to allow a user to log out
 @app.route('/api/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -392,7 +382,7 @@ def logout():
     # Google logic stop
     return redirect(url_for('login'))
 
-
+# API that allows someone to register as a user to the database
 @app.route('/api/register', methods=['GET', 'POST'])
 def register():
     print("in register route")
@@ -480,8 +470,6 @@ def googleRegister():
 # Google register method end
 
 # Google login method start
-
-
 @app.route('/api/login-google', methods=['POST', 'OPTIONS'])
 def googleLogin():
     if (request.method == "OPTIONS"):
@@ -505,7 +493,7 @@ def googleLogin():
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 
-
+# APi to allow a user to make a reservation
 @app.route("/api/makeReservation", methods=["POST"])
 def make_reservation():
     try:
@@ -531,7 +519,7 @@ def make_reservation():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# APi that is used to retreive a reservation from the Reservation table in the database
 @app.route("/api/getReservation", methods=["GET"])
 def get_reservation():
     try:
@@ -552,7 +540,7 @@ def get_reservation():
         return jsonify({"error": str(e)}), 500
 
 
-
+# API used to remove a reservation from the reservation table in the database
 @app.route("/api/removeReservation/<reservation_id>", methods=["DELETE"])
 def remove_reservation(reservation_id):
     try:
@@ -569,7 +557,7 @@ def remove_reservation(reservation_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# APi used to update a reservation in the reservation table in the database
 @app.route("/api/updateReservation/<reservation_id>", methods=["PUT"])
 def update_reservation(reservation_id):
     try:
@@ -615,26 +603,32 @@ def execute_database_query(query, params=None):
     except Exception as e:
         return None, str(e)
 
-
+# APi used to retrieve the search items from the equipment table in the database
 @app.route('/api/searchItems', methods=['GET'])
 def search_items():
     try:
         search_query = request.args.get('q')
         min_price = request.args.get('minPrice', 0)
         max_price = request.args.get('maxPrice', float('inf'))
+        availability = request.args.get('availability', None)  # Add this line
 
         print(f"Received search query: {search_query}")
         params = (f"%{search_query}%", f"%{search_query}%", min_price, max_price)
-        
-        # Modify the SQL query to include price filtering
-        SEARCH_QUERY_WITH_PRICE = """
+
+        # Modify the SQL query to include price and availability filtering
+        SEARCH_QUERY_WITH_PRICE_AND_AVAILABILITY = """
             SELECT * FROM Equipment
             WHERE (name ILIKE %s OR description ILIKE %s)
             AND price >= %s AND price <= %s
         """
 
-        equipment_data = execute_database_query(SEARCH_QUERY_WITH_PRICE, params)
-        
+        if availability == "available":
+            SEARCH_QUERY_WITH_PRICE_AND_AVAILABILITY += " AND available = true"
+        elif availability == "unavailable":
+            SEARCH_QUERY_WITH_PRICE_AND_AVAILABILITY += " AND available = false"
+
+        equipment_data = execute_database_query(SEARCH_QUERY_WITH_PRICE_AND_AVAILABILITY, params)
+
         if equipment_data:
             return jsonify(equipment_data), 200
         else:
@@ -642,13 +636,12 @@ def search_items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # Adding Info Page
 @app.route('/api/info')
 def info():
     return jsonify({"message": "Entered Info"}), 201
     
-
+# API used to retreive availble and unavailble items from the equpment table in the database
 @app.route('/api/items', methods=['GET'])
 def get_items():
     try: 

@@ -19,7 +19,7 @@ function ItemSearchAndFilter() {
   useEffect(() => {
     // Fetch initial data when the component mounts
     fetchItems();
-  }, [availabilityFilter, priceRange]);
+  }, [availabilityFilter, priceRange, searchQuery]);
 
   const fetchItems = () => {
     // Make an AJAX request to your backend API
@@ -27,13 +27,17 @@ function ItemSearchAndFilter() {
   
     if (availabilityFilter === "searchItems") {
       endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
+    } else if (availabilityFilter === "available") {
+      endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=available`;
+    } else if (availabilityFilter === "unavailable") {
+      endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=unavailable`;
     } else {
       endpoint = `http://127.0.0.1:5000/api/items?availability=${availabilityFilter}`;
     }
-
-        console.log(availabilityFilter);
-
-    fetch(endpoint).then(handleResponse).catch(handleError);
+  
+    fetch(endpoint)
+      .then(handleResponse)
+      .catch(handleError);
   };
 
   const handleResponse = (response) => {
@@ -82,6 +86,11 @@ function ItemSearchAndFilter() {
     setFilteredData(filteredItems);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    fetchItems();
+  };
+
 
   // Use useEffect to call the filtering function whenever the priceRange changes
   useEffect(() => {
@@ -95,6 +104,7 @@ function ItemSearchAndFilter() {
       <Container>
         {/* Search input */}
         <div class="searchWrapper">
+          <form onSubmit={handleSubmit}>
             <div class="searchBar">
               <input
               type="text"
@@ -102,7 +112,7 @@ function ItemSearchAndFilter() {
               placeholder="Search by name or description"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}/>
-              <Button id="searchButton" onClick={fetchItems}>Search</Button>
+              <Button id="searchButton" type="submit" onClick={fetchItems}>Search</Button>
 
             {/* Filter Options */}
             <h2>Filter by Availability Status:</h2>
@@ -111,6 +121,10 @@ function ItemSearchAndFilter() {
                 type="radio"
                 name="availabilityFilter"
                 value="searchItems"
+                onClick={() => {
+                  setSearchQuery("");
+                  fetchItems();
+                }}
                 checked={availabilityFilter === "searchItems"}
                 onChange={() => setAvailabilityFilter("searchItems")}
               />{" "}
@@ -122,8 +136,15 @@ function ItemSearchAndFilter() {
                 id="radioAvailable"
                 name="availabilityFilter"
                 value="available"
+                // onClick={(e) => setSearchQuery("")}
+                onClick={() => {
+                  setSearchQuery("");
+                  setAvailabilityFilter("available");
+                  fetchItems();
+                }}
+
                 checked={availabilityFilter === "available"}
-                onChange={() => setAvailabilityFilter("available")}
+                // onChange={() => setAvailabilityFilter("available")}
               />{" "}
               Available
             </label>
@@ -133,8 +154,14 @@ function ItemSearchAndFilter() {
                 id="radioUnavailable"
                 name="availabilityFilter"
                 value="unavailable"
+                // onClick={(e) => setSearchQuery("")}
+                onClick={() => {
+                  setSearchQuery("");
+                  setAvailabilityFilter("unavailable");
+                  fetchItems();
+                }}
                 checked={availabilityFilter === "unavailable"}
-                onChange={() => setAvailabilityFilter("unavailable")}
+                // onChange={() => setAvailabilityFilter("unavailable")}
               />{" "}
               Unavailable
             </label>
@@ -162,6 +189,7 @@ function ItemSearchAndFilter() {
             </div>
             </div>
             {/* )} */}
+            </form>
         </div>
 
         {/* Display Results */}
@@ -206,7 +234,12 @@ function ItemSearchAndFilter() {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={handleReserveClick}>Reserve</Button>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
+            <Button variant="secondary" onClick={() => {
+                setSearchQuery(""); 
+                setShowModal(false); 
+                setAvailabilityFilter("searchItems"); 
+                fetchItems();
+                }}>
               Close
             </Button>
           </Modal.Footer>

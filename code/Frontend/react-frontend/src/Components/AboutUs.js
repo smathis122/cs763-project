@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/Components/aboutus.css";
-
+// About us page that lives on the NAVBAR and renders when opened
 function AboutUs() {
     return (
         <div className="container">
