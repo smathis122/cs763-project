@@ -142,7 +142,11 @@ function LoginPage() {
             </div>
           </div>
         </Form>
-        <GoogleLoginButton redirectOnLogin={true} handleMessage={handleSubmitMessageChange} setUserEmail={() => {}}></GoogleLoginButton>
+        <GoogleLoginButton
+          redirectOnLogin={true}
+          handleMessage={handleSubmitMessageChange}
+          setUserEmail={() => {}}
+        ></GoogleLoginButton>
         {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
