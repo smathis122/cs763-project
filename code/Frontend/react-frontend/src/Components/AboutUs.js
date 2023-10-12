@@ -4,7 +4,8 @@ import "../styles/Components/aboutus.css";
 function AboutUs() {
     return (
         <div className="container">
-            <img className ="logo" src={require("../Media/GearOnTheGo.png")} alt="Gear On The Go" />
+            <h1>About Us</h1>
+            <img className="logo" src={require("../Media/GearOnTheGo.png")} alt="Gear On The Go" />
             <br />
             <h2>Step into a world of adventure with Gear On the Go! </h2>
             <p>
@@ -36,7 +37,54 @@ function AboutUs() {
             <p>
                 Gear up for a revolution—Gear up for Gear On The Go! 🚀🔥
             </p>
-        </div>
+            <br />
+            <h2>Meet Our Team! </h2>
+            <div className="team-images">
+                <div className="image-container">
+                    <img className="samantha" src={require("../Media/TeamLeader.jpg")} alt="Samantha" />
+                    <div className="overlay">
+                        <div className="text">Meet our Team Leader Samantha! Fun Fact: Samantha has a twin sister! Double the trouble, double the brilliance!🌟👯‍♀️</div>
+                    </div>
+                </div>
+                <br />
+                <div className="image-container">
+                    <img className="ahnaf" src={require("../Media/SecurityLeader.jpg")} alt="Ahnaf" />
+                    <div className="overlay">
+                        <div className="text">Meet our Security Leader Ahnaf! Fun Fact: Ahnaf finds solace in leisurely drives, using them as a means to unwind and release stress!🚗</div>
+                    </div>
+                </div>
+                <br />
+                <div className="image-container">
+                    <img className="laz" src={require("../Media/QALeader.png")} alt="Laz" />
+                    <div className="overlay">
+                        <div className="text">Meet our Quality Assurance Leader Lazaro! Fun Fact: Laz is out there, training like a powerhouse for powerlifting!💪</div>
+                    </div>
+                </div>
+                <br />
+                <div className="image-container">
+                    <img className="saahil" src={require("../Media/RequirementLeader.jpeg")} alt="Saahil" />
+                    <div className="overlay">
+                        <div className="text">Meet our Requirements Leader Saahil! Fun Fact:
+                            "Saahil knows how to play the piano, but looking at keys confuses him, so he tries to distract himself by glancing anywhere but at the black and white ivories!" 🎹😄 </div>
+                    </div>
+                </div>
+                <br />
+                <div className="image-container">
+                    <img className="shajee" src={require("../Media/ConfigurationLeader.png")} alt="Shajee" />
+                    <div className="overlay">
+                        <div className="text">Meet our Configuration Leader Shajee! Fun Fact: Our Configuration leader is a rockstart behind the scenes. You can often see him singing and strumming his guitar!🎸🎤🎶</div>
+                    </div>
+                </div>
+                <br />
+                <div className="image-container">
+                    <img className="jay" src={require("../Media/ANDLeader.jpg")} alt="Jian" />
+                    <div className="overlay">
+                        <div className="text">Meet our Architecture and Design Leader Jay! Fun Fact: Horseback riding may be the most calm outdoor experience for Jay!🐎</div>
+                    </div>
+                </div>
+            </div>
+
+        </div >
     );
 }
 
