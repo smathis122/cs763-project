@@ -1,0 +1,72 @@
+/* Style the search bar */
+.searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  #searchInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+  }
+  
+  #searchButton {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #searchButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Style the radio buttons and labels */
+  input[type="radio"] {
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  
+  label {
+    display: inline-block;
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  
+  /* Style the selected radio button label */
+  input[type="radio"]:checked + label {
+    font-weight: bold;
+    color: #007BFF;
+  }
+
+  /* Style the filter options container */
+.filterOptions {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 35px;
+  }
+  
+  /* Style the availability filter section */
+  .availabilityFilter {
+    width: 80%;
+    margin-top: 10px;
+    margin-left: 35px;
+    /* Other styles for the availability filter section */
+  }
+  
+  /* Style the price filter section */
+  .priceFilter {
+    width: 100%;
+    /* Other styles for the price filter section */
+  }
+  
+  /* Style the price range labels */
+  .priceRangeLabels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }

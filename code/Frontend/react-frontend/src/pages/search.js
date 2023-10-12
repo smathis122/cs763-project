@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col, Card, Modal } from "react-bootstrap";
-import Slider, {Range} from 'rc-slider';
-import 'rc-slider/assets/index.css';
+import Slider, { Range } from "rc-slider";
+import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavbarCustom from "../Components/Navbar";
-
+import "../styles/pages/search.css";
+import "../styles/pages/home.css";
+import "../styles/Components/card.css";
 function ItemSearchAndFilter() {
   const [searchQuery, setSearchQuery] = useState("");
   const [availabilityFilter, setAvailabilityFilter] = useState("searchItems");
@@ -24,14 +26,14 @@ function ItemSearchAndFilter() {
   const fetchItems = () => {
     // Make an AJAX request to your backend API
     let endpoint;
-  
+
     if (availabilityFilter === "searchItems") {
       endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
     } else {
       endpoint = `http://127.0.0.1:5000/api/items?availability=${availabilityFilter}`;
     }
 
-        console.log(availabilityFilter);
+    console.log(availabilityFilter);
 
     fetch(endpoint).then(handleResponse).catch(handleError);
   };
@@ -39,7 +41,9 @@ function ItemSearchAndFilter() {
   const handleResponse = (response) => {
     if (!response.ok) {
       console.error("Response not OK:", response.status, response.statusText);
-    response.text().then((errorText) => console.error("Error response:", errorText));
+      response
+        .text()
+        .then((errorText) => console.error("Error response:", errorText));
       throw new Error("Network response was not ok");
     }
 
@@ -64,7 +68,7 @@ function ItemSearchAndFilter() {
 
   const handleReserveClick = () => {
     console.log(selectedItem);
-    navigate("/reservations",{state:{selectedItem:selectedItem}});
+    navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
 
   const filterDataByPriceRange = () => {
@@ -82,7 +86,6 @@ function ItemSearchAndFilter() {
     setFilteredData(filteredItems);
   };
 
-
   // Use useEffect to call the filtering function whenever the priceRange changes
   useEffect(() => {
     filterDataByPriceRange();
@@ -91,127 +94,136 @@ function ItemSearchAndFilter() {
   return (
     <div>
       <NavbarCustom />
+      {/* Search input */}
+      <div class="searchWrapper">
+        <div class="searchBar">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by name or description"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button id="searchButton" onClick={fetchItems}>
+            Search
+          </Button>
 
-      <Container>
-        {/* Search input */}
-        <div class="searchWrapper">
-            <div class="searchBar">
-              <input
-              type="text"
-              id="searchInput"
-              placeholder="Search by name or description"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}/>
-              <Button id="searchButton" onClick={fetchItems}>Search</Button>
-
-            {/* Filter Options */}
-            <h2>Filter by Availability Status:</h2>
-            <label>
-              <input
-                type="radio"
-                name="availabilityFilter"
-                value="searchItems"
-                checked={availabilityFilter === "searchItems"}
-                onChange={() => setAvailabilityFilter("searchItems")}
-              />{" "}
-              All
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="radioAvailable"
-                name="availabilityFilter"
-                value="available"
-                checked={availabilityFilter === "available"}
-                onChange={() => setAvailabilityFilter("available")}
-              />{" "}
-              Available
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="radioUnavailable"
-                name="availabilityFilter"
-                value="unavailable"
-                checked={availabilityFilter === "unavailable"}
-                onChange={() => setAvailabilityFilter("unavailable")}
-              />{" "}
-              Unavailable
-            </label>
-
-            </div>
-            
-            {/* {availabilityFilter === "searchItems" &&  ( */}
-            <div class="priceFilter">
-              {/* Price Range Slider */}
-              <h2>Filter by Price Range:</h2>
-              <Slider range
-              size="small"
-                defaultValue={70}
-                aria-label="Small"
-                valueLabelDisplay="auto"
-                min={0}
-                max={500}
-                step={20}
-                value={priceRange}
-                onChange={(value) => setPriceRange(value)}
-              />
-              <div>
-                <span>Min Price: ${priceRange[0]}</span>
-                <span>Max Price: ${priceRange[1]}</span>
-            </div>
-            </div>
-            {/* )} */}
+          {/* Filter Options */}
         </div>
 
-        {/* Display Results */}
-      
-        <div id="results">
-                
+        {/* Filter Options */}
+        {/* Filter Options */}
+        <div className="filterOptions">
+          <Col className="col-md-6 col-12">
+            {/* Price Range Slider */}
+            <Slider
+              range
+              size="small"
+              defaultValue={70}
+              aria-label="Small"
+              valueLabelDisplay="auto"
+              min={0}
+              max={500}
+              step={20}
+              value={priceRange}
+              onChange={(value) => setPriceRange(value)}
+            />
+            <div className="priceRangeLabels">
+              <span>Min Price: ${priceRange[0]}</span>
+              <span>Max Price: ${priceRange[1]}</span>
+            </div>
+          </Col>
+          <Col className="col-md-4 col-12">
+            <div className="availabilityFilter">
+              <div className="availabilityRadio">
+                <label>
+                  <input
+                    type="radio"
+                    name="availabilityFilter"
+                    value="searchItems"
+                    checked={availabilityFilter === "searchItems"}
+                    onChange={() => setAvailabilityFilter("searchItems")}
+                  />{" "}
+                  All
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    id="radioAvailable"
+                    name="availabilityFilter"
+                    value="available"
+                    checked={availabilityFilter === "available"}
+                    onChange={() => setAvailabilityFilter("available")}
+                  />{" "}
+                  Available
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    id="radioUnavailable"
+                    name="availabilityFilter"
+                    value="unavailable"
+                    checked={availabilityFilter === "unavailable"}
+                    onChange={() => setAvailabilityFilter("unavailable")}
+                  />{" "}
+                  Unavailable
+                </label>
+              </div>
+            </div>
+          </Col>
+        </div>
+      </div>
+      {/* Display Results */}
+      <div className="container2">
+        <div className="row equal-height-cards">
           {results
-          .filter((item) => item && item.price !== undefined && item.price >= priceRange[0] && item.price <= priceRange[1])
-          .map((item) => (
-            
-            <Card
-              key={item.id}
-              style={{ cursor: "pointer" }}
-              onClick={() => handleCardClick(item)}
-            >
-              <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  Status: {item.available ? "Available" : "Unavailable"}
-                </Card.Subtitle>
-                <Card.Text>{item.description}</Card.Text>
-                <Card.Text>Price: ${item.price}</Card.Text>
-                <Card.Text>Owner: {item.owner}</Card.Text>
-              </Card.Body>
-            </Card>
-          )
-          )}
-        </div> 
+            .filter(
+              (item) =>
+                item &&
+                item.price !== undefined &&
+                item.price >= priceRange[0] &&
+                item.price <= priceRange[1]
+            )
+            .map((item) => (
+              <Col key={item.id} className="col-md-4 col-12">
+                <Card
+                  className="custom-card"
+                  onClick={() => handleCardClick(item)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Card.Body>
+                    <Card.Title>{item.name}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">
+                      Status: {item.status}
+                    </Card.Subtitle>
+                    <Card.Text>{item.description}</Card.Text>
+                    <Card.Text>Price: ${item.price}</Card.Text>
+                    <Card.Text>Owner: {item.owner}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+        </div>
+      </div>
 
-        {/* Modal for displaying details */}
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>{selectedItem?.name}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              Status: {selectedItem?.available ? "Available" : "Unavailable"}
-            </p>
-            <p>Description: {selectedItem?.description}</p>
-            <p>Price: {selectedItem?.price}</p>
-            <p>Owner: {selectedItem?.owner}</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={handleReserveClick}>Reserve</Button>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
+      {/* Modal for displaying details */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedItem?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Status: {selectedItem?.available ? "Available" : "Unavailable"}</p>
+          <p>Description: {selectedItem?.description}</p>
+          <p>Price: {selectedItem?.price}</p>
+          <p>Owner: {selectedItem?.owner}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleReserveClick}>Reserve</Button>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
