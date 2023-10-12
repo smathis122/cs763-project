@@ -29,17 +29,6 @@ function App() {
           <Route path="PaymentSuccessful" element={<PaymentSuccessful />} />
 
           <Route
-<<<<<<< HEAD
-=======
-            path="Items"
-            element={
-              <ProtectedRoute>
-                <Items />
-              </ProtectedRoute>
-            }
-          />
-          <Route
->>>>>>> 78c64ad0ac1e00545a158733a677e6e274faa71f
             path="Checkout"
             element={
               <ProtectedRoute>
