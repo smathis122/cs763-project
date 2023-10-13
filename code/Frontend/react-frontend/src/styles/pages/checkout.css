@@ -8,3 +8,13 @@
     border-radius: 5px;
     color: black;
   }
+
+  .containerSuccess{
+    display: "flex" !important;
+    flex-direction: "column" !important;
+    justify-content: "flex-end" !important;
+    align-items: "center" !important;
+    min-height: "60vh" !important;
+  }
+
+

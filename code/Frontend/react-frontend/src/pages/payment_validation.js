@@ -40,8 +40,19 @@ function CheckoutForm() {
     <div>
       <NavbarCustom />
       <Container className="checkout-form-container">
-        <h1>Checkout</h1>
-        <input type="submit" id="clickme" value="Help" />
+        <Row>
+          <Col md={3} className="items-hosted-column">
+            <h1>Checkout</h1>
+          </Col>
+          <Col md={2} className="items-hosted-column">
+            <input
+              type="submit"
+              style={{ marginTop: "10%" }}
+              id="clickme"
+              value="Help"
+            />
+          </Col>
+        </Row>
         <hr />
         <Form
           name="Payment Details"

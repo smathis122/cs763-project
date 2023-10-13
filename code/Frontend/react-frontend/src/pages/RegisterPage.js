@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import { Modal, Button } from "react-bootstrap";
 import "../styles/pages/password.css";
 import { useNavigate, Link } from "react-router-dom";
-// Google import start
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
 import UserTypePopUp from "../Components/UserTypePopUp";
-// Google import stop
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -20,6 +18,7 @@ function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const navigate = useNavigate();
@@ -37,6 +36,10 @@ function RegisterPage() {
     setShowPassword(!showPassword);
   };
 
+  const showError = () => {
+    setShowErrorModal(true);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     fetch("http://127.0.0.1:5000/api/register", {
@@ -50,6 +53,10 @@ function RegisterPage() {
         if (response.status === 201) {
           console.log(response);
           navigate("/login");
+        } else if (response.status === 400) {
+          console.log("registration failed");
+          console.log(response);
+          showError();
         }
       })
       .catch((error) => console.error("Error:", error));
@@ -125,6 +132,22 @@ function RegisterPage() {
             Already have an account? <Link to="/login">Login</Link>
           </p>
         </Form>
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Password must be between 8 and 20 characters long.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowErrorModal(false)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
