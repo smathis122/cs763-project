@@ -20,11 +20,11 @@ function ItemSearchAndFilter() {
     // Fetch initial data when the component mounts
     fetchItems();
   }, [availabilityFilter, priceRange, searchQuery]);
-
+//This is a fetch items function that looks into the equipment table of the database
   const fetchItems = () => {
     // Make an AJAX request to your backend API
     let endpoint;
-  
+
     if (availabilityFilter === "searchItems") {
       endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
     } else if (availabilityFilter === "available") {
