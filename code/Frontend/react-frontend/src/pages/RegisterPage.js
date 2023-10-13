@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 import "../styles/pages/password.css";
+import { useNavigate, Link } from "react-router-dom";
 // Google import start
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
@@ -12,32 +13,24 @@ import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 
 function RegisterPage() {
-  let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     user_type: "",
   });
-
-  const [userType, setUserType] = useState("");
-  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-
+  const navigate = useNavigate();
   const showPopup = () => {
     setButtonPopup(true);
-  }
+  };
 
   //Adding Google Pop up constants (stop)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === "user_type") {
-      setUserType(value); // Update the userType state
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const togglePasswordVisibility = () => {
@@ -46,31 +39,18 @@ function RegisterPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setErrors({});
-    setSubmitMsg("Registering...");
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...formData, user_type: userType }),
+      body: JSON.stringify({ ...formData }),
     })
       .then((response) => {
-        if (!response.ok) {
-          return response.json().then((data) => {
-            setErrors(data.errors || {});
-            console.log(data.errors);
-            setSubmitMsg("Failed to register");
-          });
-        } else {
-          return response.json().then((data) => {
-            console.log(data.message);
-            setSubmitMsg(data.message);
-          });
+        if (response.status === 201) {
+          console.log(response);
+          navigate("/login");
         }
-      })
-      .then((data) => {
-        console.log(data);
       })
       .catch((error) => console.error("Error:", error));
     setFormData({
@@ -82,13 +62,13 @@ function RegisterPage() {
   return (
     <div>
       <NavbarCustom />
-      <h1>Register</h1>
       <div className="form" id="formDiv">
-        <Form className="contact-form" onSubmit={handleSubmit}>
+        <Form className="reservation-form" onSubmit={handleSubmit}>
+          <h3 style={{ marginLeft: "35%", marginBottom: "10%" }}>Welcome!</h3>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
+              id="email"
               placeholder="Enter Email"
               name="email"
               value={formData.email}
@@ -97,7 +77,6 @@ function RegisterPage() {
             />
           </FormGroup>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Password</Form.Label>
             <div className="password-input-container">
               <Form.Control
                 type={showPassword ? "text" : "password"}
@@ -119,28 +98,34 @@ function RegisterPage() {
               </span>
             </div>
           </FormGroup>
-          <div className="FormButtonDiv">
-            <Button
-              className="FormButton"
-              variant="primary"
-              type="submit"
-              id="submitButton"
-            >
-              Submit
-            </Button>
-            <div className="error-messages">
-              {errors.email && <p>{errors.email.join(", ")}</p>}
-              {errors.password && <p>{errors.password.join(", ")}</p>}
-            </div>
-          </div>
+          <Button
+            className="FormButton"
+            variant="success"
+            type="submit"
+            id="submitButton"
+          >
+            Register
+          </Button>
+          <GoogleLoginButton
+            redirectOnLogin={false}
+            handleMessage={() => {}}
+            setUserEmail={(email) => {
+              setUserEmail(email);
+            }}
+            showPopup={showPopup}
+          />
+          <UserTypePopUp
+            trigger={buttonPopup}
+            updatePopup={(value) => {
+              setButtonPopup(value);
+            }}
+            email={userEmail}
+          />
+          <p className="dont-have-account">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
         </Form>
       </div>
-      {/* Google Logic start */}
-      <GoogleLoginButton redirectOnLogin={false} handleMessage={() => { }} setUserEmail={(email) => {setUserEmail(email)}} showPopup={showPopup}/>
-      <UserTypePopUp trigger={buttonPopup} updatePopup={(value) => {setButtonPopup(value)}} email={userEmail} />       
-      {/* Google Logic stop */}
-      {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
-
     </div>
   );
 }

@@ -406,7 +406,8 @@ def register():
             conn.commit()
             cursor.close()
             conn.close()
-            return jsonify({"message": "User added successfully"}), 201
+            print(email)
+            return jsonify({"message": "User added successfully", "username": email}), 201
         else:
             print("Form validation failed")
             errors = form.errors
