@@ -378,15 +378,20 @@ def profile():
    # except:
 
 
-@app.route('/api/logout', methods=['GET', 'POST'])
-@login_required
+@app.route('/api/logout', methods=['POST'])
 def logout():
-    logout_user()
-    flash('Logged out successfully.', 'info')
-    # Google logic start
-    session.pop("user", None)
-    # Google logic stop
-    return redirect(url_for('login'))
+    try:
+        logout_user()
+        # Google logic start
+        # session.pop("user", None)
+        # Google logic stop
+        # session.clear()
+        session['username'] = None
+        print("session cleared")
+        return jsonify({"message": "Logged out successfully"}), 200
+    except Exception as e:
+        print("logout error!!!")
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/register', methods=['GET', 'POST'])
