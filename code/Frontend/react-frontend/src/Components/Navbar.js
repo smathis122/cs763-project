@@ -10,10 +10,54 @@ import {
 import { HashLink as Link } from "react-router-hash-link";
 import "../styles/Components/navbar.css";
 import { useUser } from "./UserContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-// This component represents a custom navigation bar (NavbarCustom) for the GearOnTheGo website.
 export function NavbarCustom(props) {
-  const { username } = useUser();
+  const { username, setUsername } = useUser();
+  const navigate = useNavigate(); // Get the navigate function
+
+  const handleLogout = () => {
+    // Perform logout logic here
+    fetch("http://127.0.0.1:5000/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          // Successful logout, you can redirect or show a confirmation message
+          setUsername(null);
+          console.log("Logout successful.");
+        } else {
+          // Handle errors or display an error message
+          console.error("Logout failed.");
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error("Error:", error));
+
+    // Navigate to the login page
+    navigate("/login");
+  };
+
+  // const handleLogout = async () => {
+  //   try {
+  //     // fetch("http://127.0.0.1:5000/api/logout", {
+  //     //   method: "POST",
+  //     //   headers: {
+  //     //     "Content-Type": "application/json",
+  //     //   },
+  //     // })
+  //     const response = await axios.post('/api/logout');
+  //     console.log(response.data.message); // Optional: Display logout message
+  //   } catch (error) {
+  //     console.error('Error logging out:', error);
+  //   }
+  // }
 
   return (
     <Navbar
@@ -42,7 +86,7 @@ export function NavbarCustom(props) {
               {username ? (
                 <>
                   <NavDropdown.Item href="#/View">Profile</NavDropdown.Item>
-                  <NavDropdown.Item href="#/logout">Logout</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
                 </>
               ) : (
                 <>

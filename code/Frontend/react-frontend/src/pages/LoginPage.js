@@ -45,19 +45,10 @@ function LoginPage() {
         if (response.status === 201) {
           const user = response.data;
           const username = user.username;
-          const userType = user.user_type;
           setUsername(username);
-          setUserType(userType);
-          console.log("Logged in", username, "as", userType);
+          console.log("Logged in", username);
 
-          // ***Will remove types other than general***
-          if (userType === "general") {
-            navigate("/"); // Redirect to the home page
-          } else {
-            navigate("/");
-            // Handle other user types or scenarios
-            console.log("Unknown user type");
-          }
+          navigate("/");
         } else if (response.status === 202) {
           console.log("Wrong Password");
           console.log(response.data);
