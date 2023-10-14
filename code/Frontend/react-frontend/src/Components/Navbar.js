@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Tabs,
   Tab,
@@ -14,10 +14,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export function NavbarCustom(props) {
-  const { username, setUsername } = useUser();
+  const { username, setUsername,} = useUser();
   const navigate = useNavigate(); // Get the navigate function
 
+  //Google start
+  const [loginData, setLoginData] = useState(
+    localStorage.getItem("loginData")
+      ? JSON.parse(localStorage.getItem("loginData"))
+      : null
+  );
+  //Google stop
   const handleLogout = () => {
+    //Google logout logic: 
+    localStorage.removeItem("loginData");
+    setLoginData(null);
+    setUsername("Guest");
     // Perform logout logic here
     fetch("http://127.0.0.1:5000/api/logout", {
       method: "POST",
