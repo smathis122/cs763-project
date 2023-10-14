@@ -12,6 +12,7 @@ import GoogleLoginButton from "../Components/GoogleLoginButton";
 import "../styles/pages/password.css";
 import "../styles/pages/register.css";
 
+//This function is used to manager the user login process and initializes state for a submission message
 function LoginPage() {
   const { setUsername, setUserType } = useUser();
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -23,16 +24,26 @@ function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+//This function handles changes in the email and password input fields.
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
+//This Function is used to set the submitMsg state, which displays a message to the user during the login process.
+  const handleSubmitMessageChange = (message) => {
+    setSubmitMsg(message);
+  };
+
+  //This function toggles the visibility of the password input field.
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const navigate = useNavigate();
+
+//This function handles the form submission when the login button is clicked.
+
   const showError = () => {
     setShowErrorModal(true);
   };
@@ -67,7 +78,7 @@ function LoginPage() {
       password: "",
     });
   };
-
+//This component is used to render the login page for the user to log into their account
   return (
     <div>
       <NavbarCustom />

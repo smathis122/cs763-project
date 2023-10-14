@@ -12,6 +12,7 @@ import GoogleLoginButton from "../Components/GoogleLoginButton";
 import axios from "axios";
 import { useUser } from "../Components/UserContext";
 
+//This funtion manages various states for form data, user type, form validation errors, and whether to show or hide a password.
 function RegisterPage() {
   const { setUsername } = useUser();
   const [formData, setFormData] = useState({
@@ -34,9 +35,13 @@ function RegisterPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  //This function is used to toggle the visibility of a password. 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+
+  //This function is used to submit a form, and Sends a Post request to the server for user registration
 
   const showError = () => {
     setShowErrorModal(true);
@@ -100,7 +105,7 @@ function RegisterPage() {
         console.error("Error:", error);
       });
   };
-
+//This component is rendering a registration form for both native username and password login, and google login authentication
   return (
     <div>
       <NavbarCustom />
