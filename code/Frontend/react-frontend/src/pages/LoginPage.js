@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../Components/UserContext";
 // Google import start
 import GoogleLoginButton from "../Components/GoogleLoginButton";
@@ -141,6 +141,11 @@ function LoginPage() {
               {errors.message && <p>{errors.message}</p>}
             </div>
           </div>
+          <Link 
+            to="/register"
+          >
+            New User? Click to Register
+          </Link>
         </Form>
         <GoogleLoginButton
           redirectOnLogin={true}

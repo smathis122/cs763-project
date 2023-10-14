@@ -368,15 +368,20 @@ def profile():
 
 
 # API that will be used to allow a user to log out
-@app.route('/api/logout', methods=['GET', 'POST'])
-@login_required
+@app.route('/api/logout', methods=['POST'])
 def logout():
-    logout_user()
-    flash('Logged out successfully.', 'info')
-    # Google logic start
-    session.pop("user", None)
-    # Google logic stop
-    return redirect(url_for('login'))
+    try:
+        logout_user()
+        # Google logic start
+        # session.pop("user", None)
+        # Google logic stop
+        # session.clear()
+        session['username'] = None
+        print("session cleared")
+        return jsonify({"message": "Logged out successfully"}), 200
+    except Exception as e:
+        print("logout error!!!")
+        return jsonify({"error": str(e)}), 500
 
 # API that allows someone to register as a user to the database
 @app.route('/api/register', methods=['GET', 'POST'])
@@ -397,6 +402,7 @@ def register():
             conn.commit()
             cursor.close()
             conn.close()
+            session['username'] = email
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
