@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import { Modal, Button } from "react-bootstrap";
 // Google import start
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import "../styles/pages/register.css";
@@ -10,7 +10,7 @@ import "../styles/pages/register.css";
 export function GoogleLoginButton(props) {
   const navigate = useNavigate();
   const { setUsername } = useUser();
-
+  const [showUnregisteredModal, setShowUnregisteredModal] = useState(false);
   const [loginData, setLoginData] = useState(
     localStorage.getItem("loginData")
       ? JSON.parse(localStorage.getItem("loginData"))
@@ -46,6 +46,10 @@ export function GoogleLoginButton(props) {
 
       setUsername(username);
       localStorage.setItem("loginData", JSON.stringify(data));
+    }
+    if (res.status === 404) {
+      // If the user is unregistered, show the unregistered user modal
+      setShowUnregisteredModal(true);
     } else {
       props.handleMessage("Google login failed. Please register.");
     }
@@ -71,6 +75,25 @@ export function GoogleLoginButton(props) {
           </GoogleOAuthProvider>
         </div>
       </div>
+      <Modal
+        show={showUnregisteredModal}
+        onHide={() => setShowUnregisteredModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Unregistered User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You are not registered. Please register before logging in.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowUnregisteredModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
