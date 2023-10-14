@@ -272,7 +272,7 @@ function View() {
                 marginTop: "15px",
                 marginBottom: "25px",
               }}
-              id="submitButton"
+              id="addButton"
               onClick={handleShowAddItemModal}
             >
               Add Item
