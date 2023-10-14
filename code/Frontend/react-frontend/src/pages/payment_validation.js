@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
 
-import {useLocation, useNavigate } from "react-router-dom";
-
 //This function initializes and manages the checkoutForm and retreives reservation data
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/pages/checkout.css";
