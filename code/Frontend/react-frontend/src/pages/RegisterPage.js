@@ -11,6 +11,7 @@ import GoogleLoginButton from "../Components/GoogleLoginButton";
 import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 
+//This funtion manages various states for form data, user type, form validation errors, and whether to show or hide a password.
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
   const [formData, setFormData] = useState({
@@ -40,10 +41,12 @@ function RegisterPage() {
     }
   };
 
+  //This function is used to toggle the visibility of a password. 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  //This function is used to submit a form, and Sends a Post request to the server for user registration
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors({});
@@ -78,7 +81,7 @@ function RegisterPage() {
       password: "",
     });
   };
-
+//This component is rendering a registration form for both native username and password login, and google login authentication
   return (
     <div>
       <NavbarCustom />

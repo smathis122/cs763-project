@@ -10,6 +10,8 @@ import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import "../styles/pages/home.css";
 import "../styles/Components/card.css";
+
+//This function is a functional component that manages equipment data and provides functions to handle card clicks and reservation navigation
 function EquipmentList() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +21,7 @@ function EquipmentList() {
   useEffect(() => {
     fetchEquipmentData();
   }, []);
-
+//This is a function that takes an equipment object as a parameter and updates the selectedItem state with the selected equipment
   const fetchEquipmentData = () => {
     // Fetch equipment data from your Flask API endpoint
     fetch("http://127.0.0.1:5000/api/getEquipment")
@@ -28,6 +30,7 @@ function EquipmentList() {
       .catch((error) => console.error("Error:", error));
   };
 
+//This is a function that navigates the user to the registration page (/register) with the selected equipment as a part of the route state
   const handleCardClick = (equipment) => {
     setSelectedItem(equipment);
     setShowModal(true);
@@ -36,11 +39,11 @@ function EquipmentList() {
   const handleReserveClickRegister = () => {
     navigate("/register", { state: { selectedItem: selectedItem } });
   };
-
+//This is a function that navigates the user to the reservations page (/reservations) with the selected equipment as part of the route state. 
   const handleReserveClickReserve = () => {
     navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
-
+//This component renders the items that are in the database on the homepage
   return (
     <div>
       <NavbarCustom />
