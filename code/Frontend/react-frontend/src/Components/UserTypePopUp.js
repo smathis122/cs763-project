@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
+// UserTypePopUp is a component for updating a user's type (e.g., "renter" or "owner") with a pop-up UI.
 function UserTypePopUp(props) {
     const [type, setType] = useState("renter")
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ function UserTypePopUp(props) {
     const onOptionChange = (event) => {
         setType(event.target.value)
     }
-
+// The 'updateUser' function is an asynchronous function for sending a user type update to the server.
     const updateUser = async () => {
         const res = await fetch('http://127.0.0.1:5000/api/update-google', {
             method: 'POST',
@@ -26,7 +27,7 @@ function UserTypePopUp(props) {
         if (res.ok)
             navigate("/");
     }
-
+// This represents a pop-up component that allows a user to select their user type, specifically choosine between a renter, host, or both.
     return (
         <div className="UserTypePopUp">
             <Modal show={props.trigger}>
