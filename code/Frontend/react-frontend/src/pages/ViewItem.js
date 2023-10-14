@@ -13,11 +13,16 @@ import { useNavigate } from "react-router-dom";
 function View() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [reservationData, setReservationData] = useState([]);
+  const [selectedReservation, setSelectedReservation] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  // click modal is not necessary for reservation
   const [reviews, setReviews] = useState([]); // State for reviews
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  // adding similar remove/update modal for reservation
+  const [showRemoveReservationModal, setShowRemoveReservationModal] = useState(false);
+  const [showUpdateReservationModal, setShowUpdateReservationModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { username } = useUser();
   const navigate = useNavigate();
@@ -83,6 +88,8 @@ function View() {
     end_date: "",
     item_id: "",
     user_name: "",
+    price: "",
+    item_name: ""
   });
 //This function Uses the 'useEffect' hook to perform data fetching when 'username' changes
   useEffect(() => {
@@ -118,12 +125,7 @@ function View() {
     setSelectedItem(equipment);
     setShowRemoveModal(true);
   };
-//This function handles removing a resevation
-  const handleRemoveReservationClick = (event, reservation) => {
-    event.stopPropagation();
-    setSelectedItem(reservation);
-    setShowRemoveModal(true);
-  };
+
 //This function handles the removal and sends a confirmaiton of the removal
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
@@ -184,16 +186,26 @@ function View() {
       })
       .catch((error) => console.error("Error:", error));
   };
+
+  // Modal components for cancel/update reservations
+  const handleRemoveReservationClick = (event, reservation) => {
+    event.stopPropagation();
+    setSelectedReservation(reservation);
+    setShowRemoveReservationModal(true);
+  };
+
 //This function it checks whether a selectedItem is defined. 
 //If it's not defined (i.e., no item is selected), it logs an error message to the console and exits the function.
+
   const handleRemoveReservationConfirm = () => {
-    if (!selectedItem) {
-      console.error("No item selected for removal.");
+    if (!selectedReservation) {
+      console.error("No reservation selected for removal.");
       return;
     }
-    console.log("Selected Item:", selectedItem);
+    console.log("Selected Reservation:", selectedReservation);
     fetch(
-      `http://127.0.0.1:5000/api/removeReservation/${selectedItem.reservation_id}`,
+      // reservation will be removed from the database -> payment will be returned via Payment system (implementation details omitted)
+      `http://127.0.0.1:5000/api/removeReservation/${selectedReservation.reservation_id}`,
       {
         method: "DELETE",
       }
@@ -202,8 +214,8 @@ function View() {
       .then((data) => {
         console.log(data);
         fetchReservationData();
-        setShowRemoveModal(false);
-        setSelectedItem(null);
+        setShowRemoveReservationModal(false);
+        setSelectedReservation(null);
       })
       .catch((error) => console.error("Error:", error));
   };
@@ -211,15 +223,17 @@ function View() {
 //populates the updateReservationData state with reservation details, and shows a modal for updating the reservation.
   const handleUpdateReservationClick = (event, reservation) => {
     event.stopPropagation();
-    setSelectedItem(reservation);
+    setSelectedReservation(reservation);
     setUpdateReservationData({
       reservation_id: reservation.reservation_id,
       start_date: reservation.start_date,
       end_date: reservation.end_date,
       item_id: reservation.item_id,
       user_name: reservation.user_name,
+      price: reservation.price,
+      item_name: reservation.item_name
     });
-    setShowUpdateModal(true);
+    setShowUpdateReservationModal(true);
   };
 //This function makes a PUT request to update reservation data on the server, 
 //logs the response data, fetches updated reservation data, and closes the update modal.
@@ -240,7 +254,7 @@ function View() {
       .then((data) => {
         console.log(data);
         fetchReservationData();
-        setShowUpdateModal(false);
+        setShowUpdateReservationModal(false);
       })
       .catch((error) => console.error("Error:", error));
   };
@@ -255,12 +269,9 @@ function View() {
   };
 //This function formats the date to display the weekday (short form), numeric day, short month, and numeric year, according to the "en-US" locale
   const dateDisplay = (date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    // normal date format to change GMT to EST is hard to implement 
+    // -> fall back to use string method to format
+    return date.split(" ").slice(1, 4).join(" ");
   };
 //This is the return componant that renders a user interface that shows equipment items and active reservation, which is being filtered based on the user
   return (
@@ -350,6 +361,12 @@ function View() {
                           <Card.Text>
                             End Date: {dateDisplay(reservation.end_date)}
                           </Card.Text>
+                          <Card.Text>
+                            Price: {reservation.price}
+                          </Card.Text>
+                          <Card.Text>
+                            Item Name: {reservation.item_name}
+                          </Card.Text>
                           <Button
                             variant="danger"
                             name={`remove-${reservation.reservation_id}`}
@@ -437,7 +454,31 @@ function View() {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+      <Modal show={showRemoveReservationModal} onHide={() => setShowRemoveReservationModal(false)}>
+        {/* Cancel reservation confirmation modal */}
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Cancallation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* need to specify Body as Reservation does not have a name 
+          -> otherwise it will throw an error that selectedReservation object can't be a react component */}
+          Are you sure you want to cancel {selectedReservation?.Body}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button name="remove2" variant="danger" onClick={handleRemoveReservationConfirm}>
+            Yes
+          </Button>
+          <Button
+            name="cancel"
+            variant="secondary"
+            onClick={() => setShowRemoveReservationModal(false)}
+          >
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showUpdateReservationModal} onHide={() => setShowUpdateReservationModal(false)}>
         {/* Update reservation modal */}
         <Modal.Header closeButton>
           <Modal.Title>Edit Reservation</Modal.Title>
@@ -478,6 +519,7 @@ function View() {
           </Form>
         </Modal.Body>
       </Modal>
+
       <Modal
         show={showAddItemModal}
         id="updateModal"
@@ -552,6 +594,7 @@ function View() {
           </Button>
         </Modal.Footer>
       </Modal>
+
       <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
         {/* Remove confirmation modal */}
         <Modal.Header closeButton>

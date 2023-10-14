@@ -17,8 +17,11 @@ function ReservationForm() {
   const [formData, setFormData] = useState({
     start_date: "",
     end_date: "",
+    // item_id, price are contexts passed from items; user_name is a global user context
     item_id: location.state.selectedItem.itemid,
     user_name: username,
+    price: location.state.selectedItem.price,
+    item_name: location.state.selectedItem.name
   });
 
   const selectedItem = location.state.selectedItem;
@@ -29,39 +32,20 @@ function ReservationForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-//This function is called when the Checkout button is clicked, it navigates to the checkout page and passed the reservation details and selected item data as state
-  const handleCheckoutClick = () => {
-    navigate("/Checkout", {
-      state: { reservationDetails: formData, selectedItem },
-    });
-  };
-
 //This function handles the form submission when the Make Reservation button is clicked. IT performs date validation, and sends a post to the backend using the feth API
   const handleSubmit = (event) => {
     event.preventDefault();
     // Send the formData as JSON to your Flask back-end here
-    fetch("http://127.0.0.1:5000/api/makeReservation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error("Error:", error));
     setSubmitMsg("Loading...");
     if (formData.end_date != null && formData.end_date < formData.start_date) {
+      // enforce end user enter valid inputs: that rental end date can't be before start date
       setSubmitMsg("End date must be after the start date!");
     } else if (new Date(formData.start_date) < new Date()) {
+      // also rental start date can't be in the past
       setSubmitMsg("start date must be after today!");
     } else {
-      setTimeout(() => setSubmitMsg("Your reservation has been made!"), 3000);
-      setFormData({
-        start_date: "",
-        end_date: "",
-        item_id: location.state.selectedItem.itemid,
-        user_name: username,
+      navigate("/Checkout", {
+        state: { reservationDetails: formData, selectedItem },
       });
     }
   };
@@ -105,7 +89,7 @@ function ReservationForm() {
           <Button
             variant="primary"
             type="submit"
-            onClick={handleCheckoutClick}
+            onClick={handleSubmit}
             style={{
               fontSize: "20px",
               width: "150px",

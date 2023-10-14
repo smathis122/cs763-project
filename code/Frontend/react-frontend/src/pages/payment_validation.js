@@ -8,11 +8,12 @@ import NavbarCustom from "../Components/Navbar";
 import "../styles/pages/register.css";
 function CheckoutForm() {
   const location = useLocation();
-  console.log(location.state.reservationDetails.item_id);
-  window.onload = function () {
-    var clickMeButton = document.getElementById("clickme");
-    clickMeButton.onclick = youClicked;
-  };
+  console.log(location.state.reservationDetails);
+  // create a variable formData to fetch all contexts passed from the reservation page
+  const formData = location.state.reservationDetails;
+  const price = location.state.reservationDetails.price;
+
+
 // This function informs users to fill in the required information before submission
   function youClicked() {
     alert(
@@ -20,13 +21,21 @@ function CheckoutForm() {
     );
   }
 
-  const [showAlert, setShowAlert] = useState(false);
-  const is_paid = false;
 
   const navigate = useNavigate();
 
 // This function allows the user to naviagte to the payment Successful page when called
   const handleSuccessfulPayment = () => {
+    fetch("http://127.0.0.1:5000/api/makeReservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
     navigate("/PaymentSuccessful");
   };
 
@@ -47,6 +56,9 @@ function CheckoutForm() {
         <Row>
           <Col md={3} className="items-hosted-column">
             <h1>Checkout</h1>
+            <div>
+        <p>Price: $ {price}</p>
+        </div>
           </Col>
           <Col md={2} className="items-hosted-column">
             <input
@@ -54,6 +66,7 @@ function CheckoutForm() {
               style={{ marginTop: "10%" }}
               id="clickme"
               value="Help"
+              onClick={youClicked}
             />
           </Col>
         </Row>
@@ -170,35 +183,35 @@ function CheckoutForm() {
 function validateForm() {
   var fullName = document.getElementById("fullName");
   if (fullName.value.length < 2) {
-    alert("Sorry: Full Name should be at least two characters");
+    alert("Error: Full Name should be at least two characters");
     fullName.focus();
     return false;
   }
 
   var streetAddress = document.getElementById("streetAddress");
   if (streetAddress.value.length < 2) {
-    alert("Sorry: Street Address should be at least 2 characters");
+    alert("Error: Street Address should be at least 2 characters");
     streetAddress.focus();
     return false;
   }
 
   var state = document.getElementById("state");
   if (state.value.length !== 2) {
-    alert("Sorry: State should be only 2 characters, e.g: MA");
+    alert("Error: State should be only 2 characters, e.g: MA");
     state.focus();
     return false;
   }
 
   var zipCode = document.getElementById("zipCode");
   if (zipCode.value.length < 4) {
-    alert("Sorry: Zip Code should be at least 4 characters");
+    alert("Error: Zip Code should be at least 4 characters");
     zipCode.focus();
     return false;
   }
 
   var cvc = document.getElementById("cvc");
   if (cvc.value.length !== 3) {
-    alert("Sorry: The CVC number should be of 3 digits");
+    alert("Error: The CVC number should be of 3 digits");
     cvc.focus();
     return false;
   }
@@ -210,16 +223,50 @@ function validateForm() {
 
   if (!validPattern.test(monthValue)) {
     alert(
-      "Sorry: Please enter your Credit Card's 'valid thru' information in the form MM/YY. e.g: 12/23"
+      "Error: Please enter your Credit Card's 'valid thru' information in the form MM/YY. e.g: 12/23"
     );
     monthValid.focus();
     return false;
   }
 
+  var [validMonth, validYear] = monthValue.split("/");
+
+
+var currentDate = new Date();
+
+
+var currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // Adding 1 to get the correct month (0-indexed)
+var currentYear = String(currentDate.getFullYear()).slice(2);
+
+validMonth = parseInt(validMonth, 10);
+validYear = parseInt(validYear, 10);
+
+
+currentMonth = parseInt(currentMonth, 10);
+currentYear = parseInt(currentYear, 10);
+
+if (validYear < currentYear || (validYear === currentYear && validMonth < currentMonth)) {
+    alert("Sorry: The card you are using has expired. Please use a card that has a minimum expiry of " + currentMonth + "/" + currentYear);
+    monthValid.focus();
+    return false;
+}
+
+var cvc = document.getElementById("cvc");
+var cvcinput = cvc.value.trim(); 
+
+
+var cvcValid = /^\d{3}$/;
+
+if (!cvcValid.test(cvcinput)) {
+    alert("Sorry: Invalid CVC. Please enter exactly 3 digits.");
+    cvc.focus();
+    return false;
+}
+
   var message = document.getElementById("message");
   if (message.value.length < 30) {
     alert(
-      "Sorry: Please enter a message of at least 30 characters before you submit"
+      "Error: Please enter a message of at least 30 characters before you submit"
     );
     message.focus();
     return false;
@@ -229,7 +276,7 @@ function validateForm() {
   var cardNumber = cardNumberElement.value;
 
   if (cardNumber.length < 12 || cardNumber.length > 16) {
-    alert("Sorry: Card Number should be of 12 to 16 digits");
+    alert("Error: Card Number should be of 12 to 16 digits");
     cardNumberElement.focus();
     return false;
   } else {
