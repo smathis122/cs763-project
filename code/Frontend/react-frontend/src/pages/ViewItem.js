@@ -8,51 +8,8 @@ import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import { useUser } from "../Components/UserContext";
-import { useParams, useNavigate } from "react-router-dom";
-
-function ProfileInfo({ userType, username }) {
-  if (userType === "renter") {
-    return (
-      <div
-        style={{
-          marginLeft: "10px",
-        }}
-      >
-        <h1>Profile Page</h1>
-        <p>Welcome, {username}!</p>
-        <p>You are a renter!</p>
-        {/* Display the user's profile information */}
-      </div>
-    );
-  } else if (userType === "host") {
-    return (
-      <div
-        style={{
-          marginLeft: "10px",
-        }}
-      >
-        <h1>Profile Page</h1>
-        <p>Welcome, {username}!</p>
-        <p>You are a host!</p>
-        {/* Display the user's profile information */}
-      </div>
-    );
-  } else {
-    return (
-      <div
-        style={{
-          marginLeft: "10px",
-        }}
-      >
-        <h1>Profile Page</h1>
-        <p>Welcome, {username}!</p>
-        <p>I don't know what you are!</p>
-        {/* Display the user's profile information */}
-      </div>
-    );
-  }
-}
-
+import FormGroup from "react-bootstrap/esm/FormGroup";
+import { useNavigate } from "react-router-dom";
 function View() {
   const [equipmentData, setEquipmentData] = useState([]);
   const [reservationData, setReservationData] = useState([]);
@@ -62,8 +19,53 @@ function View() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const { username, userType } = useUser();
+  const { username } = useUser();
   const navigate = useNavigate();
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    info: "",
+    status: "",
+    price: "",
+  });
+
+  const handleAddItem = () => {
+    const newEquipment = {
+      name: formData.name,
+      description: formData.info,
+      status: formData.status,
+      price: formData.price,
+      owner: username,
+    };
+
+    fetch("http://127.0.0.1:5000/api/addEquipment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEquipment),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        navigate("/View");
+        // Optionally, you can update the equipmentData state here
+        fetchEquipmentData();
+      })
+      .catch((error) => console.error("Error:", error));
+    setShowAddItemModal(false); // Close the modal after adding the item
+    setFormData({
+      name: "",
+      info: "",
+      status: "",
+      price: "",
+    });
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const [updateFormData, setUpdateFormData] = useState({
     id: null,
     name: "",
@@ -77,7 +79,7 @@ function View() {
     start_date: "",
     end_date: "",
     item_id: "",
-    user_name: ""
+    user_name: "",
   });
 
   useEffect(() => {
@@ -119,11 +121,6 @@ function View() {
     setShowRemoveModal(true);
   };
 
-  const handleAddClick = () => {
-    navigate("/Items");
-  };
-
-
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
       console.error("No item selected for removal.");
@@ -143,6 +140,14 @@ function View() {
       .catch((error) => console.error("Error:", error));
   };
 
+  const handleShowAddItemModal = () => {
+    setShowAddItemModal(true);
+  };
+
+  const handleCloseAddItemModal = () => {
+    setShowAddItemModal(false);
+  };
+
   const handleUpdateClick = (event, equipment) => {
     event.stopPropagation();
     setSelectedItem(equipment);
@@ -157,7 +162,6 @@ function View() {
     setShowUpdateModal(true);
   };
 
-  
   const handleUpdateSubmit = (event) => {
     event.preventDefault();
     console.log(updateFormData);
@@ -183,9 +187,12 @@ function View() {
       return;
     }
     console.log("Selected Item:", selectedItem);
-    fetch(`http://127.0.0.1:5000/api/removeReservation/${selectedItem.reservation_id}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `http://127.0.0.1:5000/api/removeReservation/${selectedItem.reservation_id}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
@@ -204,7 +211,7 @@ function View() {
       start_date: reservation.start_date,
       end_date: reservation.end_date,
       item_id: reservation.item_id,
-      user_name: reservation.user_name
+      user_name: reservation.user_name,
     });
     setShowUpdateModal(true);
   };
@@ -212,13 +219,16 @@ function View() {
   const handleUpdateReservationSubmit = (event) => {
     event.preventDefault();
     console.log(updateReservationData);
-    fetch(`http://127.0.0.1:5000/api/updateReservation/${updateReservationData.reservation_id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateReservationData),
-    })
+    fetch(
+      `http://127.0.0.1:5000/api/updateReservation/${updateReservationData.reservation_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateReservationData),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
@@ -238,376 +248,394 @@ function View() {
   };
 
   const dateDisplay = (date) => {
-    return new Date(date).toLocaleDateString('en-US', 
-    { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-  }
+    return new Date(date).toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
-  if (userType === "renter") {
-    return (
-      <div>
-        <NavbarCustom />
-        <ProfileInfo userType={userType} username={username} />
-        <div className="d-flex justify-content-between align-items-center">
-          <Button
-            variant="success"
-            type="submit"
-            style={{
-              fontSize: "20px",
-              width: "45%",
-              marginRight: "5px",
-              marginTop: "15px",
-              marginBottom: "25px",
-            }}
-            id="submitButton"
-            onClick={() => handleAddClick()}
-          >
-            View Item
-          </Button>
-          <Button
-            variant="secondary" // Set the desired Bootstrap button variant
-            onClick={() => handleProfileClick()} // Replace handleNewButtonClick with your logic
-            style={{
-              fontSize: "20px",
-              width: "45%",
-              marginLeft: "5px",
-              marginTop: "15px",
-              marginBottom: "25px",
-            }}
-          >
-            View other Profiles
-          </Button>
-        </div>
-        <Container fluid>
-          <Row>
-            <Col md={8} className="reservation-column">
-              <h2>Active Reservations</h2>
-              <Row>
-                {reservationData.map(
-                  (reservation) =>
+  return (
+    <div>
+      <NavbarCustom />
+      <Container fluid>
+        <Row>
+          <Col md={8} className="items-hosted-column">
+            <Button
+              variant="success"
+              type="submit"
+              style={{
+                fontSize: "20px",
+                width: "45%",
+                marginRight: "5px",
+                marginTop: "15px",
+                marginBottom: "25px",
+              }}
+              id="submitButton"
+              onClick={handleShowAddItemModal}
+            >
+              Add Item
+            </Button>
+            <h2>Equipment Items</h2>
+            <Row>
+              {equipmentData.map(
+                (equipment) =>
+                  equipment.owner === username && (
+                    <Col key={equipment.id} xs={12} sm={6} md={6} lg={6}>
+                      <Card
+                        onClick={() => handleCardClick(equipment)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <Card.Body>
+                          <Card.Title>{equipment.name}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Status: {equipment.status}
+                          </Card.Subtitle>
+                          <Card.Text>{equipment.description}</Card.Text>
+                          <Card.Text>Price: ${equipment.price}</Card.Text>
+                          <Card.Text>Owner: {equipment.owner}</Card.Text>
+                          <Button
+                            variant="danger"
+                            name={`remove-${equipment.itemid}`}
+                            onClick={(e) => handleRemoveClick(e, equipment)}
+                            style={{
+                              marginLeft: "5px",
+                              marginRight: "5px",
+                            }}
+                          >
+                            Remove
+                          </Button>
+                          <Button
+                            variant="success"
+                            name={`remove-${equipment.itemid}`}
+                            onClick={(e) => handleUpdateClick(e, equipment)}
+                            style={{
+                              marginLeft: "5px",
+                              marginRight: "5px",
+                            }}
+                          >
+                            Update
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
+              )}
+            </Row>
+            <h2>Active Reservations</h2>
+            <Row>
+              {reservationData.map(
+                (reservation) =>
                   reservation.user_name === username && (
-                      <Col key={reservation.reservation_id} xs={12} sm={6} md={6} lg={6}>
-                        <Card
-                          style={{ cursor: "pointer" }}
-                        >
-                          <Card.Body>
-                            <Card.Text>Start Date: {dateDisplay(reservation.start_date)}</Card.Text>
-                            <Card.Text>End Date: {dateDisplay(reservation.end_date)}</Card.Text>
-                            <Button
-                              variant="danger"
-                              name={`remove-${reservation.reservation_id}`}
-                              onClick={(e) => handleRemoveReservationClick(e, reservation)}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              variant="primary"
-                              name={`remove-${reservation.reservation_id}`}
-                              onClick={(e) => handleUpdateReservationClick(e, reservation)}
-                            >
-                              Modify
-                            </Button>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    )
-                )}
-              </Row>
-            </Col>
-            <Col md={4} className="reviews-column">
-              <h2>Reviews for {username}</h2>
-              {reviews.length === 0 ? (
-                <p>This person has no reviews yet.</p>
-              ) : (
-                reviews.map((review, index) => (
-                  <Card key={index} style={{ marginBottom: "10px" }}>
-                    <Card.Body>
-                      <Card.Title>{review[3]}</Card.Title>
-                      <Card.Text>Rating: {review[4]}</Card.Text>
-                      <Card.Text>{review[5]}</Card.Text>
-                      <Card.Text>By: {review[2]}</Card.Text>
-                    </Card.Body>
-                  </Card>
-                ))
+                    <Col
+                      key={reservation.reservation_id}
+                      xs={12}
+                      sm={6}
+                      md={6}
+                      lg={6}
+                    >
+                      <Card style={{ cursor: "pointer" }}>
+                        <Card.Body>
+                          <Card.Text>
+                            Start Date: {dateDisplay(reservation.start_date)}
+                          </Card.Text>
+                          <Card.Text>
+                            End Date: {dateDisplay(reservation.end_date)}
+                          </Card.Text>
+                          <Button
+                            variant="danger"
+                            name={`remove-${reservation.reservation_id}`}
+                            onClick={(e) =>
+                              handleRemoveReservationClick(e, reservation)
+                            }
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="success"
+                            name={`remove-${reservation.reservation_id}`}
+                            onClick={(e) =>
+                              handleUpdateReservationClick(e, reservation)
+                            }
+                          >
+                            Modify
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
               )}
-            </Col>
-          </Row>
-        </Container>
-        {/* Add a section to display reviews */}
+            </Row>
+          </Col>
 
-
-        <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
-          {/* Remove confirmation modal */}
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Removal</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to remove {selectedItem?.name}?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button name="remove2" variant="danger" onClick={handleRemoveReservationConfirm}>
-              Remove
-            </Button>
-            <Button
-              name="cancel"
-              variant="secondary"
-              onClick={() => setShowRemoveModal(false)}
+          <Col md={4} className="reviews-reservations-column">
+            <div
+              className="d-flex flex-column"
+              style={{ alignItems: "flex-start" }}
             >
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
-          {/* Update reservation modal */}
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Reservation</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleUpdateReservationSubmit}>
-              <Form.Group controlId="formName">
-                <Form.Label>Start Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="start_date"
-                  value={updateReservationData.start_date}
-                  onChange={(e) =>
-                    setUpdateReservationData({ ...updateReservationData, start_date: e.target.value })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="formDescription">
-                <Form.Label>End Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="end_date"
-                  value={updateReservationData.end_date}
-                  onChange={(e) =>
-                    setUpdateReservationData({
-                      ...updateReservationData,
-                      end_date: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Update
+              <Button
+                variant="success"
+                onClick={() => handleProfileClick()}
+                style={{
+                  fontSize: "20px",
+                  width: "100%",
+                  marginRight: "5px",
+                  marginTop: "15px",
+                  marginBottom: "25px",
+                }}
+              >
+                View other Profiles
               </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
-      </div>
-    );
+            </div>
+            <h2>Reviews:</h2>
+            {reviews.length === 0 ? (
+              <p>This person has no reviews yet.</p>
+            ) : (
+              reviews.map((review, index) => (
+                <Card key={index} style={{ marginBottom: "10px" }}>
+                  <Card.Body>
+                    <Card.Title>{review[3]}</Card.Title>
+                    <Card.Text>Rating: {review[4]}</Card.Text>
+                    <Card.Text>{review[5]}</Card.Text>
+                    <Card.Text>By: {review[2]}</Card.Text>
+                  </Card.Body>
+                </Card>
+              ))
+            )}
+          </Col>
+        </Row>
+      </Container>
+      {/* Add a section to display reviews */}
 
-  } else if (userType === "host") {
-    return (
-      <div>
-        <NavbarCustom />
-        <ProfileInfo userType={userType} username={username} />
-        <div className="d-flex justify-content-between align-items-center">
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedEquipment?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Status: {selectedEquipment?.status}</p>
+          <p>Description: {selectedEquipment?.description}</p>
+          <p>Price: ${selectedEquipment?.price}</p>
+          <p>Owner: {selectedEquipment?.owner}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            name="close"
+            onClick={() => setShowModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+        {/* Update reservation modal */}
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Reservation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleUpdateReservationSubmit}>
+            <Form.Group controlId="formName">
+              <Form.Label>Start Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="start_date"
+                value={updateReservationData.start_date}
+                onChange={(e) =>
+                  setUpdateReservationData({
+                    ...updateReservationData,
+                    start_date: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="formDescription">
+              <Form.Label>End Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="end_date"
+                value={updateReservationData.end_date}
+                onChange={(e) =>
+                  setUpdateReservationData({
+                    ...updateReservationData,
+                    end_date: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Button variant="success" type="submit">
+              Update
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+      <Modal show={showAddItemModal} onHide={handleCloseAddItemModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form className="contact-form" onSubmit={handleAddItem}>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Name for Item"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Condition</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Condition of Item"
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter Price for object"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup className="contact-page-form-group">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Description of Item"
+                name="info"
+                value={formData.info}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             variant="success"
             type="submit"
             style={{
               fontSize: "20px",
-              width: "45%",
-              marginRight: "5px",
-              marginTop: "15px",
+              width: "150px",
+              marginLeft: "15px",
               marginBottom: "25px",
             }}
             id="submitButton"
-            onClick={() => handleAddClick()}
+            onClick={handleAddItem}
           >
-            Add Item
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
+        {/* Remove confirmation modal */}
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Removal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to remove {selectedItem?.name}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button name="remove2" variant="danger" onClick={handleRemoveConfirm}>
+            Remove
           </Button>
           <Button
-            variant="secondary" // Set the desired Bootstrap button variant
-            onClick={() => handleProfileClick()} // Replace handleNewButtonClick with your logic
-            style={{
-              fontSize: "20px",
-              width: "45%",
-              marginLeft: "5px",
-              marginTop: "15px",
-              marginBottom: "25px",
-            }}
+            name="cancel"
+            variant="secondary"
+            onClick={() => setShowRemoveModal(false)}
           >
-            View other Profiles
+            Cancel
           </Button>
-        </div>
-        <Container fluid>
-          <Row>
-            <Col md={8} className="equipment-column">
-              <h2>Equipment Items</h2>
-              <Row>
-                {equipmentData.map(
-                  (equipment) =>
-                    equipment.owner === username && (
-                      <Col key={equipment.id} xs={12} sm={6} md={6} lg={6}>
-                        <Card
-                          onClick={() => handleCardClick(equipment)}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <Card.Body>
-                            <Card.Title>{equipment.name}</Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">
-                              Status: {equipment.status}
-                            </Card.Subtitle>
-                            <Card.Text>{equipment.description}</Card.Text>
-                            <Card.Text>Price: ${equipment.price}</Card.Text>
-                            <Card.Text>Owner: {equipment.owner}</Card.Text>
-                            <Button
-                              variant="danger"
-                              name={`remove-${equipment.itemid}`}
-                              onClick={(e) => handleRemoveClick(e, equipment)}
-                            >
-                              Remove
-                            </Button>
-                            <Button
-                              variant="primary"
-                              name={`remove-${equipment.itemid}`}
-                              onClick={(e) => handleUpdateClick(e, equipment)}
-                            >
-                              Update
-                            </Button>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    )
-                )}
-              </Row>
-            </Col>
-            <Col md={4} className="reviews-column">
-              <h2>Reviews for {username}</h2>
-              {reviews.length === 0 ? (
-                <p>This person has no reviews yet.</p>
-              ) : (
-                reviews.map((review, index) => (
-                  <Card key={index} style={{ marginBottom: "10px" }}>
-                    <Card.Body>
-                      <Card.Title>{review[3]}</Card.Title>
-                      <Card.Text>Rating: {review[4]}</Card.Text>
-                      <Card.Text>{review[5]}</Card.Text>
-                      <Card.Text>By: {review[2]}</Card.Text>
-                    </Card.Body>
-                  </Card>
-                ))
-              )}
-            </Col>
-          </Row>
-        </Container>
-        {/* Add a section to display reviews */}
+        </Modal.Footer>
+      </Modal>
 
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>{selectedEquipment?.name}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Status: {selectedEquipment?.status}</p>
-            <p>Description: {selectedEquipment?.description}</p>
-            <p>Price: ${selectedEquipment?.price}</p>
-            <p>Owner: {selectedEquipment?.owner}</p>
-          </Modal.Body>
-          <Modal.Footer>
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+        {/* Update item modal */}
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleUpdateSubmit}>
+            <Form.Group controlId="formName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={updateFormData.name}
+                onChange={(e) =>
+                  setUpdateFormData({
+                    ...updateFormData,
+                    name: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="formDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="description"
+                value={updateFormData.description}
+                onChange={(e) =>
+                  setUpdateFormData({
+                    ...updateFormData,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="formStatus">
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                type="text"
+                name="status"
+                value={updateFormData.status}
+                onChange={(e) =>
+                  setUpdateFormData({
+                    ...updateFormData,
+                    status: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="formPrice">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                name="price"
+                value={updateFormData.price}
+                onChange={(e) =>
+                  setUpdateFormData({
+                    ...updateFormData,
+                    price: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
             <Button
-              variant="secondary"
-              name="close"
-              onClick={() => setShowModal(false)}
+              variant="success"
+              style={{ marginTop: "5px" }}
+              type="submit"
             >
-              Close
+              Update
             </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
-          {/* Remove confirmation modal */}
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Removal</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to remove {selectedItem?.name}?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button name="remove2" variant="danger" onClick={handleRemoveConfirm}>
-              Remove
-            </Button>
-            <Button
-              name="cancel"
-              variant="secondary"
-              onClick={() => setShowRemoveModal(false)}
-            >
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
-          {/* Update item modal */}
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Item</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleUpdateSubmit}>
-              <Form.Group controlId="formName">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  value={updateFormData.name}
-                  onChange={(e) =>
-                    setUpdateFormData({ ...updateFormData, name: e.target.value })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="formDescription">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="description"
-                  value={updateFormData.description}
-                  onChange={(e) =>
-                    setUpdateFormData({
-                      ...updateFormData,
-                      description: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="formStatus">
-                <Form.Label>Status</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="status"
-                  value={updateFormData.status}
-                  onChange={(e) =>
-                    setUpdateFormData({
-                      ...updateFormData,
-                      status: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="formPrice">
-                <Form.Label>Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="price"
-                  value={updateFormData.price}
-                  onChange={(e) =>
-                    setUpdateFormData({
-                      ...updateFormData,
-                      price: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Update
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
-      </div>
-    );
-  }
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
 }
 
 export default View;

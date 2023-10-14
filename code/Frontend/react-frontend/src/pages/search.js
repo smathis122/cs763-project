@@ -186,7 +186,7 @@ function ItemSearchAndFilter() {
               <div>
                 <span>Min Price: ${priceRange[0]}</span>
                 <span>Max Price: ${priceRange[1]}</span>
-            </div>
+              </div>
             </div>
             {/* )} */}
             </form>

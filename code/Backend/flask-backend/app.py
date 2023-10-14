@@ -7,6 +7,7 @@ import json
 import urllib
 import urllib.parse as up
 from flask import Flask, render_template, url_for, redirect, flash, request, jsonify, session
+from werkzeug.urls import url_decode
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField
@@ -85,9 +86,6 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
-    user_type = SelectField('User Type', choices=[('renter', 'Renter'), ('host', 'Host')],
-                            validators=[InputRequired()])
 
     submit = SubmitField('Register')
 
@@ -314,8 +312,6 @@ def login():
         session['username'] = None
         if form.validate_on_submit():
             email = form.email.data
-            password = form.password.data.encode('utf-8')
-            print('Entered pass:', password)
             cursor.execute('SELECT * FROM "user" WHERE email = %s', (email,))
             user_data = cursor.fetchone()
             cursor.close()
@@ -325,7 +321,7 @@ def login():
                 print("Hex pass:", db_password)
                 hashed_db_password = binascii.unhexlify(db_password)
                 print("Unhexed pass:", hashed_db_password)
-                if bcrypt.checkpw(password, hashed_db_password):
+                if bcrypt.checkpw(form.password.data.encode('utf-8'), hashed_db_password):
                     print("password match!")
                     print(user_data[0])
                     print(type(user_data[0]))
@@ -395,7 +391,7 @@ def register():
             email = form.email.data
             hashed_password = bcrypt.hashpw(
                 form.password.data.encode('utf-8'), bcrypt.gensalt())
-            user_type = form.user_type.data
+            user_type = "general"
             cursor.execute(
                 'INSERT INTO "user" (email, password, user_type) VALUES (%s, %s, %s)', (email, hashed_password, user_type))
             conn.commit()
