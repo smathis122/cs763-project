@@ -90,10 +90,7 @@ export function NavbarCustom(props) {
                 </>
               ) : (
                 <>
-                  <NavDropdown.Item href="#/login">Login</NavDropdown.Item>
-                  <NavDropdown.Item href="#/register">
-                    Register
-                  </NavDropdown.Item>
+                  <NavDropdown.Item href="#/login">Login/Register</NavDropdown.Item>
                 </>
               )}
             </NavDropdown>
