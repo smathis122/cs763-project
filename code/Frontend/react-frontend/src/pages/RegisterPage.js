@@ -8,7 +8,6 @@ import { useNavigate, Link } from "react-router-dom";
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
-import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 import axios from "axios";
 import { useUser } from "../Components/UserContext";
@@ -30,7 +29,6 @@ function RegisterPage() {
     setButtonPopup(true);
   };
 
-  //Adding Google Pop up constants (stop)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -158,13 +156,7 @@ function RegisterPage() {
             }}
             showPopup={showPopup}
           />
-          <UserTypePopUp
-            trigger={buttonPopup}
-            updatePopup={(value) => {
-              setButtonPopup(value);
-            }}
-            email={userEmail}
-          />
+
           <p className="dont-have-account">
             Already have an account? <Link to="/login">Login</Link>
           </p>

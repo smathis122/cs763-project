@@ -120,6 +120,7 @@ function LoginPage() {
           </Button>
           <GoogleLoginButton
             redirectOnLogin={true}
+            handleMessage={() => {}}
             setUserEmail={() => {}}
           ></GoogleLoginButton>
           {/* Add a link inside the form */}
