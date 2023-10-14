@@ -31,7 +31,7 @@ function AboutUs() {
         Why buy when you can experience the best without the commitment? Our
         platform brings together equipment owners looking to share their
         treasures during downtime. And for those on the move or seeking an
-        adrenaline rush, Gear to Go unlocks access to top-tier gear, right when
+        adrenaline rush, Gear on the Go unlocks access to top-tier gear, right when
         you need it.
       </p>
       <br />
