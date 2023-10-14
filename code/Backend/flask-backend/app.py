@@ -24,7 +24,6 @@ from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
 from datetime import datetime
 
-
 app = Flask(__name__)
 load_dotenv()
 
