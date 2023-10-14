@@ -369,12 +369,11 @@ def profile():
 
 # API that will be used to allow a user to log out
 @app.route('/api/logout', methods=['POST'])
-@login_required
 def logout():
     try:
         logout_user()
         # Google logic start
-        session.pop("user", None)
+        # session.pop("user", None)
         # Google logic stop
         # session.clear()
         session['username'] = None

@@ -13,7 +13,6 @@ import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// This component represents a custom navigation bar (NavbarCustom) for the GearOnTheGo website.
 export function NavbarCustom(props) {
   const { username, setUsername } = useUser();
   const navigate = useNavigate(); // Get the navigate function
@@ -91,7 +90,10 @@ export function NavbarCustom(props) {
                 </>
               ) : (
                 <>
-                  <NavDropdown.Item href="#/login">Login/Register</NavDropdown.Item>
+                  <NavDropdown.Item href="#/login">Login</NavDropdown.Item>
+                  <NavDropdown.Item href="#/register">
+                    Register
+                  </NavDropdown.Item>
                 </>
               )}
             </NavDropdown>
