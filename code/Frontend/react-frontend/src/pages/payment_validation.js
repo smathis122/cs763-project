@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
 
+//This function initializes and manages the checkoutForm and retreives reservation data
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/pages/checkout.css";
 import NavbarCustom from "../Components/Navbar";
@@ -12,6 +13,7 @@ function CheckoutForm() {
     var clickMeButton = document.getElementById("clickme");
     clickMeButton.onclick = youClicked;
   };
+// This function informs users to fill in the required information before submission
   function youClicked() {
     alert(
       "Please fill in the boxes below.\nIncomplete information will not be submitted."
@@ -23,10 +25,12 @@ function CheckoutForm() {
 
   const navigate = useNavigate();
 
+// This function allows the user to naviagte to the payment Successful page when called
   const handleSuccessfulPayment = () => {
     navigate("/PaymentSuccessful");
   };
 
+//This function is executed when a form is submitted
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -35,7 +39,7 @@ function CheckoutForm() {
       handleSuccessfulPayment();
     }
   };
-
+// This is the component for the checkout form, it collects payment information details with demographic data
   return (
     <div>
       <NavbarCustom />
@@ -162,6 +166,7 @@ function CheckoutForm() {
   );
 }
 
+//This function is used to make validaitons on the form to avoid information being entered that will prevent any mistakes from being passed into the database
 function validateForm() {
   var fullName = document.getElementById("fullName");
   if (fullName.value.length < 2) {

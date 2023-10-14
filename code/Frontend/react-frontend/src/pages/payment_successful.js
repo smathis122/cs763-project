@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+
+
+//This function is the display that takes palce when the payment becomes succsseful
+
 import NavbarCustom from "../Components/Navbar";
+
 function PaymentSuccessful() {
   const marginStyle = {
     marginLeft: "20px",
