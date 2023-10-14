@@ -15,7 +15,6 @@ import "../styles/pages/register.css";
 //This function is used to manager the user login process and initializes state for a submission message
 function LoginPage() {
   const { setUsername, setUserType } = useUser();
-  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -24,15 +23,10 @@ function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-//This function handles changes in the email and password input fields.
+  //This function handles changes in the email and password input fields.
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-//This Function is used to set the submitMsg state, which displays a message to the user during the login process.
-  const handleSubmitMessageChange = (message) => {
-    setSubmitMsg(message);
   };
 
   //This function toggles the visibility of the password input field.
@@ -42,17 +36,12 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-//This function handles the form submission when the login button is clicked.
-
-  const showError = () => {
-    setShowErrorModal(true);
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
       .post("http://127.0.0.1:5000/api/login", formData)
       .then((response) => {
+        console.log(response);
         if (response.status === 201) {
           const user = response.data;
           const username = user.username;
@@ -61,16 +50,15 @@ function LoginPage() {
 
           navigate("/");
         } else if (response.status === 202) {
-          console.log("Wrong Password");
-          console.log(response.data);
-          showError();
+          window.alert("Wrong Password!");
         } else if (response.status === 203) {
-          console.log("Wrong User");
-          console.log(response.data);
-          showError();
+          window.alert("Wrong User");
+        } else {
+          window.alert("Failed to login");
         }
       })
       .catch((error) => {
+        window.alert("Failed to login");
         console.error("Error:", error);
       });
     setFormData({
@@ -78,7 +66,7 @@ function LoginPage() {
       password: "",
     });
   };
-//This component is used to render the login page for the user to log into their account
+  //This component is used to render the login page for the user to log into their account
   return (
     <div>
       <NavbarCustom />
@@ -139,23 +127,6 @@ function LoginPage() {
             Don't have an account? <Link to="/register">Sign up</Link>
           </p>
         </Form>
-
-        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Incorrect username/password combination. Please try again.
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowErrorModal(false)}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
     </div>
   );
