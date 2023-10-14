@@ -1,1 +1,1 @@
-web: gunicorn code/Backend/flask-backend/app:application
+web: gunicorn code/Backend/flask-backend/app:app
