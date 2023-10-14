@@ -20,12 +20,12 @@ profile_button = driver.find_element(By.PARTIAL_LINK_TEXT, 'Profile')
 profile_button.click()
 wait = WebDriverWait(driver, 10)
 time.sleep(3)
-remove_item = "remove-77"
+remove_item = "remove-79"
 try:
     remove_item_button = driver.find_element(By.NAME, remove_item)
     driver.execute_script("arguments[0].scrollIntoView(true);", remove_item_button)
-    remove_item_button = wait.until(EC.element_to_be_clickable((By.NAME, remove_item)))
-    remove_item_button.click()
+    driver.execute_script("arguments[0].click();", remove_item_button)
+
 except NoSuchElementException:
     print(f"Test Failed: '{remove_item}' was not found. Removal could not be completed.")
     driver.quit()
