@@ -24,6 +24,9 @@ function PaymentSuccessful() {
         <h3 style={marginStyle}>
           A copy of your purchase has been sent to your email
         </h3>
+        <h3 style={marginStyle}>
+          View your reservations <Link to="/View">here</Link> 
+        </h3>
       </div>
       <div
         style={{
