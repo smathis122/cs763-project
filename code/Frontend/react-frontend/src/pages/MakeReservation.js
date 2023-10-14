@@ -11,7 +11,6 @@ import "../styles/pages/reservations.css";
 //This function is used to render a reservation form, it retrieves the selected items information, and user data from the components props, and manages the form data
 function ReservationForm() {
   const location = useLocation();
-  let [submitMsg, setSubmitMsg] = React.useState("");
   const { username } = useUser();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -21,35 +20,34 @@ function ReservationForm() {
     item_id: location.state.selectedItem.itemid,
     user_name: username,
     price: location.state.selectedItem.price,
-    item_name: location.state.selectedItem.name
+    item_name: location.state.selectedItem.name,
   });
 
   const selectedItem = location.state.selectedItem;
 
-//This function is triggered when an input fields value changes
+  //This function is triggered when an input fields value changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-//This function handles the form submission when the Make Reservation button is clicked. IT performs date validation, and sends a post to the backend using the feth API
+  //This function handles the form submission when the Make Reservation button is clicked. IT performs date validation, and sends a post to the backend using the feth API
   const handleSubmit = (event) => {
     event.preventDefault();
     // Send the formData as JSON to your Flask back-end here
-    setSubmitMsg("Loading...");
     if (formData.end_date != null && formData.end_date < formData.start_date) {
       // enforce end user enter valid inputs: that rental end date can't be before start date
-      setSubmitMsg("End date must be after the start date!");
+      window.alert("End date must be after the start date!");
     } else if (new Date(formData.start_date) < new Date()) {
       // also rental start date can't be in the past
-      setSubmitMsg("start date must be after today!");
+      window.alert("Start date must be after today!");
     } else {
       navigate("/Checkout", {
         state: { reservationDetails: formData, selectedItem },
       });
     }
   };
-//This component provides a user interface for reserving an item, displaying item details, date inputs, and a checkout button, and handles the submission and confirmation of the reservaiton
+  //This component provides a user interface for reserving an item, displaying item details, date inputs, and a checkout button, and handles the submission and confirmation of the reservaiton
   return (
     <div>
       <NavbarCustom />
@@ -101,7 +99,6 @@ function ReservationForm() {
             Checkout
           </Button>
         </Form>
-        {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
       </div>
     </div>
   );

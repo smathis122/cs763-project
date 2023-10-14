@@ -22,7 +22,6 @@ function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const [showErrorModal, setShowErrorModal] = useState(false);
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const navigate = useNavigate();
@@ -35,16 +34,9 @@ function RegisterPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  //This function is used to toggle the visibility of a password. 
+  //This function is used to toggle the visibility of a password.
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-  };
-
-
-  //This function is used to submit a form, and Sends a Post request to the server for user registration
-
-  const showError = () => {
-    setShowErrorModal(true);
   };
 
   const handleSubmit = (event) => {
@@ -60,8 +52,10 @@ function RegisterPage() {
         if (!response.ok) {
           return response.json().then((data) => {
             console.log("registration failed");
+            window.alert(
+              "Failed to Register:\nCheck Email is valid\nPassword is between 8 and 20 characters long"
+            );
             console.log(response);
-            showError();
           });
         } else {
           return response.json().then((data) => {
@@ -86,12 +80,14 @@ function RegisterPage() {
                   // Redirect to the home page or any other desired location
                   navigate("/");
                 } else {
-                  // Handle login errors
+                  // Handle l
+                  window.alert("Failed to Register");
                   console.log("Login failed:", loginResponse.data);
                 }
               })
               .catch((loginError) => {
                 // Handle login request errors
+                window.alert("Failed to Register");
                 console.error("Error:", loginError);
               });
             setFormData({
@@ -105,7 +101,7 @@ function RegisterPage() {
         console.error("Error:", error);
       });
   };
-//This component is rendering a registration form for both native username and password login, and google login authentication
+  //This component is rendering a registration form for both native username and password login, and google login authentication
   return (
     <div>
       <NavbarCustom />
@@ -166,22 +162,6 @@ function RegisterPage() {
             Already have an account? <Link to="/login">Login</Link>
           </p>
         </Form>
-        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Password must be between 8 and 20 characters long.
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowErrorModal(false)}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
     </div>
   );
