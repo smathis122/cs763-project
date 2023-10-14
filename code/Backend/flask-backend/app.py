@@ -479,16 +479,16 @@ def make_reservation():
         cursor = conn.cursor()
 
         
-        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name) VALUES (%s, %s, %s, %s)"
+        insert_sql = "INSERT INTO Reservation (start_date, end_date, item_id, user_name, price, item_name) VALUES (%s, %s, %s, %s, %s, %s)"
         if data["end_date"] >= data["start_date"] and datetime.strptime(data["start_date"], "%Y-%m-%d") >= datetime.now():
-            cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"]))
+            cursor.execute(insert_sql, (data["start_date"], data["end_date"], data["item_id"], data["user_name"], data["price"], data["item_name"]))
             
             conn.commit()
             cursor.close()
             conn.close()
 
 
-            return jsonify({"message": "Reservation made successfully"}), 200
+            return jsonify({"message": "Reservation data saved successfully"}), 200
         else:
             return jsonify({"message": "Date inputs are invalid"}), 500
     except Exception as e:
