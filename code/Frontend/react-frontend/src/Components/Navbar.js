@@ -11,6 +11,7 @@ import { HashLink as Link } from "react-router-hash-link";
 import "../styles/Components/navbar.css";
 import { useUser } from "./UserContext";
 
+// This component represents a custom navigation bar (NavbarCustom) for the GearOnTheGo website.
 export function NavbarCustom(props) {
   const { username } = useUser();
 
