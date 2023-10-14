@@ -11,9 +11,12 @@ import GoogleLoginButton from "../Components/GoogleLoginButton";
 import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useUser } from "../Components/UserContext";
 
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
+  const { setUsername} = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,6 +29,7 @@ function RegisterPage() {
 
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const navigate = useNavigate();
 
   const showPopup = () => {
     setButtonPopup(true);
@@ -67,18 +71,46 @@ function RegisterPage() {
           return response.json().then((data) => {
             console.log(data.message);
             setSubmitMsg(data.message);
+          // Automatically log in the user after registration
+            const loginData = {
+              email: formData.email, // Use the email from the registration form
+              password: formData.password, // Use the password from the registration form
+            };
+
+            // Perform a login request
+            axios
+              .post("http://127.0.0.1:5000/api/login", loginData)
+              .then((loginResponse) => {
+                if (loginResponse.status === 201) {
+                  // Successful login
+                  const user = loginResponse.data;
+                  const username = user.username;
+                  const userType = user.user_type;
+                  setUsername(username);
+                  setUserType(userType);
+                  console.log("Logged in", username, "as", userType);
+
+                  // Redirect to the home page or any other desired location
+                  navigate("/");
+                } else {
+                  // Handle login errors
+                  console.log("Login failed:", loginResponse.data);
+                }
+              })
+              .catch((loginError) => {
+                // Handle login request errors
+                console.error("Error:", loginError);
+              });
           });
         }
       })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => console.error("Error:", error));
-    setFormData({
-      email: "",
-      password: "",
-    });
-  };
+      .catch((error) => {
+        // Handle registration request errors
+        setErrors(error.response.data.errors || {});
+        console.error("Error:", error);
+        setSubmitMsg("Registration failed. Please try again.");
+      });
+    };
 
   return (
     <div>

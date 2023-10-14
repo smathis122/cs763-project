@@ -413,7 +413,6 @@ def register():
             cursor.close()
             conn.close()
             session['username'] = email
-            login_user(user)
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
