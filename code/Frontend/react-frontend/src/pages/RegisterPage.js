@@ -8,7 +8,6 @@ import "../styles/pages/password.css";
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
-import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,7 +34,6 @@ function RegisterPage() {
     setButtonPopup(true);
   }
 
-  //Adding Google Pop up constants (stop)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (name === "user_type") {
@@ -174,8 +172,7 @@ function RegisterPage() {
         </Form>
       </div>
       {/* Google Logic start */}
-      <GoogleLoginButton redirectOnLogin={false} handleMessage={() => { }} setUserEmail={(email) => {setUserEmail(email)}} showPopup={showPopup}/>
-      <UserTypePopUp trigger={buttonPopup} updatePopup={(value) => {setButtonPopup(value)}} email={userEmail} />       
+      <GoogleLoginButton redirectOnLogin={false} handleMessage={() => { }} setUserEmail={() => {}}/>
       {/* Google Logic stop */}
       {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
 
