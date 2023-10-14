@@ -10,7 +10,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useUser } from "./UserContext";
 import FormGroup from "react-bootstrap/esm/FormGroup";
-
+//This function is designed to handle user profiles, display equipment, and reviews. It uses various states to manage data and control the visibility of modals.
 function UserProfile() {
   const { usernameSelected } = useParams();
   const { username } = useUser();
@@ -114,7 +114,6 @@ function UserProfile() {
 
   // The return represents a user profile page that displays equipment hosted by a selected user,
   // user reviews, and provides the ability to write reviews for the displayed equipment.
-
   return (
     <div>
       <NavbarCustom />

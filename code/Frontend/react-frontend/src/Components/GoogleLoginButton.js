@@ -38,7 +38,7 @@ export function GoogleLoginButton(props) {
     });
 
     const data = await res.json();
-
+//This coniditoning is handling a  login process and handles responses from a Google login attempt.
     if (res.ok && data && data.name && data.email) {
       const username = data.email;
       props.handleMessage(username);
@@ -56,6 +56,7 @@ export function GoogleLoginButton(props) {
 
     if (res.ok && (props.redirectOnLogin || !data.isNew)) navigate("/");
   };
+  //This is a react component that renders a Google login button and a modal to handle unregistered users.
   return (
     <div className="App">
       <div className="GoogleLoginDiv">

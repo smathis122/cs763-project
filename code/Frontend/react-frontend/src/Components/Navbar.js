@@ -55,21 +55,6 @@ export function NavbarCustom(props) {
     navigate("/login");
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     // fetch("http://127.0.0.1:5000/api/logout", {
-  //     //   method: "POST",
-  //     //   headers: {
-  //     //     "Content-Type": "application/json",
-  //     //   },
-  //     // })
-  //     const response = await axios.post('/api/logout');
-  //     console.log(response.data.message); // Optional: Display logout message
-  //   } catch (error) {
-  //     console.error('Error logging out:', error);
-  //   }
-  // }
-
   return (
     <Navbar
       collapseOnSelect
