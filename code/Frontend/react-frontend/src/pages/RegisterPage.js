@@ -10,6 +10,7 @@ import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
 import UserTypePopUp from "../Components/UserTypePopUp";
 // Google import stop
+import { Link, useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   let [submitMsg, setSubmitMsg] = React.useState("");
@@ -133,6 +134,11 @@ function RegisterPage() {
               {errors.password && <p>{errors.password.join(", ")}</p>}
             </div>
           </div>
+          <Link 
+            to="/login"
+          >
+            Already have an account? Click to Login
+          </Link>
         </Form>
       </div>
       {/* Google Logic start */}

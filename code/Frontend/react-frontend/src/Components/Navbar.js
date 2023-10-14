@@ -28,7 +28,7 @@ export function NavbarCustom(props) {
       .then((response) => {
         if (response.status === 200) {
           // Successful logout, you can redirect or show a confirmation message
-          setUsername("Guest");
+          setUsername(null);
           console.log("Logout successful.");
         } else {
           // Handle errors or display an error message
