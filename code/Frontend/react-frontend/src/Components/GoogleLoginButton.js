@@ -8,7 +8,6 @@ import "../styles/pages/register.css";
 // Google import stop
 
 export function GoogleLoginButton(props) {
-  const [submitMsg, setSubmitMsg] = React.useState("");
   const navigate = useNavigate();
   const { setUsername } = useUser();
 
@@ -40,11 +39,10 @@ export function GoogleLoginButton(props) {
 
     const data = await res.json();
 
-    if (res.ok && data && data.name && data.email) { 
-      const username = data.email; 
+    if (res.ok && data && data.name && data.email) {
+      const username = data.email;
       props.handleMessage(username);
-      console.log("Logged in", username)
-    
+      console.log("Logged in", username);
 
       setUsername(username);
       localStorage.setItem("loginData", JSON.stringify(data));
@@ -57,21 +55,21 @@ export function GoogleLoginButton(props) {
   return (
     <div className="App">
       <div className="GoogleLoginDiv">
-          <div className="GoogleLogin">
-            <GoogleOAuthProvider
+        <div className="GoogleLogin">
+          <GoogleOAuthProvider
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            id={"google-login-auth"}
+          >
+            <GoogleLogin
+              id="google-login-button"
               clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-              id={"google-login-auth"}
-            >
-              <GoogleLogin
-                id="google-login-button"
-                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                buttonText="Sign up with Google"
-                onSuccess={handleLogin}
-                onFailure={handleFailure}
-                cookiePolicy={"single_host_origin"}
-              ></GoogleLogin>
-            </GoogleOAuthProvider>
-          </div>
+              buttonText="Sign up with Google"
+              onSuccess={handleLogin}
+              onFailure={handleFailure}
+              cookiePolicy={"single_host_origin"}
+            ></GoogleLogin>
+          </GoogleOAuthProvider>
+        </div>
       </div>
     </div>
   );

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
 // Google import start
 import GoogleLoginButton from "../Components/GoogleLoginButton";
@@ -13,14 +13,14 @@ import "../styles/pages/password.css";
 import "../styles/pages/register.css";
 
 function LoginPage() {
-  const [submitMsg, setSubmitMsg] = useState("");
   const { setUsername, setUserType } = useUser();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (event) => {
@@ -28,70 +28,55 @@ function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmitMessageChange = (message) => {
-    setSubmitMsg(message);
-  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const navigate = useNavigate();
+  const showError = () => {
+    setShowErrorModal(true);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setErrors({});
-    setSubmitMsg("Logging in...");
     axios
       .post("http://127.0.0.1:5000/api/login", formData)
       .then((response) => {
         if (response.status === 201) {
-          // Going here when email right and password right
-          setSubmitMsg("Login successful!");
           const user = response.data;
           const username = user.username;
-          const userType = user.user_type;
           setUsername(username);
-          setUserType(userType);
-          console.log("Logged in", username, "as", userType);
+          console.log("Logged in", username);
 
-          // ***Will remove types other than general***
-          if (userType === "general") {
-            navigate("/"); // Redirect to the home page
-          } else {
-            // Handle other user types or scenarios
-            console.log("Unknown user type");
-          }
+          navigate("/");
         } else if (response.status === 202) {
-          // Going here when password wrong but email right
-          setErrors(response.data || {});
           console.log("Wrong Password");
           console.log(response.data);
-          setSubmitMsg("Login failed. Please try again!");
+          showError();
         } else if (response.status === 203) {
-          // Going here when user wrong
-          setErrors(response.data || {});
           console.log("Wrong User");
           console.log(response.data);
-          setSubmitMsg("Login failed. Please try again!");
+          showError();
         }
       })
       .catch((error) => {
-        // Going here when email and/or password format wrong
-        setErrors(error.response.data.errors || {});
-        console.log(errors);
         console.error("Error:", error);
-        setSubmitMsg("Login failed. Please try again.");
       });
+    setFormData({
+      email: "",
+      password: "",
+    });
   };
 
   return (
     <div>
       <NavbarCustom />
-      <h1>Log In</h1>
       <div className="form" id="formDiv">
-        <Form className="contact-form" onSubmit={handleSubmit}>
+        <Form className="reservation-form" onSubmit={handleSubmit}>
+          <h3 style={{ marginLeft: "30%", marginBottom: "10%" }}>
+            Welcome Back!
+          </h3>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
               id="email"
@@ -103,10 +88,9 @@ function LoginPage() {
             />
           </FormGroup>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Password</Form.Label>
             <div className="password-input-container">
               <Form.Control
-                type={showPassword ? "text" : "password"} // Toggle password visibility
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
                 name="password"
                 id="password"
@@ -126,33 +110,41 @@ function LoginPage() {
               </span>
             </div>
           </FormGroup>
-          <div className="FormButtonDiv">
-            <Button
-              className="FormButton"
-              variant="primary"
-              type="submit"
-              id="submitButton"
-            >
-              Submit
-            </Button>
-            <div className="error-messages" id="error_messages">
-              {errors.email && <p>{errors.email.join(", ")}</p>}
-              {errors.password && <p>{errors.password.join(", ")}</p>}
-              {errors.message && <p>{errors.message}</p>}
-            </div>
-          </div>
-          <Link 
-            to="/register"
+          <Button
+            className="FormButton" // Apply Bootstrap class for button width
+            variant="success"
+            type="submit"
+            id="submitButton"
           >
-            New User? Click to Register
-          </Link>
+            Log in
+          </Button>
+          <GoogleLoginButton
+            redirectOnLogin={true}
+            handleMessage={() => {}}
+            setUserEmail={() => {}}
+          ></GoogleLoginButton>
+          {/* Add a link inside the form */}
+          <p className="dont-have-account">
+            Don't have an account? <Link to="/register">Sign up</Link>
+          </p>
         </Form>
-        <GoogleLoginButton
-          redirectOnLogin={true}
-          handleMessage={handleSubmitMessageChange}
-          setUserEmail={() => {}}
-        ></GoogleLoginButton>
-        {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
+
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Incorrect username/password combination. Please try again.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowErrorModal(false)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

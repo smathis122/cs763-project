@@ -2,74 +2,66 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import Button from "react-bootstrap/Button";
+import { Modal, Button } from "react-bootstrap";
 import "../styles/pages/password.css";
-// Google import start
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
 import GoogleLoginButton from "../Components/GoogleLoginButton";
 // Google import stop
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../Components/UserContext";
 
 function RegisterPage() {
-  let [submitMsg, setSubmitMsg] = React.useState("");
-  const { setUsername} = useUser();
+  const { setUsername } = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     user_type: "",
   });
-
-  const [userType, setUserType] = useState("");
-  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [buttonPopup, setButtonPopup] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const navigate = useNavigate();
-
   const showPopup = () => {
     setButtonPopup(true);
-  }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === "user_type") {
-      setUserType(value); // Update the userType state
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const showError = () => {
+    setShowErrorModal(true);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    setErrors({});
-    setSubmitMsg("Registering...");
     fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...formData, user_type: userType }),
+      body: JSON.stringify({ ...formData }),
     })
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
-            setErrors(data.errors || {});
-            console.log(data.errors);
-            setSubmitMsg("Failed to register");
+            console.log("registration failed");
+            console.log(response);
+            showError();
           });
         } else {
           return response.json().then((data) => {
-            console.log(data.message);
-            setSubmitMsg(data.message);
-          // Automatically log in the user after registration
+            console.log(data);
+            // Automatically log in the user after registration
             const loginData = {
               email: formData.email, // Use the email from the registration form
               password: formData.password, // Use the password from the registration form
@@ -83,10 +75,8 @@ function RegisterPage() {
                   // Successful login
                   const user = loginResponse.data;
                   const username = user.username;
-                  const userType = user.user_type;
                   setUsername(username);
-                  setUserType(userType);
-                  console.log("Logged in", username, "as", userType);
+                  console.log("Logged in", username);
 
                   // Redirect to the home page or any other desired location
                   navigate("/");
@@ -99,27 +89,28 @@ function RegisterPage() {
                 // Handle login request errors
                 console.error("Error:", loginError);
               });
+            setFormData({
+              email: "",
+              password: "",
+            });
           });
         }
       })
       .catch((error) => {
-        // Handle registration request errors
-        setErrors(error.response.data.errors || {});
         console.error("Error:", error);
-        setSubmitMsg("Registration failed. Please try again.");
       });
-    };
+  };
 
   return (
     <div>
       <NavbarCustom />
-      <h1>Register</h1>
       <div className="form" id="formDiv">
-        <Form className="contact-form" onSubmit={handleSubmit}>
+        <Form className="reservation-form" onSubmit={handleSubmit}>
+          <h3 style={{ marginLeft: "35%", marginBottom: "10%" }}>Welcome!</h3>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
+              id="email"
               placeholder="Enter Email"
               name="email"
               value={formData.email}
@@ -128,7 +119,6 @@ function RegisterPage() {
             />
           </FormGroup>
           <FormGroup className="contact-page-form-group">
-            <Form.Label>Password</Form.Label>
             <div className="password-input-container">
               <Form.Control
                 type={showPassword ? "text" : "password"}
@@ -150,32 +140,44 @@ function RegisterPage() {
               </span>
             </div>
           </FormGroup>
-          <div className="FormButtonDiv">
-            <Button
-              className="FormButton"
-              variant="primary"
-              type="submit"
-              id="submitButton"
-            >
-              Submit
-            </Button>
-            <div className="error-messages">
-              {errors.email && <p>{errors.email.join(", ")}</p>}
-              {errors.password && <p>{errors.password.join(", ")}</p>}
-            </div>
-          </div>
-          <Link 
-            to="/login"
+          <Button
+            className="FormButton"
+            variant="success"
+            type="submit"
+            id="submitButton"
           >
-            Already have an account? Click to Login
-          </Link>
-        </Form>
-      </div>
-      {/* Google Logic start */}
-      <GoogleLoginButton redirectOnLogin={false} handleMessage={() => { }} setUserEmail={() => {}}/>
-      {/* Google Logic stop */}
-      {submitMsg && <div style={{ fontSize: "35px" }}>{submitMsg}</div>}
+            Register
+          </Button>
+          <GoogleLoginButton
+            redirectOnLogin={false}
+            handleMessage={() => {}}
+            setUserEmail={(email) => {
+              setUserEmail(email);
+            }}
+            showPopup={showPopup}
+          />
 
+          <p className="dont-have-account">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        </Form>
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Password must be between 8 and 20 characters long.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowErrorModal(false)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </div>
   );
 }

@@ -272,7 +272,7 @@ function View() {
                 marginTop: "15px",
                 marginBottom: "25px",
               }}
-              id="submitButton"
+              id="addButton"
               onClick={handleShowAddItemModal}
             >
               Add Item
@@ -308,7 +308,7 @@ function View() {
                           </Button>
                           <Button
                             variant="success"
-                            name={`remove-${equipment.itemid}`}
+                            name={`update-${equipment.itemid}`}
                             onClick={(e) => handleUpdateClick(e, equipment)}
                             style={{
                               marginLeft: "5px",
@@ -377,6 +377,7 @@ function View() {
               <Button
                 variant="success"
                 onClick={() => handleProfileClick()}
+                name="otherProfiles"
                 style={{
                   fontSize: "20px",
                   width: "100%",
@@ -470,7 +471,11 @@ function View() {
           </Form>
         </Modal.Body>
       </Modal>
-      <Modal show={showAddItemModal} onHide={handleCloseAddItemModal}>
+      <Modal
+        show={showAddItemModal}
+        id="updateModal"
+        onHide={handleCloseAddItemModal}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Add Item</Modal.Title>
         </Modal.Header>
@@ -526,13 +531,14 @@ function View() {
           <Button
             variant="success"
             type="submit"
+            name="submitButtonUpdate"
             style={{
               fontSize: "20px",
               width: "150px",
               marginLeft: "15px",
               marginBottom: "25px",
             }}
-            id="submitButton"
+            id="submitButtonUpdate"
             onClick={handleAddItem}
           >
             Submit

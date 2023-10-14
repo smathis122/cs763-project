@@ -1,7 +1,7 @@
 from selenium import webdriver
 import sys
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
@@ -14,20 +14,28 @@ driver = webdriver.Chrome()
 # Call the login function with your credentials
 login(driver, 'hello123@gmail.com', 'helloworld')
 
-view_items_button = driver.find_element(By.PARTIAL_LINK_TEXT, 'View Items')
-view_items_button.click()
-
+account_button = driver.find_element(By.PARTIAL_LINK_TEXT, 'Account')
+account_button.click()
+profile_button = driver.find_element(By.PARTIAL_LINK_TEXT, 'Profile')
+profile_button.click()
+wait = WebDriverWait(driver, 10)
 time.sleep(3)
-remove_item = "remove-60"
+remove_item = "remove-79"
 try:
     remove_item_button = driver.find_element(By.NAME, remove_item)
-    remove_item_button.click()
+    driver.execute_script("arguments[0].scrollIntoView(true);", remove_item_button)
+    driver.execute_script("arguments[0].click();", remove_item_button)
+
 except NoSuchElementException:
     print(f"Test Failed: '{remove_item}' was not found. Removal could not be completed.")
     driver.quit()
     sys.exit() 
+except ElementClickInterceptedException:
+    print(f"Test Failed: '{remove_item}' could not be clicked.")
+    driver.quit()
+    sys.exit() 
+time.sleep(2)
 
-wait = WebDriverWait(driver, 10)
 remove2_item_button = wait.until(EC.presence_of_element_located((By.NAME, 'remove2')))
 time.sleep(2)
 driver.save_screenshot("./removeItemImages/removeSelectItemScreen.png")
