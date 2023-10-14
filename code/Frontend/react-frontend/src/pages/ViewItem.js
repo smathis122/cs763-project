@@ -196,6 +196,7 @@ function View() {
     }
     console.log("Selected Reservation:", selectedReservation);
     fetch(
+      // reservation will be removed from the database -> payment will be returned via Payment system (implementation details omitted)
       `http://127.0.0.1:5000/api/removeReservation/${selectedReservation.reservation_id}`,
       {
         method: "DELETE",
