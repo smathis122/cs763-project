@@ -33,7 +33,7 @@ function UserProfile() {
     fetchReviewsData();
   }, [usernameSelected]);
 
- // This function is used to Fetch equipment data from the server based on 'usernameSelected'.
+  // This function is used to Fetch equipment data from the server based on 'usernameSelected'.
   const fetchEquipmentData = () => {
     fetch(`http://127.0.0.1:5000/api/items/${usernameSelected}`)
       .then((response) => response.json())
@@ -43,25 +43,25 @@ function UserProfile() {
       })
       .catch((error) => console.error("Error:", error));
   };
-// This function is used to fetch reviews data from the server based on 'usernameSelected'.
+  // This function is used to fetch reviews data from the server based on 'usernameSelected'.
   const fetchReviewsData = () => {
     fetch(`http://127.0.0.1:5000/api/getReviews/${usernameSelected}`)
       .then((response) => response.json())
       .then((data) => setReviews(data))
       .catch((error) => console.error("Error:", error));
   };
-  
+
   const handleCardClick = (item) => {
     setSelectedItem(item);
     setShowModal(true);
   };
 
-//This function handles changes in input fields and update the form review data.
+  //This function handles changes in input fields and update the form review data.
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormReviewData({ ...formReviewData, [name]: value });
   };
-//This function handles the submission of a review form.
+  //This function handles the submission of a review form.
   const handleReviewSubmit = (event) => {
     event.preventDefault();
     const newReview = {
@@ -71,7 +71,7 @@ function UserProfile() {
       source: username,
       target: usernameSelected,
     };
-// This fetch sends a POST request to add the review to the server.
+    // This fetch sends a POST request to add the review to the server.
     fetch("http://127.0.0.1:5000/api/addReviews", {
       method: "POST",
       headers: {
@@ -111,10 +111,10 @@ function UserProfile() {
     console.log(selectedItem);
     navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
-  
-// The return represents a user profile page that displays equipment hosted by a selected user,
-// user reviews, and provides the ability to write reviews for the displayed equipment.
-  
+
+  // The return represents a user profile page that displays equipment hosted by a selected user,
+  // user reviews, and provides the ability to write reviews for the displayed equipment.
+
   return (
     <div>
       <NavbarCustom />
@@ -236,6 +236,7 @@ function UserProfile() {
                   <Button
                     style={{ width: "100%" }}
                     variant="success"
+                    name="review"
                     onClick={() => setShowReviewModal(true)}
                   >
                     Write Review
@@ -333,6 +334,7 @@ function UserProfile() {
               <Button
                 variant="success"
                 type="submit"
+                name="submitReview"
                 style={{ marginTop: "5px" }}
               >
                 Submit Review

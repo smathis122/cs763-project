@@ -42,8 +42,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
-    user_type = db.Column(db.String(40), nullable = False)
-
 
 CORS(app)  # Allow all origins for development; restrict in production
 # Generate a 32-character (16 bytes) random hexadecimal string
@@ -368,15 +366,20 @@ def profile():
 
 
 # API that will be used to allow a user to log out
-@app.route('/api/logout', methods=['GET', 'POST'])
-@login_required
+@app.route('/api/logout', methods=['POST'])
 def logout():
-    logout_user()
-    flash('Logged out successfully.', 'info')
-    # Google logic start
-    session.pop("user", None)
-    # Google logic stop
-    return redirect(url_for('login'))
+    try:
+        logout_user()
+        # Google logic start
+        # session.pop("user", None)
+        # Google logic stop
+        # session.clear()
+        session['username'] = None
+        print("session cleared")
+        return jsonify({"message": "Logged out successfully"}), 200
+    except Exception as e:
+        print("logout error!!!")
+        return jsonify({"error": str(e)}), 500
 
 # API that allows someone to register as a user to the database
 @app.route('/api/register', methods=['GET', 'POST'])
@@ -397,6 +400,7 @@ def register():
             conn.commit()
             cursor.close()
             conn.close()
+            session['username'] = email
             return jsonify({"message": "User added successfully"}), 201
         else:
             print("Form validation failed")
@@ -408,32 +412,8 @@ def register():
         return jsonify({"error": str(e)}), 500
 
     
-#Google update user registration start
-@app.route('/api/update-google', methods=['POST', 'OPTIONS'])
-def googleUpdate():
-    if (request.method == "OPTIONS"):
-        return jsonify({"message": "Success"}), 200
-    try:
-        # Get data from the frontend request
-        data = request.get_json()
-        user_email = data["email"]
-        user_type = data["type"]
 
-        # Logic to check database for matching email and update user type
-        if User.query.filter_by(email=user_email).first():
-            updated_user = User.query.filter_by(email=user_email).update(dict(user_type=user_type))
-            db.session.commit()
-            return jsonify({"message": "User updated successfully"}), 201
-        # User not found
-        else:
-            return jsonify({"error": "User not found"}), 404
-    except Exception as e:
-        return jsonify({"error": "Error validating user: " + str(e)}), 500
-#Google update user registration start
-
-    
 #Google register method start
-
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
 def googleRegister():
     # GOOGLE ADDITION START
@@ -447,20 +427,19 @@ def googleRegister():
 
         claims = jwt.decode(token, verify=False)
         user_email = claims["email"]
-        user_name = claims["email"]
+        user_name = claims["given_name"] + " " + claims["family_name"]
         session["user"] = token
 
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully", "name": user_name, "isNew": False, "email": user_email},), 200
+            return jsonify({"message": "User validated successfully", "name": user_name,"email": user_email},), 200 
+            # && (props.redirectOnLogin)
         # Logic to add to database
         else:
-            
-            new_user = User(email=user_email, password="Google account, password not available", user_type="renter")
-
+            new_user = User(email=user_email, password="Google account, password not available")
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({"message": "User added successfully", "name": user_name, "isNew": True, "email": user_email}), 201
+            return jsonify({"message": "User added successfully", "name": user_name,  "email": user_email}), 201
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 # Google register method end
@@ -478,14 +457,14 @@ def googleLogin():
 
         claims = jwt.decode(token, verify=False)
         user_email = claims["email"]
-        user_name = claims["email"]
+        user_name = claims["given_name"] + " " + claims["family_name"]
         session["user"] = token
 
         # Logic to check database for matching email
         if User.query.filter_by(email=user_email).first():
-            return jsonify({"message": "User validated successfully", "name": user_name},), 200
+            return jsonify({"message": "User validated successfully", "name": user_name, "email": user_email},), 200
 
-        return jsonify({"message": "Please register first", "name": user_name},), 404
+        return jsonify({"message": "Please register first", "name": user_name, "email": user_email},), 404
     except Exception as e:
         return jsonify({"error": "Error validating user: " + str(e)}), 500
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col, Card, Modal } from "react-bootstrap";
-import Slider, {Range} from 'rc-slider';
-import 'rc-slider/assets/index.css';
+import Slider, { Range } from "rc-slider";
+import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavbarCustom from "../Components/Navbar";
+import "../styles/pages/search.css";
+import "../styles/Components/card.css";
 
 function ItemSearchAndFilter() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,8 +22,8 @@ function ItemSearchAndFilter() {
     // Fetch initial data when the component mounts
     fetchItems();
   }, [availabilityFilter, priceRange, searchQuery]);
-
-//This is a fetch items function that looks into the equipment table of the database
+  
+  //This is a fetch items function that looks into the equipment table of the database
   const fetchItems = () => {
     // Make an AJAX request to your backend API
     let endpoint;
@@ -35,17 +37,17 @@ function ItemSearchAndFilter() {
     } else {
       endpoint = `http://127.0.0.1:5000/api/items?availability=${availabilityFilter}`;
     }
-  
-    fetch(endpoint)
-      .then(handleResponse)
-      .catch(handleError);
+
+    fetch(endpoint).then(handleResponse).catch(handleError);
   };
 
 //This function processes the response from the API, checking for errors and setting the results state accordingly.
   const handleResponse = (response) => {
     if (!response.ok) {
       console.error("Response not OK:", response.status, response.statusText);
-    response.text().then((errorText) => console.error("Error response:", errorText));
+      response
+        .text()
+        .then((errorText) => console.error("Error response:", errorText));
       throw new Error("Network response was not ok");
     }
 
@@ -70,7 +72,7 @@ function ItemSearchAndFilter() {
 //This function navigates to the reservations page with the selected equipment item.
   const handleReserveClick = () => {
     console.log(selectedItem);
-    navigate("/reservations",{state:{selectedItem:selectedItem}});
+    navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
 //This function filters the results based on price range and availability, setting the filtered data.
   const filterDataByPriceRange = () => {
@@ -94,7 +96,6 @@ function ItemSearchAndFilter() {
     fetchItems();
   };
 
-
   // Use useEffect to call the filtering function whenever the priceRange changes
   useEffect(() => {
     filterDataByPriceRange();
@@ -104,79 +105,38 @@ function ItemSearchAndFilter() {
     <div>
       <NavbarCustom />
 
-      <Container>
+      <div
+        style={{
+          marginLeft: "10px",
+          marginRight: "10px",
+        }}
+      >
         {/* Search input */}
         <div class="searchWrapper">
-          <form onSubmit={handleSubmit}>
-            <div class="searchBar">
-              <input
+          <div class="searchBar">
+            <input
               type="text"
               id="searchInput"
               placeholder="Search by name or description"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}/>
-              <Button id="searchButton" type="submit" onClick={fetchItems}>Search</Button>
-
-            {/* Filter Options */}
-            <h2>Filter by Availability Status:</h2>
-            <label>
-              <input
-                type="radio"
-                name="availabilityFilter"
-                value="searchItems"
-                onClick={() => {
-                  setSearchQuery("");
-                  fetchItems();
-                }}
-                checked={availabilityFilter === "searchItems"}
-                onChange={() => setAvailabilityFilter("searchItems")}
-              />{" "}
-              All
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="radioAvailable"
-                name="availabilityFilter"
-                value="available"
-                // onClick={(e) => setSearchQuery("")}
-                onClick={() => {
-                  setSearchQuery("");
-                  setAvailabilityFilter("available");
-                  fetchItems();
-                }}
-
-                checked={availabilityFilter === "available"}
-                // onChange={() => setAvailabilityFilter("available")}
-              />{" "}
-              Available
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="radioUnavailable"
-                name="availabilityFilter"
-                value="unavailable"
-                // onClick={(e) => setSearchQuery("")}
-                onClick={() => {
-                  setSearchQuery("");
-                  setAvailabilityFilter("unavailable");
-                  fetchItems();
-                }}
-                checked={availabilityFilter === "unavailable"}
-                // onChange={() => setAvailabilityFilter("unavailable")}
-              />{" "}
-              Unavailable
-            </label>
-
-            </div>
-            
-            {/* {availabilityFilter === "searchItems" &&  ( */}
-            <div class="priceFilter">
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Button
+              id="searchButton"
+              variant="success"
+              type="submit"
+              onClick={fetchItems}
+            >
+              Search
+            </Button>
+          </div>
+          {/* Filter Options */}
+          <div className="filterOptions">
+            <Col md={6} sm={12}>
               {/* Price Range Slider */}
-              <h2>Filter by Price Range:</h2>
-              <Slider range
-              size="small"
+              <Slider
+                range
+                size="small"
                 defaultValue={70}
                 aria-label="Small"
                 valueLabelDisplay="auto"
@@ -186,41 +146,101 @@ function ItemSearchAndFilter() {
                 value={priceRange}
                 onChange={(value) => setPriceRange(value)}
               />
-              <div>
+              <div className="priceRangeLabels">
                 <span>Min Price: ${priceRange[0]}</span>
                 <span>Max Price: ${priceRange[1]}</span>
               </div>
-            </div>
-            {/* )} */}
-            </form>
+            </Col>
+            <Col md={4} sm={12}>
+              <div className="availabilityFilter">
+                <div className="availabilityRadio">
+                  <label>
+                    <input
+                      type="radio"
+                      name="availabilityFilter"
+                      value="searchItems"
+                      onClick={() => {
+                        setSearchQuery("");
+                        fetchItems();
+                      }}
+                      checked={availabilityFilter === "searchItems"}
+                      onChange={() => setAvailabilityFilter("searchItems")}
+                    />{" "}
+                    All
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      id="radioAvailable"
+                      name="availabilityFilter"
+                      value="available"
+                      // onClick={(e) => setSearchQuery("")}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setAvailabilityFilter("available");
+                        fetchItems();
+                      }}
+                      checked={availabilityFilter === "available"}
+                      // onChange={() => setAvailabilityFilter("available")}
+                    />{" "}
+                    Available
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      id="radioUnavailable"
+                      name="availabilityFilter"
+                      value="unavailable"
+                      // onClick={(e) => setSearchQuery("")}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setAvailabilityFilter("unavailable");
+                        fetchItems();
+                      }}
+                      checked={availabilityFilter === "unavailable"}
+                      // onChange={() => setAvailabilityFilter("unavailable")}
+                    />{" "}
+                    Unavailable
+                  </label>
+                </div>
+              </div>
+            </Col>
+          </div>
         </div>
 
         {/* Display Results */}
-      
-        <div id="results">
-                
-          {results
-          .filter((item) => item && item.price !== undefined && item.price >= priceRange[0] && item.price <= priceRange[1])
-          .map((item) => (
-            
-            <Card
-              key={item.id}
-              style={{ cursor: "pointer" }}
-              onClick={() => handleCardClick(item)}
-            >
-              <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  Status: {item.available ? "Available" : "Unavailable"}
-                </Card.Subtitle>
-                <Card.Text>{item.description}</Card.Text>
-                <Card.Text>Price: ${item.price}</Card.Text>
-                <Card.Text>Owner: {item.owner}</Card.Text>
-              </Card.Body>
-            </Card>
-          )
-          )}
-        </div> 
+
+        <div className="container2">
+          <div className="row equal-height-cards">
+            {results
+              .filter(
+                (item) =>
+                  item &&
+                  item.price !== undefined &&
+                  item.price >= priceRange[0] &&
+                  item.price <= priceRange[1]
+              )
+              .map((item) => (
+                <Col key={item.id} className="col-md-4 col-12">
+                  <Card
+                    key={item.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleCardClick(item)}
+                  >
+                    <Card.Body>
+                      <Card.Title>{item.name}</Card.Title>
+                      <Card.Subtitle className="mb-2 text-muted">
+                        Status: {item.available ? "Available" : "Unavailable"}
+                      </Card.Subtitle>
+                      <Card.Text>{item.description}</Card.Text>
+                      <Card.Text>Price: ${item.price}</Card.Text>
+                      <Card.Text>Owner: {item.owner}</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+          </div>
+        </div>
 
         {/* Modal for displaying details */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -237,17 +257,20 @@ function ItemSearchAndFilter() {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={handleReserveClick}>Reserve</Button>
-            <Button variant="secondary" onClick={() => {
-                setSearchQuery(""); 
-                setShowModal(false); 
-                setAvailabilityFilter("searchItems"); 
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setSearchQuery("");
+                setShowModal(false);
+                setAvailabilityFilter("searchItems");
                 fetchItems();
-                }}>
+              }}
+            >
               Close
             </Button>
           </Modal.Footer>
         </Modal>
-      </Container>
+      </div>
     </div>
   );
 }

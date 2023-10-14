@@ -44,6 +44,7 @@ function UserDataList() {
               <Link to={`user/${user}`} style={{ textDecoration: "none" }}>
                 <Card
                   onClick={() => handleCardClick(user)}
+                  name={`${user}`}
                   style={{ cursor: "pointer" }}
                 >
                   <Card.Body>

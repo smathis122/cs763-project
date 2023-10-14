@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import { Modal, Button } from "react-bootstrap";
 // Google import start
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import "../styles/pages/register.css";
-import UserTypePopUp from "./UserTypePopUp";
 // Google import stop
 
 export function GoogleLoginButton(props) {
-  const [submitMsg, setSubmitMsg] = React.useState("");
   const navigate = useNavigate();
   const { setUsername } = useUser();
-
+  const [showUnregisteredModal, setShowUnregisteredModal] = useState(false);
   const [loginData, setLoginData] = useState(
     localStorage.getItem("loginData")
       ? JSON.parse(localStorage.getItem("loginData"))
@@ -42,54 +40,60 @@ export function GoogleLoginButton(props) {
     const data = await res.json();
 
     if (res.ok && data && data.name && data.email) {
-      props.handleMessage("Login successful!");
-      const username = data.name;
-      props.handleMessage(data.email);
-      props.setUserEmail(data.email);
+      const username = data.email;
+      props.handleMessage(username);
+      console.log("Logged in", username);
 
-      setUsername(data.email);
+      setUsername(username);
       localStorage.setItem("loginData", JSON.stringify(data));
+    }
+    if (res.status === 404) {
+      // If the user is unregistered, show the unregistered user modal
+      setShowUnregisteredModal(true);
     } else {
       props.handleMessage("Google login failed. Please register.");
     }
 
     if (res.ok && (props.redirectOnLogin || !data.isNew)) navigate("/");
-    //USER TYPE SELECTION
-    else if (res.ok && !props.redirectOnLogin && data.isNew) props.showPopup();
   };
-  // Login handling for google login stop
-  const handleLogout = () => {
-    localStorage.removeItem("loginData");
-    setLoginData(null);
-    setUsername("Guest");
-  };
-
   return (
     <div className="App">
       <div className="GoogleLoginDiv">
-        {loginData ? (
-          <div>
-            <h3>You logged in as {loginData.name}</h3>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        ) : (
-          <div className="GoogleLogin">
-            <GoogleOAuthProvider
+        <div className="GoogleLogin">
+          <GoogleOAuthProvider
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            id={"google-login-auth"}
+          >
+            <GoogleLogin
+              id="google-login-button"
               clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-              id={"google-login-auth"}
-            >
-              <GoogleLogin
-                id="google-login-button"
-                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                buttonText="Sign up with Google"
-                onSuccess={handleLogin}
-                onFailure={handleFailure}
-                cookiePolicy={"single_host_origin"}
-              ></GoogleLogin>
-            </GoogleOAuthProvider>
-          </div>
-        )}
+              buttonText="Sign up with Google"
+              onSuccess={handleLogin}
+              onFailure={handleFailure}
+              cookiePolicy={"single_host_origin"}
+            ></GoogleLogin>
+          </GoogleOAuthProvider>
+        </div>
       </div>
+      <Modal
+        show={showUnregisteredModal}
+        onHide={() => setShowUnregisteredModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Unregistered User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          You are not registered. Please register before logging in.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowUnregisteredModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
