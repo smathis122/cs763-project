@@ -24,7 +24,7 @@ from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
 from datetime import datetime
 
-app = Flask(__name__, static_folder='../../Frontend/react-frontend/build')
+app = Flask(__name__, static_folder='../../Frontend/react-frontend/build/')
 load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
