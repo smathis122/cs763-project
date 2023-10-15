@@ -1,1 +1,1 @@
-web: gunicorn -b :$PORT code/Backend/flask-backend/app:app
+web: python3 ./code/Backend/flask-backend/app.py
