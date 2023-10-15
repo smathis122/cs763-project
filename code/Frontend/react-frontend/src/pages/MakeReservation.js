@@ -41,6 +41,8 @@ function ReservationForm() {
     } else if (new Date(formData.start_date) < new Date()) {
       // also rental start date can't be in the past
       window.alert("Start date must be after today!");
+    } else if (formData.end_date == "" || formData.start_date == "") {
+      window.alert("Please enter a date!");
     } else {
       navigate("/Checkout", {
         state: { reservationDetails: formData, selectedItem },
