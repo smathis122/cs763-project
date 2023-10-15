@@ -52,7 +52,7 @@ export function NavbarCustom(props) {
       .catch((error) => console.error("Error:", error));
 
     // Navigate to the login page
-    navigate("/login");
+    navigate("https://gearonthego-52bc9f57a8cd.herokuapp.com/login");
   };
 
   return (
