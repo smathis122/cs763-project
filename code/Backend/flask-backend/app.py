@@ -42,7 +42,7 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
 
-CORS(app)  # Allow all origins for development; restrict in production
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Allow all origins for development; restrict in production
 # Generate a 32-character (16 bytes) random hexadecimal string
 secret_key = secrets.token_hex(16)
 
