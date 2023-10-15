@@ -54,7 +54,7 @@ Instructions to set up React
      * Build frontend
           * Go to frontend source code: `cd /code/Frontend/react-frontened`
           * `npm run build`
-     * Run app
+     * Run service
           * Change directory to repo root: `cd ../../..`
           * `gunicorn --chdir ./code/Backend/flask-backend app:app`
      * Nagivate to https://127.0.0.1:8000/
