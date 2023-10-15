@@ -39,7 +39,7 @@ function LoginPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", formData)
+      .post("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", formData)
       .then((response) => {
         console.log(response);
         if (response.status === 201) {

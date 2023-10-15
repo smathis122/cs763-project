@@ -41,7 +41,7 @@ function RegisterPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("http://gearonthego-52bc9f57a8cd.herokuapp.com/api/register", {
+    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -68,7 +68,7 @@ function RegisterPage() {
 
             // Perform a login request
             axios
-              .post("http://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", loginData)
+              .post("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", loginData)
               .then((loginResponse) => {
                 if (loginResponse.status === 201) {
                   // Successful login

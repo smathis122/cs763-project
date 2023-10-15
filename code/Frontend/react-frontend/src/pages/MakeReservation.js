@@ -35,7 +35,7 @@ function ReservationForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Send the formData as JSON to your Flask back-end here
-    fetch("http://gearonthego-52bc9f57a8cd.herokuapp.com/api/makeReservation", {
+    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/makeReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

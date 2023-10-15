@@ -30,7 +30,7 @@ export function NavbarCustom(props) {
     setLoginData(null);
     setUsername("Guest");
     // Perform logout logic here
-    fetch("http://127.0.0.1:8000/api/logout", {
+    fetch("https://127.0.0.1:8000/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,6 +54,21 @@ export function NavbarCustom(props) {
     // Navigate to the login page
     navigate("/login");
   };
+
+  // const handleLogout = async () => {
+  //   try {
+  //     // fetch("https://127.0.0.1:8000/api/logout", {
+  //     //   method: "POST",
+  //     //   headers: {
+  //     //     "Content-Type": "application/json",
+  //     //   },
+  //     // })
+  //     const response = await axios.post('/api/logout');
+  //     console.log(response.data.message); // Optional: Display logout message
+  //   } catch (error) {
+  //     console.error('Error logging out:', error);
+  //   }
+  // }
 
   return (
     <Navbar
