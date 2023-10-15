@@ -6,7 +6,7 @@ import requests
 import json
 import urllib
 import urllib.parse as up
-from flask import Flask, render_template, url_for, redirect, flash, request, jsonify, session
+from flask import Flask, render_template, send_from_directory, url_for, redirect, flash, request, jsonify, session
 from werkzeug.urls import url_decode
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -24,7 +24,7 @@ from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../../Frontend/react-frontend/build')
 load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
@@ -112,6 +112,11 @@ class LoginForm(FlaskForm):
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Login')
+
+# Load frontend homepage
+@app.route("/")
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
 
 #API route to remove item from equipment database table
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
