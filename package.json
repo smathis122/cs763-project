@@ -1,5 +1,0 @@
-{
-    "scripts": {
-        "start": "npm start --prefix ./code/Frontend/react-frontend/"
-    }
-}
