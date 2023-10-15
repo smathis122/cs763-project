@@ -24,7 +24,7 @@ from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
 from datetime import datetime
 
-app = Flask(__name__, static_folder='../../Frontend/react-frontend/build/')
+app = Flask(__name__, static_folder='../../Frontend/react-frontend/build/static', template_folder='../../Frontend/react-frontend/build/')
 load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
@@ -116,7 +116,7 @@ class LoginForm(FlaskForm):
 # Load frontend homepage
 @app.route("/")
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return render_template('index.html')
 
 #API route to remove item from equipment database table
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])

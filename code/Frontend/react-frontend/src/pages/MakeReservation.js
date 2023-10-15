@@ -35,6 +35,17 @@ function ReservationForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Send the formData as JSON to your Flask back-end here
+    fetch("http://gearonthego-52bc9f57a8cd.herokuapp.com/api/makeReservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+    setSubmitMsg("Loading...");
     if (formData.end_date != null && formData.end_date < formData.start_date) {
       // enforce end user enter valid inputs: that rental end date can't be before start date
       window.alert("End date must be after the start date!");
