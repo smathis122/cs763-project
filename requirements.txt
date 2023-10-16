@@ -11,7 +11,7 @@ python-dotenv
 bcrypt
 flask_marshmallow
 marshmallow-sqlalchemy
-oauthlib
+oauthlib==2.1.0
 authlib
 pyjwt
 requests
