@@ -12,15 +12,15 @@ def test_search_items(search_query):
     driver.get(base_url)
     # Logging into the application
     driver.get(base_url)  # Replace with your app's URL
-    driver.find_element(By.ID,'searchTab').click()
+    driver.find_element(By.ID,'collapsible-nav-dropdown').click()
+    time.sleep(2)
+    driver.find_element(By.ID,'login').click()
     time.sleep(2)
     driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)
-    # Find the search input field and submit button
-    driver.find_element(By.ID,'searchTab').click()
-    time.sleep(2)
+
     search_input = driver.find_element(By.ID,'searchInput')
     search_button = driver.find_element(By.ID,'searchButton')
     time.sleep(4)
@@ -38,15 +38,15 @@ def test_search_available_items():
     driver.get(base_url)
     # Logging into the application
     driver.get(base_url)  # Replace with your app's URL
-    driver.find_element(By.ID,'searchTab').click()
+    driver.find_element(By.ID,'collapsible-nav-dropdown').click()
+    time.sleep(2)
+    driver.find_element(By.ID,'login').click()
     time.sleep(2)
     driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)
-    # Find the search input field and submit button
-    driver.find_element(By.ID,'searchTab').click()
-    time.sleep(2)
+
     driver.find_element(By.ID,"radioAvailable").click()
     search_button = driver.find_element(By.ID,'searchButton')
     search_button.click()
@@ -59,15 +59,15 @@ def test_search_unavailable_items():
     driver.get(base_url)
     # Logging into the application
     driver.get(base_url)  # Replace with your app's URL
-    driver.find_element(By.ID,'searchTab').click()
+    driver.find_element(By.ID,'collapsible-nav-dropdown').click()
+    time.sleep(2)
+    driver.find_element(By.ID,'login').click()
     time.sleep(2)
     driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)
-    # Find the search input field and submit button
-    driver.find_element(By.ID,'searchTab').click()
-    time.sleep(2)
+
     driver.find_element(By.ID,"radioUnavailable").click()
     search_button = driver.find_element(By.ID,'searchButton')
     search_button.click()
