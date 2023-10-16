@@ -1,5 +1,7 @@
 This folder contains all required documents, including SPPP, SDD, STD, meeting minutes and progressreport
 
+doc/CS673_finalpresentation_team5: Slide show explaining Summary of all iterations, Testing, Metrics, and features
+
 doc/CS673_presentation2_team5: Slide show explaining our project features and automatic testing
 
 doc/CS673_SDD_team5 (Updated): Document going into detail on our design and architecture of the code. Along with some early UI designs.
