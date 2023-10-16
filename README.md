@@ -20,15 +20,22 @@ Our project is a recreational equipment rental service web application. Our visi
 
 ****
 
+**Deployment**
+[GearOnTheGo.com](https://gearonthego-52bc9f57a8cd.herokuapp.com/#/)
+
+****
+
 **How to:**
 
 Instructions to set up Flask
 
 * `cd code/Backend/flask-backend`
 
+Requirements need to be unstalled and than reinstalled if already installed
+* `pip uninstall -r ../requirements.txt`
+
 * `pip install -r ../requirements.txt`
 * `Python3 app.py`
-
 
 Instructions to set up React
 
@@ -45,18 +52,5 @@ Instructions to set up React
 * If Nodejs and npm is installed:
 
      * `npm start`
-
-* To run everything locally (backend + frontend)
-     * Start virtual environment
-          * `python -m venv env`
-          * `source env/bin/activate`
-     * Install required packages: `pip install -r requirements.txt`
-     * Build frontend
-          * Go to frontend source code: `cd /code/Frontend/react-frontened`
-          * `npm run build`
-     * Run service
-          * Change directory to repo root: `cd ../../..`
-          * `gunicorn --chdir ./code/Backend/flask-backend app:app`
-     * Nagivate to https://127.0.0.1:8000/
 
 
