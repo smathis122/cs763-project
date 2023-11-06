@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "https://gearonthego-52bc9f57a8cd.herokuapp.com/",
   "dependencies": {
-    "@mui/material": "^5.14.11",
+    "@mui/material": "^5.14.13",
     "@react-oauth/google": "^0.11.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
