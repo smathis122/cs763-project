@@ -1,10 +1,5 @@
 name: OWASP ZAP Security Scan
 
-on:
-  push:
-    branches:
-      - zap-workflow # Replace with your branch name
-
 jobs:
   security_scan:
     runs-on: ubuntu-latest
