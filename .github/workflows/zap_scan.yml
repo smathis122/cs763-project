@@ -1,5 +1,10 @@
 name: OWASP ZAP Security Scan
 
+on:
+  pull_request:
+    branches:
+      - main 
+
 jobs:
   security_scan:
     runs-on: ubuntu-latest
