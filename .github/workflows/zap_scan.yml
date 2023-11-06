@@ -15,6 +15,6 @@ jobs:
 
       - name: Run ZAP Scan
         run: |
-          docker run -v $(pwd):/zap/wrk -t owasp/zap2docker-weekly zap-baseline.py -t $(target-url)
+          docker run -v $(pwd):/zap/wrk -t owasp/zap2docker-weekly zap-baseline.py -t $target-url
         env:
           target-url: http://samantha.etiennethompson.com/
