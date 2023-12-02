@@ -20,15 +20,23 @@ Our project is a recreational equipment rental service web application. Our visi
 
 ****
 
+**Deployment:**
+
+[GearOnTheGo.com](https://gearonthego-52bc9f57a8cd.herokuapp.com/#/)
+
+****
+
 **How to:**
 
 Instructions to set up Flask
 
 * `cd code/Backend/flask-backend`
 
+Requirements need to be unstalled and than reinstalled if already installed
+* `pip uninstall -r ../requirements.txt`
+
 * `pip install -r ../requirements.txt`
 * `Python3 app.py`
-
 
 Instructions to set up React
 
