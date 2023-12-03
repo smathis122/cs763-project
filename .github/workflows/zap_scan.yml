@@ -1,0 +1,18 @@
+name: OWASP ZAP Security Scan
+
+on:
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  security_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Run ZAP Scan
+        run: |
+          docker run -v $(pwd):/zap/wrk -t owasp/zap2docker-weekly zap-baseline.py -t http://samantha.etiennethompson.com/

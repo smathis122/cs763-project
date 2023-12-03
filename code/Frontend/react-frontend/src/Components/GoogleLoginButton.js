@@ -38,7 +38,7 @@ export function GoogleLoginButton(props) {
     });
 
     const data = await res.json();
-//This coniditoning is handling a  login process and handles responses from a Google login attempt.
+    //This coniditoning is handling a  login process and handles responses from a Google login attempt.
     if (res.ok && data && data.name && data.email) {
       const username = data.email;
       props.handleMessage(username);

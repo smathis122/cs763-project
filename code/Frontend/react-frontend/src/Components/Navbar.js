@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export function NavbarCustom(props) {
-  const { username, setUsername,} = useUser();
+  const { username, setUsername } = useUser();
   const navigate = useNavigate(); // Get the navigate function
 
   //Google start
@@ -25,7 +25,7 @@ export function NavbarCustom(props) {
   );
   //Google stop
   const handleLogout = () => {
-    //Google logout logic: 
+    //Google logout logic:
     localStorage.removeItem("loginData");
     setLoginData(null);
     setUsername("Guest");
@@ -82,7 +82,9 @@ export function NavbarCustom(props) {
               {username ? (
                 <>
                   <NavDropdown.Item href="#/View">Profile</NavDropdown.Item>
-                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Logout
+                  </NavDropdown.Item>
                 </>
               ) : (
                 <>
