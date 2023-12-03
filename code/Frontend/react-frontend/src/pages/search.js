@@ -17,31 +17,31 @@ function ItemSearchAndFilter() {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
-//This hook fetches data when the component mounts or when the dependencies (availabilityFilter, priceRange, searchQuery) change.
+  //This hook fetches data when the component mounts or when the dependencies (availabilityFilter, priceRange, searchQuery) change.
   useEffect(() => {
     // Fetch initial data when the component mounts
     fetchItems();
   }, [availabilityFilter, priceRange, searchQuery]);
-  
+
   //This is a fetch items function that looks into the equipment table of the database
   const fetchItems = () => {
     // Make an AJAX request to your backend API
     let endpoint;
 
     if (availabilityFilter === "searchItems") {
-      endpoint = `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
+      endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`;
     } else if (availabilityFilter === "available") {
-      endpoint = `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=available`;
+      endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=available`;
     } else if (availabilityFilter === "unavailable") {
-      endpoint = `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=unavailable`;
+      endpoint = `http://127.0.0.1:5000/api/searchItems?q=${searchQuery}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&availability=unavailable`;
     } else {
-      endpoint = `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/items?availability=${availabilityFilter}`;
+      endpoint = `http://127.0.0.1:5000/api/items?availability=${availabilityFilter}`;
     }
 
     fetch(endpoint).then(handleResponse).catch(handleError);
   };
 
-//This function processes the response from the API, checking for errors and setting the results state accordingly.
+  //This function processes the response from the API, checking for errors and setting the results state accordingly.
   const handleResponse = (response) => {
     if (!response.ok) {
       console.error("Response not OK:", response.status, response.statusText);
@@ -58,23 +58,23 @@ function ItemSearchAndFilter() {
       })
       .catch(handleError);
   };
-//This function handles any errors that occur during the API request and sets the results state to an error message.
+  //This function handles any errors that occur during the API request and sets the results state to an error message.
   const handleError = (error) => {
     console.error("Error:", error);
     setResults([{ message: "An error occurred while fetching data." }]);
   };
-//This function sets the selected equipment item and shows a modal when a card is clicked.
+  //This function sets the selected equipment item and shows a modal when a card is clicked.
   const handleCardClick = (item) => {
     console.log(selectedItem);
     setSelectedItem(item);
     setShowModal(true);
   };
-//This function navigates to the reservations page with the selected equipment item.
+  //This function navigates to the reservations page with the selected equipment item.
   const handleReserveClick = () => {
     console.log(selectedItem);
     navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
-//This function filters the results based on price range and availability, setting the filtered data.
+  //This function filters the results based on price range and availability, setting the filtered data.
   const filterDataByPriceRange = () => {
     const filteredItems = results.filter((item) => {
       return (
@@ -90,7 +90,7 @@ function ItemSearchAndFilter() {
     setFilteredData(filteredItems);
   };
 
-//This function handles form submission by preventing the default behavior and calling fetchItems to update the results based on the filters.
+  //This function handles form submission by preventing the default behavior and calling fetchItems to update the results based on the filters.
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     fetchItems();
@@ -100,7 +100,7 @@ function ItemSearchAndFilter() {
   useEffect(() => {
     filterDataByPriceRange();
   }, [priceRange]);
-//This component renders a web page with a search input, filter options for equipment availability, a price range slider, and displays equipment items based on the applied filters.
+  //This component renders a web page with a search input, filter options for equipment availability, a price range slider, and displays equipment items based on the applied filters.
   return (
     <div>
       <NavbarCustom />

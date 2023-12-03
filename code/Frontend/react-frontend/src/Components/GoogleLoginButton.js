@@ -24,8 +24,8 @@ export function GoogleLoginButton(props) {
   // Failure handling for google login stop
   // Login handling for google login start
   const handleLogin = async (googleData) => {
-    var url = "https://gearonthego-52bc9f57a8cd.herokuapp.com/api/register-google";
-    if (props.redirectOnLogin) url = "https://gearonthego-52bc9f57a8cd.herokuapp.com/api/login-google";
+    var url = "http://127.0.0.1:5000/api/register-google";
+    if (props.redirectOnLogin) url = "http://127.0.0.1:5000/api/login-google";
 
     const res = await fetch(url, {
       method: "POST",
@@ -38,7 +38,7 @@ export function GoogleLoginButton(props) {
     });
 
     const data = await res.json();
-//This coniditoning is handling a  login process and handles responses from a Google login attempt.
+    //This coniditoning is handling a  login process and handles responses from a Google login attempt.
     if (res.ok && data && data.name && data.email) {
       const username = data.email;
       props.handleMessage(username);

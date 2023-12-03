@@ -21,16 +21,16 @@ function EquipmentList() {
   useEffect(() => {
     fetchEquipmentData();
   }, []);
-//This is a function that takes an equipment object as a parameter and updates the selectedItem state with the selected equipment
+  //This is a function that takes an equipment object as a parameter and updates the selectedItem state with the selected equipment
   const fetchEquipmentData = () => {
     // Fetch equipment data from your Flask API endpoint
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/getEquipment")
+    fetch("http://127.0.0.1:5000/api/getEquipment")
       .then((response) => response.json())
       .then((data) => setEquipmentData(data))
       .catch((error) => console.error("Error:", error));
   };
 
-//This is a function that navigates the user to the registration page (/register) with the selected equipment as a part of the route state
+  //This is a function that navigates the user to the registration page (/register) with the selected equipment as a part of the route state
   const handleCardClick = (equipment) => {
     setSelectedItem(equipment);
     setShowModal(true);
@@ -39,11 +39,11 @@ function EquipmentList() {
   const handleReserveClickRegister = () => {
     navigate("/register", { state: { selectedItem: selectedItem } });
   };
-//This is a function that navigates the user to the reservations page (/reservations) with the selected equipment as part of the route state. 
+  //This is a function that navigates the user to the reservations page (/reservations) with the selected equipment as part of the route state.
   const handleReserveClickReserve = () => {
     navigate("/reservations", { state: { selectedItem: selectedItem } });
   };
-//This component renders the items that are in the database on the homepage
+  //This component renders the items that are in the database on the homepage
   return (
     <div>
       <NavbarCustom />

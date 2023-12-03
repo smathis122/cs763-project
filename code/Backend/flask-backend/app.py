@@ -22,14 +22,17 @@ import psycopg2
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from google.auth import jwt
-from datetime import datetime
+from datetime import datetime, timedelta
+import smtplib
+from email.message import EmailMessage
+import secrets
 
-app = Flask(__name__, static_folder='../../Frontend/react-frontend/build/static', template_folder='../../Frontend/react-frontend/build/')
+app = Flask(__name__)
 load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.secret_key = os.environ.get('SECRET_KEY')
 
+app.secret_key = os.environ.get('SECRET_KEY')
 
 db = SQLAlchemy(app)
 
@@ -41,6 +44,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    reset_token=db.Column(db.String(255), nullable=True)
+    reset_expiration=db.Column(db.Integer, nullable=True)
 
 CORS(app, resources={r"/api/*": {"origins": "*"}, r"/*": {"origins": "*"}})  # Allow all origins for development; restrict in production
 # Generate a 32-character (16 bytes) random hexadecimal string
@@ -113,11 +118,14 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login')
 
-# Load frontend homepage
-@app.route("/")
-def index():
-    return render_template('index.html')
+# Class to take input data to login
+class PasswordForm(FlaskForm):
 
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Password')
+    
 #API route to remove item from equipment database table
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -638,6 +646,75 @@ def get_items():
             return jsonify({"message": f"No {availability} items found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/reset/<username>', methods=['POST'])
+def reset_password(username):
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        token = secrets.token_urlsafe(16)
+        expiration=(datetime.now() + timedelta(minutes = 15)).timestamp()
+        url = "http://localhost:3000/#/newPassword?token="+token
+        cursor.execute('UPDATE "user" SET reset_token = %s, reset_expiration = %s WHERE email = %s', (token, expiration, username, ))
+        conn.commit()
+        message = EmailMessage()
+        message.set_content("Here is your password link:\n\n " + url)
+
+        message['Subject'] = "Password Reset"
+        message['From'] = "gearonthego@etiennethompson.com"
+        message['To'] = username
+
+        s = smtplib.SMTP_SSL(host="shared82.accountservergroup.com", port=465)
+        s.login("gearonthego@etiennethompson.com", "k6-eeRn#$P)hFAw")
+        s.send_message(message)
+
+        cursor.close()
+        conn.close()
+        return jsonify("message sent"), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/newPassword', methods=['POST'])
+def new_password():
+    try:
+        conn = psycopg2.connect(**db_connection_settings)
+        cursor = conn.cursor()
+        token = request.json.get('token')
+        hashed_password = bcrypt.hashpw(
+                request.json.get('newPassword').encode('utf-8'), bcrypt.gensalt())
+        # Search for the user based on the reset_token
+        cursor.execute('SELECT * FROM "user" WHERE reset_token = %s', (token,))
+        user = cursor.fetchone()
+        if user:
+            # Check if the token expiration is valid 
+            if token_expiration_valid(user[5]):
+                cursor.execute('UPDATE "user" SET password = %s, reset_token = NULL, reset_expiration = NULL WHERE reset_token = %s', (hashed_password, token))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                print("Password updated successfully")
+                return jsonify({'message': 'Password updated successfully'}), 201
+            else:
+                cursor.close()
+                conn.close()
+                print("Invalid or expired token")
+                return jsonify({'message': 'Invalid or expired token'}), 400
+        else:
+            cursor.close()
+            conn.close()
+            print("token not found")
+            return jsonify({'message': 'Token not found'}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Function to check if token expiration is valid
+def token_expiration_valid(expiration):
+    if expiration:
+        expiration_time = datetime.fromtimestamp(expiration)
+        return expiration_time > datetime.now()
+    return False
 
 if __name__ == "__main__":
     app.run(debug=False)
