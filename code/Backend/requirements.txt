@@ -19,3 +19,4 @@ google.auth
 email_validator
 selenium
 Werkzeug==2.3.0
+flask_mail

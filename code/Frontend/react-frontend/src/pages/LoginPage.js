@@ -126,6 +126,9 @@ function LoginPage() {
           <p className="dont-have-account">
             Don't have an account? <Link to="/register">Sign up</Link>
           </p>
+          <p className="dont-have-account">
+            Forgot Password? <Link to="/reset">Reset</Link>
+          </p>
         </Form>
       </div>
     </div>
