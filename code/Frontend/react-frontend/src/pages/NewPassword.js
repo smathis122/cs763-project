@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import "../styles/pages/password.css";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/pages/register.css";
 import "../styles/Components/popup.css";
 
 const ResetPassword = () => {
-  const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(null);
   const navigate = useNavigate();
 
   //This function is used to toggle the visibility of a password.
@@ -24,8 +22,6 @@ const ResetPassword = () => {
     const urlParams = new URLSearchParams(window.location.hash.slice(1));
     console.log(urlParams);
     const tokenParam = urlParams.get("/newPassword?token");
-    console.log("Token in handleReset:", tokenParam); // Check if the token is correctly retrieved
-    console.log(newPassword);
     axios
       .post("http://127.0.0.1:5000/api/newPassword", {
         token: tokenParam,
@@ -36,27 +32,12 @@ const ResetPassword = () => {
           alert("Password updated successfully!");
           navigate("/login");
         } else {
-          alert(response.data.message);
+          alert("Invalid or Expired Token!");
         }
       })
       .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-          alert("Password updated unsuccessful");
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request);
-          alert("Password not updated 2!");
-        } else {
-          // Something happened in setting up the request that triggered an error
-          console.log("Error", error.message);
-          alert("Password not updated 3!");
-        }
-        console.log(error.config);
-        alert("Password not updated 4!");
+        console.error(error);
+        alert("Invalid or Expired Token!");
       });
   };
 
@@ -65,6 +46,9 @@ const ResetPassword = () => {
       <NavbarCustom />
       <div className="form" id="formDiv">
         <Form className="reservation-form" onSubmit={handleReset}>
+          <h3 style={{ marginLeft: "35%", marginBottom: "10%" }}>
+            Reset Password
+          </h3>
           <FormGroup className="contact-page-form-group">
             <div className="password-input-container">
               <Form.Control
@@ -90,7 +74,7 @@ const ResetPassword = () => {
           <Button
             className="FormButton"
             variant="success"
-            type="submit"
+            onClick={handleReset}
             id="submitButton"
           >
             Reset Password

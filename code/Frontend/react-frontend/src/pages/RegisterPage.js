@@ -80,7 +80,6 @@ function RegisterPage() {
                   // Redirect to the home page or any other desired location
                   navigate("/");
                 } else {
-                  // Handle l
                   window.alert("Failed to Register");
                   console.log("Login failed:", loginResponse.data);
                 }
@@ -144,7 +143,7 @@ function RegisterPage() {
           <Button
             className="FormButton"
             variant="success"
-            type="submit"
+            onClick={handleSubmit}
             id="submitButton"
           >
             Register

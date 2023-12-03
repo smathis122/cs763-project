@@ -688,7 +688,7 @@ def new_password():
         if user:
             # Check if the token expiration is valid 
             if token_expiration_valid(user[5]):
-                #cursor.execute('UPDATE "user" SET password = %s, reset_token = NULL, reset_expiration = NULL WHERE reset_token = %s', (hashed_password, token))
+                cursor.execute('UPDATE "user" SET password = %s, reset_token = NULL, reset_expiration = NULL WHERE reset_token = %s', (hashed_password, token))
                 conn.commit()
                 cursor.close()
                 conn.close()

@@ -112,7 +112,7 @@ function LoginPage() {
           <Button
             className="FormButton" // Apply Bootstrap class for button width
             variant="success"
-            type="submit"
+            onClick={handleSubmit}
             id="submitButton"
           >
             Log in
