@@ -13,7 +13,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Run ZAP Scan
-        run: |
-          docker run -v $(pwd):/zap/wrk -t owasp/zap2docker-weekly zap-baseline.py -t http://samantha.etiennethompson.com/
+        
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.10.0
