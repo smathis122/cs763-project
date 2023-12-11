@@ -12,7 +12,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        
+
+      - name: Modify Permissions
+        run: |
+          sudo chmod -R 777 /zap/wrk/
+
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
