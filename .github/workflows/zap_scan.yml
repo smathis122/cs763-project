@@ -13,11 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Create Directory for ZAP Reports
-        run: mkdir -p /zap/wrk/
-
       - name: ZAP Scan
-        run: |
-             # Run your ZAP command here, specifying the necessary options for your scan
-             # For example:
-             /path/to/zap-baseline.py -t http://samantha.etiennethompson.com -J /zap/wrk/report_json.json -w /zap/wrk/report_md.md -r /zap/wrk/report_html.html
+        uses: zaproxy/action-baseline@v0.3.0
+        with:
+          target: 'https://www.zaproxy.org/'
