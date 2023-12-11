@@ -1,5 +1,8 @@
 name: OWASP ZAP Security Scan
 
+
+            
+
 on:
   pull_request:
     branches:
@@ -10,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
 
       - name: Run ZAP Scan
         run: |
