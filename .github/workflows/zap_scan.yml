@@ -1,6 +1,5 @@
 name: OWASP ZAP Security Scan
 
-
 on:
   pull_request:
     branches:
@@ -16,3 +15,5 @@ jobs:
         
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: 'http://samantha.etiennethompson.com' # Replace 'http://example.com' with your target URL
