@@ -48,7 +48,7 @@ else:
     current_url = driver.current_url
     
     error_message += f"\n\nFailure Message: {error_message}\n"
-    error_message += f"\nContext:"
+    error_message += "\nContext:"
     error_message += f"\n- Current URL: {current_url}"
 
     print(error_message)

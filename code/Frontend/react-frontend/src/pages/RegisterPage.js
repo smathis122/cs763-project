@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import "../styles/pages/password.css";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/pages/register.css";
@@ -22,12 +22,8 @@ function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const [buttonPopup, setButtonPopup] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+  const [setUserEmail] = useState("");
   const navigate = useNavigate();
-  const showPopup = () => {
-    setButtonPopup(true);
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -154,7 +150,6 @@ function RegisterPage() {
             setUserEmail={(email) => {
               setUserEmail(email);
             }}
-            showPopup={showPopup}
           />
 
           <p className="dont-have-account">

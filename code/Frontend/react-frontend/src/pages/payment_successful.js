@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-
 
 //This function is the display that takes palce when the payment becomes succsseful
 
@@ -25,7 +24,7 @@ function PaymentSuccessful() {
           A copy of your purchase has been sent to your email
         </h3>
         <h3 style={marginStyle}>
-          View your reservations <Link to="/View">here</Link> 
+          View your reservations <Link to="/View">here</Link>
         </h3>
       </div>
       <div

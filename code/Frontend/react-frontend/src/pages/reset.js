@@ -39,9 +39,6 @@ function RegisterPage() {
           return response.json().then((data) => {
             console.log(data);
             window.alert("Link Sent! Check your inbox");
-            const loginData = {
-              email: formData.email,
-            };
 
             setFormData({
               email: "",

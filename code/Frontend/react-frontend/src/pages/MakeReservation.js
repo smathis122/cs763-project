@@ -3,9 +3,8 @@ import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import Button from "react-bootstrap/Button";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../Components/UserContext";
-import { useNavigate } from "react-router-dom";
 import "../styles/pages/reservations.css";
 
 //This function is used to render a reservation form, it retrieves the selected items information, and user data from the components props, and manages the form data

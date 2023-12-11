@@ -3,8 +3,6 @@ import { NavbarCustom } from "../Components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../Components/UserContext";
 import Card from "react-bootstrap/esm/Card";
-import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";

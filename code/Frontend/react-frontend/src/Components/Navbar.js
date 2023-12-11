@@ -1,33 +1,15 @@
-import React, { useState } from "react";
-import {
-  Tabs,
-  Tab,
-  Navbar,
-  Container,
-  Nav,
-  NavDropdown,
-} from "react-bootstrap";
+import React from "react";
+import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { HashLink as Link } from "react-router-hash-link";
 import "../styles/Components/navbar.css";
 import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export function NavbarCustom(props) {
   const { username, setUsername } = useUser();
   const navigate = useNavigate(); // Get the navigate function
 
-  //Google start
-  const [loginData, setLoginData] = useState(
-    localStorage.getItem("loginData")
-      ? JSON.parse(localStorage.getItem("loginData"))
-      : null
-  );
-  //Google stop
   const handleLogout = () => {
-    //Google logout logic:
-    localStorage.removeItem("loginData");
-    setLoginData(null);
     setUsername("Guest");
     // Perform logout logic here
     fetch("http://127.0.0.1:5000/api/logout", {

@@ -3,12 +3,8 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
 import Contact from "./pages/contact";
-
 import Checkout from "./pages/payment_validation";
 import PaymentSuccessful from "./pages/payment_successful";
-
-import { useUser } from "./Components/UserContext";
-
 import ItemSearchAndFilter from "./pages/search";
 import Info from "./pages/info";
 import Reservations from "./pages/MakeReservation";

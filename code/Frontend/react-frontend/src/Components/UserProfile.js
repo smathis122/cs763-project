@@ -155,9 +155,7 @@ function UserProfile() {
             <Col md={8} className="items-hosted-column">
               <h3>Available Items</h3>
               <Row>
-                {equipmentData &&
-                equipmentData.items &&
-                equipmentData.items.length > 0 ? (
+                {equipmentData?.items && equipmentData.items.length > 0 ? (
                   equipmentData.items
                     .filter(
                       (item) =>
@@ -191,9 +189,7 @@ function UserProfile() {
 
               <h3>Unavailable Items</h3>
               <Row>
-                {equipmentData &&
-                equipmentData.items &&
-                equipmentData.items.length > 0 ? (
+                {equipmentData?.items && equipmentData.items.length > 0 ? (
                   equipmentData.items
                     .filter(
                       (item) =>
@@ -245,8 +241,8 @@ function UserProfile() {
               {reviews.length === 0 ? (
                 <p>This person has no reviews yet.</p>
               ) : (
-                reviews.map((review, index) => (
-                  <Card key={index} style={{ marginBottom: "10px" }}>
+                reviews.map((review) => (
+                  <Card key={review.id} style={{ marginBottom: "10px" }}>
                     <Card.Body>
                       <Card.Title>{review[3]}</Card.Title>
                       <Card.Text>Rating: {review[4]}</Card.Text>

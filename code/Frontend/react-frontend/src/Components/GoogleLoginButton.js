@@ -11,11 +11,6 @@ export function GoogleLoginButton(props) {
   const navigate = useNavigate();
   const { setUsername } = useUser();
   const [showUnregisteredModal, setShowUnregisteredModal] = useState(false);
-  const [loginData, setLoginData] = useState(
-    localStorage.getItem("loginData")
-      ? JSON.parse(localStorage.getItem("loginData"))
-      : null
-  );
 
   // Failure handling for google login start
   const handleFailure = (result) => {
@@ -24,7 +19,7 @@ export function GoogleLoginButton(props) {
   // Failure handling for google login stop
   // Login handling for google login start
   const handleLogin = async (googleData) => {
-    var url = "http://127.0.0.1:5000/api/register-google";
+    let url = "http://127.0.0.1:5000/api/register-google";
     if (props.redirectOnLogin) url = "http://127.0.0.1:5000/api/login-google";
 
     const res = await fetch(url, {
@@ -45,7 +40,6 @@ export function GoogleLoginButton(props) {
       console.log("Logged in", username);
 
       setUsername(username);
-      localStorage.setItem("loginData", JSON.stringify(data));
     }
     if (res.status === 404) {
       // If the user is unregistered, show the unregistered user modal
