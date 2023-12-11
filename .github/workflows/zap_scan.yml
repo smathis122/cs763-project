@@ -13,10 +13,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Modify Permissions
-        run: |
-          sudo chmod -R 777 /zap/wrk/
+      - name: Create Directory for ZAP Reports
+        run: mkdir -p /zap/wrk/
 
       - name: ZAP Scan
         run: |
-          docker run -v /home/runner/work/cs763-project/cs763-project:/zap/wrk/:rw --network=host -e ZAP_AUTH_HEADER -e ZAP_AUTH_HEADER_VALUE -e ZAP_AUTH_HEADER_SITE -t ghcr.io/zaproxy/zaproxy:stable bash -c "chmod -R 777 /zap/wrk/ && zap-baseline.py -t http://samantha.etiennethompson.com -J report_json.json -w report_md.md -r report_html.html"
+             # Run your ZAP command here, specifying the necessary options for your scan
+             # For example:
+             /path/to/zap-baseline.py -t http://samantha.etiennethompson.com -J /zap/wrk/report_json.json -w /zap/wrk/report_md.md -r /zap/wrk/report_html.html
