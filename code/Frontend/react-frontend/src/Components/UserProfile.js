@@ -35,7 +35,7 @@ function UserProfile() {
 
   // This function is used to Fetch equipment data from the server based on 'usernameSelected'.
   const fetchEquipmentData = () => {
-    fetch(`https://gearonthego-52bc9f57a8cd.herokuapp.com/api/items/${usernameSelected}`)
+    fetch(`http://127.0.0.1:5000/api/items/${usernameSelected}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched equipment data:", data); // Debug statement
@@ -45,7 +45,7 @@ function UserProfile() {
   };
   // This function is used to fetch reviews data from the server based on 'usernameSelected'.
   const fetchReviewsData = () => {
-    fetch(`https://gearonthego-52bc9f57a8cd.herokuapp.com/api/getReviews/${usernameSelected}`)
+    fetch(`http://127.0.0.1:5000/api/getReviews/${usernameSelected}`)
       .then((response) => response.json())
       .then((data) => setReviews(data))
       .catch((error) => console.error("Error:", error));
@@ -72,7 +72,7 @@ function UserProfile() {
       target: usernameSelected,
     };
     // This fetch sends a POST request to add the review to the server.
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/addReviews", {
+    fetch("http://127.0.0.1:5000/api/addReviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -155,9 +155,7 @@ function UserProfile() {
             <Col md={8} className="items-hosted-column">
               <h3>Available Items</h3>
               <Row>
-                {equipmentData &&
-                equipmentData.items &&
-                equipmentData.items.length > 0 ? (
+                {equipmentData?.items && equipmentData.items.length > 0 ? (
                   equipmentData.items
                     .filter(
                       (item) =>
@@ -191,9 +189,7 @@ function UserProfile() {
 
               <h3>Unavailable Items</h3>
               <Row>
-                {equipmentData &&
-                equipmentData.items &&
-                equipmentData.items.length > 0 ? (
+                {equipmentData?.items && equipmentData.items.length > 0 ? (
                   equipmentData.items
                     .filter(
                       (item) =>
@@ -245,8 +241,8 @@ function UserProfile() {
               {reviews.length === 0 ? (
                 <p>This person has no reviews yet.</p>
               ) : (
-                reviews.map((review, index) => (
-                  <Card key={index} style={{ marginBottom: "10px" }}>
+                reviews.map((review) => (
+                  <Card key={review.id} style={{ marginBottom: "10px" }}>
                     <Card.Body>
                       <Card.Title>{review[3]}</Card.Title>
                       <Card.Text>Rating: {review[4]}</Card.Text>

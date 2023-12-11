@@ -21,8 +21,12 @@ function View() {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   // adding similar remove/update modal for reservation
-  const [showRemoveReservationModal, setShowRemoveReservationModal] = useState(false);
-  const [showUpdateReservationModal, setShowUpdateReservationModal] = useState(false);
+  const [showRemoveReservationModal, setShowRemoveReservationModal] = useState(
+    false
+  );
+  const [showUpdateReservationModal, setShowUpdateReservationModal] = useState(
+    false
+  );
   const [selectedItem, setSelectedItem] = useState(null);
   const { username } = useUser();
   const navigate = useNavigate();
@@ -33,7 +37,7 @@ function View() {
     status: "",
     price: "",
   });
-//This is a function that creates a new object to add an item to a user
+  //This is a function that creates a new object to add an item to a user
   const handleAddItem = () => {
     const newEquipment = {
       name: formData.name,
@@ -42,9 +46,9 @@ function View() {
       price: formData.price,
       owner: username,
     };
-//This fetch call  makes a POST request to the server's API to add new equipment. 
-//Upon a successful response, it logs the data, navigates to a different route, and optionally updates the equipment data.
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/addEquipment", {
+    //This fetch call  makes a POST request to the server's API to add new equipment.
+    //Upon a successful response, it logs the data, navigates to a different route, and optionally updates the equipment data.
+    fetch("http://127.0.0.1:5000/api/addEquipment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +71,7 @@ function View() {
       price: "",
     });
   };
-//This function handles the input and handles changes to the input fields
+  //This function handles the input and handles changes to the input fields
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -89,51 +93,51 @@ function View() {
     item_id: "",
     user_name: "",
     price: "",
-    item_name: ""
+    item_name: "",
   });
-//This function Uses the 'useEffect' hook to perform data fetching when 'username' changes
+  //This function Uses the 'useEffect' hook to perform data fetching when 'username' changes
   useEffect(() => {
     fetchEquipmentData();
     fetchReservationData();
     fetchReviewsData();
   }, [username]);
-//This function fetches the equipment from the database server
+  //This function fetches the equipment from the database server
   const fetchEquipmentData = () => {
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/getEquipment")
+    fetch("http://127.0.0.1:5000/api/getEquipment")
       .then((response) => response.json())
       .then((data) => setEquipmentData(data))
       .catch((error) => console.error("Error:", error));
   };
-//This function fetches the reservations from the database server
+  //This function fetches the reservations from the database server
   const fetchReservationData = () => {
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/getReservation")
+    fetch("http://127.0.0.1:5000/api/getReservation")
       .then((response) => response.json())
       .then((data) => setReservationData(data))
       .catch((error) => console.error("Error:", error));
   };
-//This function fetches the reviews from the database server
+  //This function fetches the reviews from the database server
   const fetchReviewsData = () => {
-    fetch(`https://gearonthego-52bc9f57a8cd.herokuapp.com/api/getReviews/${username}`)
+    fetch(`http://127.0.0.1:5000/api/getReviews/${username}`)
       .then((response) => response.json())
       .then((data) => setReviews(data))
       .catch((error) => console.error("Error:", error));
   };
-//This function is triggered from a click event It prevents event propagation to parent elements (likely to avoid unintended behavior), 
-//sets the selected equipment, and shows a modal dialog for confirming the removal of the equipment.
+  //This function is triggered from a click event It prevents event propagation to parent elements (likely to avoid unintended behavior),
+  //sets the selected equipment, and shows a modal dialog for confirming the removal of the equipment.
   const handleRemoveClick = (event, equipment) => {
     event.stopPropagation();
     setSelectedItem(equipment);
     setShowRemoveModal(true);
   };
 
-//This function handles the removal and sends a confirmaiton of the removal
+  //This function handles the removal and sends a confirmaiton of the removal
   const handleRemoveConfirm = () => {
     if (!selectedItem) {
       console.error("No item selected for removal.");
       return;
     }
     console.log("Selected Item:", selectedItem);
-    fetch(`https://gearonthego-52bc9f57a8cd.herokuapp.com/api/removeEquipment/${selectedItem.itemid}`, {
+    fetch(`http://127.0.0.1:5000/api/removeEquipment/${selectedItem.itemid}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
@@ -145,15 +149,15 @@ function View() {
       })
       .catch((error) => console.error("Error:", error));
   };
-// This function is used to display the users items
+  // This function is used to display the users items
   const handleShowAddItemModal = () => {
     setShowAddItemModal(true);
   };
-//This function is used to handled closing the screen displaying the item
+  //This function is used to handled closing the screen displaying the item
   const handleCloseAddItemModal = () => {
     setShowAddItemModal(false);
   };
-//This function handles any updates made to the item
+  //This function handles any updates made to the item
   const handleUpdateClick = (event, equipment) => {
     event.stopPropagation();
     setSelectedItem(equipment);
@@ -167,11 +171,11 @@ function View() {
     });
     setShowUpdateModal(true);
   };
-// This function is used to make a PUT request to update the equipment data on the database
+  // This function is used to make a PUT request to update the equipment data on the database
   const handleUpdateSubmit = (event) => {
     event.preventDefault();
     console.log(updateFormData);
-    fetch(`https://gearonthego-52bc9f57a8cd.herokuapp.com/api/updateEquipment/${updateFormData.id}`, {
+    fetch(`http://127.0.0.1:5000/api/updateEquipment/${updateFormData.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -194,8 +198,8 @@ function View() {
     setShowRemoveReservationModal(true);
   };
 
-//This function it checks whether a selectedItem is defined. 
-//If it's not defined (i.e., no item is selected), it logs an error message to the console and exits the function.
+  //This function it checks whether a selectedItem is defined.
+  //If it's not defined (i.e., no item is selected), it logs an error message to the console and exits the function.
 
   const handleRemoveReservationConfirm = () => {
     if (!selectedReservation) {
@@ -205,7 +209,7 @@ function View() {
     console.log("Selected Reservation:", selectedReservation);
     fetch(
       // reservation will be removed from the database -> payment will be returned via Payment system (implementation details omitted)
-      `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/removeReservation/${selectedReservation.reservation_id}`,
+      `http://127.0.0.1:5000/api/removeReservation/${selectedReservation.reservation_id}`,
       {
         method: "DELETE",
       }
@@ -219,8 +223,8 @@ function View() {
       })
       .catch((error) => console.error("Error:", error));
   };
-//This function is triggered by a click event, and sets the selected reservation, 
-//populates the updateReservationData state with reservation details, and shows a modal for updating the reservation.
+  //This function is triggered by a click event, and sets the selected reservation,
+  //populates the updateReservationData state with reservation details, and shows a modal for updating the reservation.
   const handleUpdateReservationClick = (event, reservation) => {
     event.stopPropagation();
     setSelectedReservation(reservation);
@@ -231,17 +235,17 @@ function View() {
       item_id: reservation.item_id,
       user_name: reservation.user_name,
       price: reservation.price,
-      item_name: reservation.item_name
+      item_name: reservation.item_name,
     });
     setShowUpdateReservationModal(true);
   };
-//This function makes a PUT request to update reservation data on the server, 
-//logs the response data, fetches updated reservation data, and closes the update modal.
+  //This function makes a PUT request to update reservation data on the server,
+  //logs the response data, fetches updated reservation data, and closes the update modal.
   const handleUpdateReservationSubmit = (event) => {
     event.preventDefault();
     console.log(updateReservationData);
     fetch(
-      `https://gearonthego-52bc9f57a8cd.herokuapp.com/api/updateReservation/${updateReservationData.reservation_id}`,
+      `http://127.0.0.1:5000/api/updateReservation/${updateReservationData.reservation_id}`,
       {
         method: "PUT",
         headers: {
@@ -258,22 +262,22 @@ function View() {
       })
       .catch((error) => console.error("Error:", error));
   };
-//This function sets the selected equipment and shows a modal for displaying additional information about the equipment.
+  //This function sets the selected equipment and shows a modal for displaying additional information about the equipment.
   const handleCardClick = (equipment) => {
     setSelectedEquipment(equipment);
     setShowModal(true);
   };
-///This function navigates to the "/AllProfile" route. It's typically used for redirecting the user to a profile-related page or component.
+  ///This function navigates to the "/AllProfile" route. It's typically used for redirecting the user to a profile-related page or component.
   const handleProfileClick = () => {
     navigate("/AllProfile");
   };
-//This function formats the date to display the weekday (short form), numeric day, short month, and numeric year, according to the "en-US" locale
+  //This function formats the date to display the weekday (short form), numeric day, short month, and numeric year, according to the "en-US" locale
   const dateDisplay = (date) => {
-    // normal date format to change GMT to EST is hard to implement 
+    // normal date format to change GMT to EST is hard to implement
     // -> fall back to use string method to format
     return date.split(" ").slice(1, 4).join(" ");
   };
-//This is the return componant that renders a user interface that shows equipment items and active reservation, which is being filtered based on the user
+  //This is the return componant that renders a user interface that shows equipment items and active reservation, which is being filtered based on the user
   return (
     <div>
       <NavbarCustom />
@@ -361,9 +365,7 @@ function View() {
                           <Card.Text>
                             End Date: {dateDisplay(reservation.end_date)}
                           </Card.Text>
-                          <Card.Text>
-                            Price: {reservation.price}
-                          </Card.Text>
+                          <Card.Text>Price: {reservation.price}</Card.Text>
                           <Card.Text>
                             Item Name: {reservation.item_name}
                           </Card.Text>
@@ -417,8 +419,8 @@ function View() {
             {reviews.length === 0 ? (
               <p>This person has no reviews yet.</p>
             ) : (
-              reviews.map((review, index) => (
-                <Card key={index} style={{ marginBottom: "10px" }}>
+              reviews.map((review) => (
+                <Card key={review.id} style={{ marginBottom: "10px" }}>
                   <Card.Body>
                     <Card.Title>{review[3]}</Card.Title>
                     <Card.Text>Rating: {review[4]}</Card.Text>
@@ -454,7 +456,10 @@ function View() {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showRemoveReservationModal} onHide={() => setShowRemoveReservationModal(false)}>
+      <Modal
+        show={showRemoveReservationModal}
+        onHide={() => setShowRemoveReservationModal(false)}
+      >
         {/* Cancel reservation confirmation modal */}
         <Modal.Header closeButton>
           <Modal.Title>Confirm Cancallation</Modal.Title>
@@ -465,7 +470,11 @@ function View() {
           Are you sure you want to cancel {selectedReservation?.Body}?
         </Modal.Body>
         <Modal.Footer>
-          <Button name="remove2" variant="danger" onClick={handleRemoveReservationConfirm}>
+          <Button
+            name="remove2"
+            variant="danger"
+            onClick={handleRemoveReservationConfirm}
+          >
             Yes
           </Button>
           <Button
@@ -478,7 +487,10 @@ function View() {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showUpdateReservationModal} onHide={() => setShowUpdateReservationModal(false)}>
+      <Modal
+        show={showUpdateReservationModal}
+        onHide={() => setShowUpdateReservationModal(false)}
+      >
         {/* Update reservation modal */}
         <Modal.Header closeButton>
           <Modal.Title>Edit Reservation</Modal.Title>

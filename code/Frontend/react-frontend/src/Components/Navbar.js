@@ -1,41 +1,22 @@
-import React, { useState } from "react";
-import {
-  Tabs,
-  Tab,
-  Navbar,
-  Container,
-  Nav,
-  NavDropdown,
-} from "react-bootstrap";
+import React from "react";
+import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { HashLink as Link } from "react-router-hash-link";
 import "../styles/Components/navbar.css";
 import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export function NavbarCustom(props) {
-  const { username, setUsername,} = useUser();
+  const { username, setUsername } = useUser();
   const navigate = useNavigate(); // Get the navigate function
 
-  //Google start
-  const [loginData, setLoginData] = useState(
-    localStorage.getItem("loginData")
-      ? JSON.parse(localStorage.getItem("loginData"))
-      : null
-  );
-  //Google stop
   const handleLogout = () => {
-    //Google logout logic: 
-    localStorage.removeItem("loginData");
-    setLoginData(null);
     setUsername("Guest");
     // Perform logout logic here
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/logout", {
+    fetch("http://127.0.0.1:5000/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: {}
     })
       .then((response) => {
         if (response.status === 200) {
@@ -83,11 +64,13 @@ export function NavbarCustom(props) {
               {username ? (
                 <>
                   <NavDropdown.Item href="#/View">Profile</NavDropdown.Item>
-                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Logout
+                  </NavDropdown.Item>
                 </>
               ) : (
                 <>
-                  <NavDropdown.Item href="#/login" id="login">Login</NavDropdown.Item>
+                  <NavDropdown.Item href="#/login">Login</NavDropdown.Item>
                   <NavDropdown.Item href="#/register">
                     Register
                   </NavDropdown.Item>

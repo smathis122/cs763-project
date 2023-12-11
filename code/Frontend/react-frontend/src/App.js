@@ -3,16 +3,14 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Index from "./pages";
 import Contact from "./pages/contact";
-
 import Checkout from "./pages/payment_validation";
 import PaymentSuccessful from "./pages/payment_successful";
-
-import { useUser } from "./Components/UserContext";
-
 import ItemSearchAndFilter from "./pages/search";
 import Info from "./pages/info";
 import Reservations from "./pages/MakeReservation";
 import RegisterPage from "./pages/RegisterPage";
+import NewPassword from "./pages/NewPassword";
+import Reset from "./pages/reset";
 import LoginPage from "./pages/LoginPage";
 import View from "./pages/ViewItem";
 import Profile from "./pages/profile";
@@ -72,6 +70,8 @@ function App() {
           />
 
           <Route path="register" element={<RegisterPage />} />
+          <Route path="newPassword" element={<NewPassword />} />
+          <Route path="reset" element={<Reset />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="info" element={<Info />} />
         </Route>

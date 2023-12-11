@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import "../styles/pages/password.css";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/pages/register.css";
@@ -22,12 +22,8 @@ function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const [buttonPopup, setButtonPopup] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+  const [setUserEmail] = useState("");
   const navigate = useNavigate();
-  const showPopup = () => {
-    setButtonPopup(true);
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -41,7 +37,7 @@ function RegisterPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/register", {
+    fetch("http://127.0.0.1:5000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -68,7 +64,7 @@ function RegisterPage() {
 
             // Perform a login request
             axios
-              .post("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", loginData)
+              .post("http://127.0.0.1:5000/api/login", loginData)
               .then((loginResponse) => {
                 if (loginResponse.status === 201) {
                   // Successful login
@@ -80,7 +76,6 @@ function RegisterPage() {
                   // Redirect to the home page or any other desired location
                   navigate("/");
                 } else {
-                  // Handle l
                   window.alert("Failed to Register");
                   console.log("Login failed:", loginResponse.data);
                 }
@@ -144,7 +139,7 @@ function RegisterPage() {
           <Button
             className="FormButton"
             variant="success"
-            type="submit"
+            onClick={handleSubmit}
             id="submitButton"
           >
             Register
@@ -155,7 +150,6 @@ function RegisterPage() {
             setUserEmail={(email) => {
               setUserEmail(email);
             }}
-            showPopup={showPopup}
           />
 
           <p className="dont-have-account">

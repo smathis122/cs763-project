@@ -1,8 +1,5 @@
 name: OWASP ZAP Security Scan
 
-
-            
-
 on:
   pull_request:
     branches:

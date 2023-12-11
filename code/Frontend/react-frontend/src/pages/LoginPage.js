@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
@@ -14,7 +14,7 @@ import "../styles/pages/register.css";
 
 //This function is used to manager the user login process and initializes state for a submission message
 function LoginPage() {
-  const { setUsername, setUserType } = useUser();
+  const { setUsername } = useUser();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,7 +39,7 @@ function LoginPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("https://gearonthego-52bc9f57a8cd.herokuapp.com/api/login", formData)
+      .post("http://127.0.0.1:5000/api/login", formData)
       .then((response) => {
         console.log(response);
         if (response.status === 201) {
@@ -112,7 +112,7 @@ function LoginPage() {
           <Button
             className="FormButton" // Apply Bootstrap class for button width
             variant="success"
-            type="submit"
+            onClick={handleSubmit}
             id="submitButton"
           >
             Log in
@@ -125,6 +125,9 @@ function LoginPage() {
           {/* Add a link inside the form */}
           <p className="dont-have-account">
             Don't have an account? <Link to="/register">Sign up</Link>
+          </p>
+          <p className="dont-have-account">
+            Forgot Password? <Link to="/reset">Reset</Link>
           </p>
         </Form>
       </div>
