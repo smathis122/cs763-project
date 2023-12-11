@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavbarCustom } from "../Components/Navbar";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
-import { Modal, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../Components/UserContext";
@@ -14,7 +14,7 @@ import "../styles/pages/register.css";
 
 //This function is used to manager the user login process and initializes state for a submission message
 function LoginPage() {
-  const { setUsername, setUserType } = useUser();
+  const { setUsername } = useUser();
 
   const [formData, setFormData] = useState({
     email: "",

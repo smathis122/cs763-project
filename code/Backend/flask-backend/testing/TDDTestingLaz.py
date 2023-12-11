@@ -12,7 +12,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, DataRequired, EqualTo
 import re
-# from flask_bcrypt import Bcrypt
 import os
 import secrets
 from dotenv import load_dotenv
@@ -57,11 +56,6 @@ db_connection_settings = {
     "port": "5432",
 }
 
-
-
-# TDD Testing for Production Code
-
-
 def execute_database_query(query, params=None):
     try:
         # Connect to the PostgreSQL database
@@ -87,14 +81,6 @@ query = "SELECT * FROM Equipment WHERE name ILIKE %s OR description ILIKE %s"
 params = ("Boots", "Boots")
 
 execute_database_query(query, params)
-
-# class TestExecuteDatabaseQuery(unittest.TestCase):
-#       def test_execute_database_query_error(self):
-#         # This test case expects an error to be raised
-#         query = "SELECT * FROM non_existent_table;"
-#         with self.assertRaises(Exception):
-#             execute_database_query(query)
-
 
 if __name__ == '__main__':
     unittest.main()

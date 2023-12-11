@@ -67,14 +67,14 @@ login_manager.login_view = 'login'
 
 
 # Class to collect payment information
-class paymentInfo(db.Model):
+class PaymentInfo(db.Model):
     payment_id = db.Column(db.Integer, primary_key=True)
     itemid = db.Column(db.Integer, nullable=False)
     is_paid = db.Column(db.Boolean, nullable=False)
     Price = db.Column(db.Integer, nullable=False)
 
 # Class to register a user
-class regUser(UserMixin):
+class RegUser(UserMixin):
     def __init__(self, id, email, password, user_type):
         self.id = id
         self.email = email
@@ -125,7 +125,7 @@ class PasswordForm(FlaskForm):
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Password')
-    
+
 #API route to remove item from equipment database table
 @app.route("/api/removeEquipment/<int:item_id>", methods=["DELETE"])
 def remove_equipment(item_id):
@@ -307,7 +307,7 @@ def load_user(user_id):
     if user_info:
         db_password = user_info[2][2:].encode('utf-8')
         hashed_db_password = binascii.unhexlify(db_password)
-        user = regUser(user_info[0], user_info[1], hashed_db_password)
+        user = RegUser(user_info[0], user_info[1], hashed_db_password)
         print(user)
         app.logger.info(f"Loaded user: {user}")
     return user
@@ -336,7 +336,7 @@ def login():
                     print(user_data[0])
                     print(type(user_data[0]))
 
-                    user = regUser(user_data[0], email,
+                    user = RegUser(user_data[0], email,
                                    db_password, user_data[3])
 
                     username = user_data[1]
@@ -427,7 +427,7 @@ def register():
 
 #Google register method start
 @app.route('/api/register-google', methods=['POST', 'OPTIONS'])
-def googleRegister():
+def google_register():
     # GOOGLE ADDITION START
     if (request.method == "OPTIONS"):
         return jsonify({"message": "Success"}), 200
@@ -458,7 +458,7 @@ def googleRegister():
 
 # Google login method start
 @app.route('/api/login-google', methods=['POST', 'OPTIONS'])
-def googleLogin():
+def google_login():
     if (request.method == "OPTIONS"):
         return jsonify({"message": "Success"}), 200
     try:

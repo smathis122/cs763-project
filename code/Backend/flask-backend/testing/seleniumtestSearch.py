@@ -4,7 +4,7 @@ import time
 
 # Define the base URL of your application
 base_url = "http://localhost:3000/"  # Change the port if needed
-
+username = "lazpz61@gmail.com"
 
 # Function to perform a search for items
 def test_search_items(search_query):
@@ -16,7 +16,7 @@ def test_search_items(search_query):
     time.sleep(2)
     driver.find_element(By.ID,'login').click()
     time.sleep(2)
-    driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
+    driver.find_element(By.ID,'email').send_keys(username)
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)
@@ -42,7 +42,7 @@ def test_search_available_items():
     time.sleep(2)
     driver.find_element(By.ID,'login').click()
     time.sleep(2)
-    driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
+    driver.find_element(By.ID,'email').send_keys(username)
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)
@@ -63,7 +63,7 @@ def test_search_unavailable_items():
     time.sleep(2)
     driver.find_element(By.ID,'login').click()
     time.sleep(2)
-    driver.find_element(By.ID,'email').send_keys("lazpz61@gmail.com")
+    driver.find_element(By.ID,'email').send_keys(username)
     driver.find_element(By.ID,'password').send_keys("testing1")
     driver.find_element(By.ID,'submitButton').click()
     time.sleep(3)

@@ -11,7 +11,7 @@ import { useUser } from "../Components/UserContext";
 // Ths infunction is used to displat the user data
 function UserDataList() {
   const [userData, setUserData] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [setSelectedUser] = useState(null);
   const { username } = useUser();
   console.log(username);
 
@@ -39,8 +39,8 @@ function UserDataList() {
 
       <Container>
         <Row>
-          {userData.map((user, index) => (
-            <Col key={index} xs={12} sm={6} md={4} lg={3}>
+          {userData.map((user) => (
+            <Col key={user.id} xs={12} sm={6} md={4} lg={3}>
               <Link to={`user/${user}`} style={{ textDecoration: "none" }}>
                 <Card
                   onClick={() => handleCardClick(user)}

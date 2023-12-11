@@ -47,7 +47,7 @@ else:
     }
     
     error_message += f"\n\nFailure Message: {error_message}\n"
-    error_message += f"\nContext:"
+    error_message += "\nContext:"
     error_message += f"\n- Current URL: {current_url}"
     error_message += f"\n- Form fields: {form_fields}"
     

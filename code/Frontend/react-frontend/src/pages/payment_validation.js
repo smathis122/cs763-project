@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
+import React from "react";
+import { Container, Form, Button, Col, Row } from "react-bootstrap";
 
 //This function initializes and manages the checkoutForm and retreives reservation data
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,18 +13,16 @@ function CheckoutForm() {
   const formData = location.state.reservationDetails;
   const price = location.state.reservationDetails.price;
 
-
-// This function informs users to fill in the required information before submission
+  // This function informs users to fill in the required information before submission
   function youClicked() {
     alert(
       "Please fill in the boxes below.\nIncomplete information will not be submitted."
     );
   }
 
-
   const navigate = useNavigate();
 
-// This function allows the user to naviagte to the payment Successful page when called
+  // This function allows the user to naviagte to the payment Successful page when called
   const handleSuccessfulPayment = () => {
     fetch("http://127.0.0.1:5000/api/makeReservation", {
       method: "POST",
@@ -39,16 +37,15 @@ function CheckoutForm() {
     navigate("/PaymentSuccessful");
   };
 
-//This function is executed when a form is submitted
+  //This function is executed when a form is submitted
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form is valid. Submitting...");
-      //is_paid = true;
       handleSuccessfulPayment();
     }
   };
-// This is the component for the checkout form, it collects payment information details with demographic data
+  // This is the component for the checkout form, it collects payment information details with demographic data
   return (
     <div>
       <NavbarCustom />
@@ -57,8 +54,8 @@ function CheckoutForm() {
           <Col md={3} className="items-hosted-column">
             <h1>Checkout</h1>
             <div>
-        <p>Price: $ {price}</p>
-        </div>
+              <p>Price: $ {price}</p>
+            </div>
           </Col>
           <Col md={2} className="items-hosted-column">
             <input
@@ -178,49 +175,105 @@ function CheckoutForm() {
     </div>
   );
 }
-
-//This function is used to make validaitons on the form to avoid information being entered that will prevent any mistakes from being passed into the database
 function validateForm() {
-  var fullName = document.getElementById("fullName");
+  return (
+    validateFullName() &&
+    validateStreetAddress() &&
+    validateState() &&
+    validateZipCode() &&
+    validateCVC() &&
+    validateValidThru() &&
+    validateMessage() &&
+    validateCardNumber()
+  );
+}
+
+function validateFullName() {
+  let fullName = document.getElementById("fullName");
   if (fullName.value.length < 2) {
     alert("Error: Full Name should be at least two characters");
     fullName.focus();
     return false;
   }
+  return true; // Return false if validation fails
+}
 
-  var streetAddress = document.getElementById("streetAddress");
+function validateStreetAddress() {
+  let streetAddress = document.getElementById("streetAddress");
   if (streetAddress.value.length < 2) {
     alert("Error: Street Address should be at least 2 characters");
     streetAddress.focus();
     return false;
   }
+  return true; // Return false if validation fails
+}
 
-  var state = document.getElementById("state");
+function validateState() {
+  let state = document.getElementById("state");
   if (state.value.length !== 2) {
     alert("Error: State should be only 2 characters, e.g: MA");
     state.focus();
     return false;
   }
 
-  var zipCode = document.getElementById("zipCode");
+  return true; // Return false if validation fails
+}
+
+function validateZipCode() {
+  let zipCode = document.getElementById("zipCode");
   if (zipCode.value.length < 4) {
     alert("Error: Zip Code should be at least 4 characters");
     zipCode.focus();
     return false;
   }
+  return true;
+}
 
-  var cvc = document.getElementById("cvc");
-  if (cvc.value.length !== 3) {
-    alert("Error: The CVC number should be of 3 digits");
+function validateCVC() {
+  let cvc = document.getElementById("cvc");
+  let cvcinput = cvc.value.trim();
+
+  let cvcValid = /^\d{3}$/;
+
+  if (!cvcValid.test(cvcinput)) {
+    alert("Sorry: Invalid CVC. Please enter exactly 3 digits.");
     cvc.focus();
     return false;
   }
+  return true;
+}
 
-  var monthValid = document.getElementById("validThru");
-  var monthValue = monthValid.value.trim();
+function validateValidThru() {
+  let monthValid = document.getElementById("validThru");
+  let monthValue = monthValid.value.trim();
 
-  var validPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+  let validPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+  let [validMonth, validYear] = monthValue.split("/");
 
+  let currentDate = new Date();
+
+  let currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // Adding 1 to get the correct month (0-indexed)
+  let currentYear = String(currentDate.getFullYear()).slice(2);
+
+  validMonth = parseInt(validMonth, 10);
+  validYear = parseInt(validYear, 10);
+
+  currentMonth = parseInt(currentMonth, 10);
+  currentYear = parseInt(currentYear, 10);
+
+  if (
+    validYear < currentYear ||
+    (validYear === currentYear && validMonth < currentMonth)
+  ) {
+    alert(
+      "Sorry: The card you are using has expired. Please use a card that has a minimum expiry of " +
+        currentMonth +
+        "/" +
+        currentYear
+    );
+    monthValid.focus();
+    return false;
+  }
   if (!validPattern.test(monthValue)) {
     alert(
       "Error: Please enter your Credit Card's 'valid thru' information in the form MM/YY. e.g: 12/23"
@@ -228,42 +281,10 @@ function validateForm() {
     monthValid.focus();
     return false;
   }
-
-  var [validMonth, validYear] = monthValue.split("/");
-
-
-var currentDate = new Date();
-
-
-var currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // Adding 1 to get the correct month (0-indexed)
-var currentYear = String(currentDate.getFullYear()).slice(2);
-
-validMonth = parseInt(validMonth, 10);
-validYear = parseInt(validYear, 10);
-
-
-currentMonth = parseInt(currentMonth, 10);
-currentYear = parseInt(currentYear, 10);
-
-if (validYear < currentYear || (validYear === currentYear && validMonth < currentMonth)) {
-    alert("Sorry: The card you are using has expired. Please use a card that has a minimum expiry of " + currentMonth + "/" + currentYear);
-    monthValid.focus();
-    return false;
+  return true;
 }
-
-var cvc = document.getElementById("cvc");
-var cvcinput = cvc.value.trim(); 
-
-
-var cvcValid = /^\d{3}$/;
-
-if (!cvcValid.test(cvcinput)) {
-    alert("Sorry: Invalid CVC. Please enter exactly 3 digits.");
-    cvc.focus();
-    return false;
-}
-
-  var message = document.getElementById("message");
+function validateMessage() {
+  let message = document.getElementById("message");
   if (message.value.length < 30) {
     alert(
       "Error: Please enter a message of at least 30 characters before you submit"
@@ -271,9 +292,11 @@ if (!cvcValid.test(cvcinput)) {
     message.focus();
     return false;
   }
-
-  var cardNumberElement = document.getElementById("cardNumber");
-  var cardNumber = cardNumberElement.value;
+  return true;
+}
+function validateCardNumber() {
+  let cardNumberElement = document.getElementById("cardNumber");
+  let cardNumber = cardNumberElement.value;
 
   if (cardNumber.length < 12 || cardNumber.length > 16) {
     alert("Error: Card Number should be of 12 to 16 digits");
