@@ -17,3 +17,4 @@ jobs:
         uses: zaproxy/action-baseline@v0.1.0
         with:
           target: 'http://samantha.etiennethompson.com'
+          rules_file_name: "rules.tsv"
