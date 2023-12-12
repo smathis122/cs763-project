@@ -12,7 +12,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
+      - name: read directory
+        run: ls -la
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
