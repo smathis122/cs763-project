@@ -19,3 +19,4 @@ google.auth
 email_validator
 selenium
 Werkzeug==2.3.0
+dnspython>=2.6.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
