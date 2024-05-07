@@ -18,4 +18,4 @@ requests
 google.auth
 email_validator
 selenium
-Werkzeug==2.3.0
+Werkzeug==3.0.3
